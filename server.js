@@ -28,6 +28,7 @@ db.exec(`
     title TEXT NOT NULL,
     description TEXT DEFAULT '',
     event_date TEXT NOT NULL,
+    event_time TEXT DEFAULT '',
     slots INTEGER NOT NULL DEFAULT 10,
     created_at TEXT DEFAULT (datetime('now'))
   );
@@ -53,6 +54,11 @@ db.exec(`
     created_at TEXT DEFAULT (datetime('now'))
   );
 `);
+
+// Add event_time column if it doesn't exist (migration for existing DBs)
+try {
+  db.prepare("ALTER TABLE lists ADD COLUMN event_time TEXT DEFAULT ''").run();
+} catch(e) { /* column already exists */ }
 
 db.prepare("DELETE FROM sessions WHERE created_at < datetime('now', '-24 hours')").run();
 
@@ -99,7 +105,7 @@ app.post('/api/auth/logout', (req, res) => {
 // ── Static ─────────────────────────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ── Categories (nur Admin) ─────────────────────────────────────────────────
+// ── Categories ─────────────────────────────────────────────────────────────
 
 app.get('/api/categories', (_req, res) => {
   const cats = db.prepare(`
@@ -123,7 +129,7 @@ app.get('/api/categories/:id', (req, res) => {
     SELECT l.*, COUNT(s.id) AS filled
     FROM lists l LEFT JOIN signups s ON s.list_id = l.id
     WHERE l.category_id = ?
-    GROUP BY l.id ORDER BY l.event_date ASC
+    GROUP BY l.id ORDER BY l.event_date ASC, l.event_time ASC
   `).all(req.params.id);
   res.json({ ...cat, lists });
 });
@@ -154,7 +160,30 @@ app.delete('/api/categories/:id', requireAuth, (req, res) => {
   res.json({ ok: true });
 });
 
-// ── Lists (Gäste dürfen erstellen & löschen) ───────────────────────────────
+// ── Lists ──────────────────────────────────────────────────────────────────
+
+app.get('/api/lists/upcoming', (_req, res) => {
+  // Returns lists with event_date >= today, sorted by date+time, with signups
+  const lists = db.prepare(`
+    SELECT l.*, c.name as category_name, c.color as category_color,
+      COUNT(s.id) AS filled
+    FROM lists l
+    JOIN categories c ON c.id = l.category_id
+    LEFT JOIN signups s ON s.list_id = l.id
+    WHERE l.event_date >= date('now')
+    GROUP BY l.id
+    ORDER BY l.event_date ASC, COALESCE(NULLIF(l.event_time,''), '99:99') ASC
+    LIMIT 20
+  `).all();
+
+  // Fetch signups for each list
+  const result = lists.map(l => {
+    const signups = db.prepare('SELECT * FROM signups WHERE list_id = ? ORDER BY slot_number').all(l.id);
+    return { ...l, signups };
+  });
+
+  res.json(result);
+});
 
 app.get('/api/lists/:id', (req, res) => {
   const list = db.prepare('SELECT * FROM lists WHERE id = ?').get(req.params.id);
@@ -164,22 +193,22 @@ app.get('/api/lists/:id', (req, res) => {
 });
 
 app.post('/api/lists', (req, res) => {
-  const { category_id, title, description, event_date, slots } = req.body;
+  const { category_id, title, description, event_date, event_time, slots } = req.body;
   if (!title?.trim() || !event_date || !slots || !category_id)
     return res.status(400).json({ error: 'Missing fields' });
   const n = Math.min(Math.max(parseInt(slots) || 1, 1), 500);
-  const r = db.prepare('INSERT INTO lists (category_id, title, description, event_date, slots) VALUES (?,?,?,?,?)')
-    .run(category_id, title.trim(), description?.trim() || '', event_date, n);
+  const r = db.prepare('INSERT INTO lists (category_id, title, description, event_date, event_time, slots) VALUES (?,?,?,?,?,?)')
+    .run(category_id, title.trim(), description?.trim() || '', event_date, event_time?.trim() || '', n);
   res.json({ id: r.lastInsertRowid });
 });
 
 app.put('/api/lists/:id', (req, res) => {
-  const { title, description, event_date, slots } = req.body;
+  const { title, description, event_date, event_time, slots } = req.body;
   if (!title?.trim() || !event_date || !slots)
     return res.status(400).json({ error: 'Missing fields' });
   const n = Math.min(Math.max(parseInt(slots) || 1, 1), 500);
-  db.prepare('UPDATE lists SET title=?, description=?, event_date=?, slots=? WHERE id=?')
-    .run(title.trim(), description?.trim() || '', event_date, n, req.params.id);
+  db.prepare('UPDATE lists SET title=?, description=?, event_date=?, event_time=?, slots=? WHERE id=?')
+    .run(title.trim(), description?.trim() || '', event_date, event_time?.trim() || '', n, req.params.id);
   res.json({ ok: true });
 });
 

@@ -146,7 +146,9 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .field textarea{resize:vertical;min-height:82px;line-height:1.5}
 .field input[type=number]{font-family:'JetBrains Mono',monospace}
 .field input[type=color]{padding:4px 6px;height:42px;cursor:pointer;}
+.field input[type=time]{font-family:'JetBrains Mono',monospace}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
 .field-hint{font-size:.72rem;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace;}
 
 /* ── Color picker row ── */
@@ -221,11 +223,52 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .req-item-reason{font-size:.8rem;color:var(--muted);font-style:italic;border-left:3px solid var(--rule);padding-left:10px;margin-top:2px;}
 .req-item-actions{display:flex;gap:8px;flex-shrink:0;}
 
+/* ── UPCOMING DASHBOARD (Home) ── */
+#upcoming-section{margin-top:52px;}
+.upcoming-hd{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid var(--ink);display:flex;align-items:center;gap:10px;}
+.upcoming-live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse-dot 1.8s ease-in-out infinite;}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.upcoming-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.upc-card{
+  background:#fff;border:2px solid var(--ink);border-radius:var(--r);
+  box-shadow:4px 4px 0 var(--ink);overflow:hidden;
+  transition:box-shadow .15s,transform .15s;
+  cursor:pointer;
+}
+.upc-card:hover{box-shadow:7px 7px 0 var(--ink);transform:translate(-2px,-2px);}
+.upc-card.urgency-warn{border-color:var(--yellow);box-shadow:4px 4px 0 var(--yellow);}
+.upc-card.urgency-warn:hover{box-shadow:7px 7px 0 var(--yellow);}
+.upc-card.urgency-hot{border-color:var(--red);box-shadow:4px 4px 0 var(--red);animation:hot-pulse 1.2s ease-in-out infinite;}
+@keyframes hot-pulse{0%,100%{box-shadow:4px 4px 0 var(--red)}50%{box-shadow:4px 4px 0 rgba(192,57,43,.3),0 0 12px rgba(192,57,43,.25)}}
+.upc-card.urgency-hot:hover{box-shadow:7px 7px 0 var(--red);animation:none;}
+.upc-top-bar{height:5px;}
+.upc-body{padding:16px 18px 14px;}
+.upc-cat-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:5px;display:flex;align-items:center;gap:5px;}
+.upc-cat-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.upc-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;line-height:1.25;margin-bottom:10px;}
+.upc-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.upc-chip{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:600;padding:3px 9px;border-radius:99px;border:1.5px solid currentColor;}
+.upc-chip-date{color:var(--blue);}
+.upc-chip-time{color:var(--blue);}
+.upc-chip-countdown{color:var(--green);}
+.upc-chip-countdown.warn{color:var(--yellow);}
+.upc-chip-countdown.hot{color:var(--red);}
+.upc-chip-slots{color:var(--muted);}
+.upc-names{display:flex;flex-direction:column;gap:3px;max-height:110px;overflow:hidden;position:relative;}
+.upc-names.has-more::after{content:'';position:absolute;bottom:0;left:0;right:0;height:28px;background:linear-gradient(transparent,#fff);}
+.upc-name-row{display:flex;align-items:center;gap:7px;font-size:.78rem;}
+.upc-slot-num{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);min-width:16px;}
+.upc-slot-name{font-weight:600;color:var(--ink);}
+.upc-slot-name.free{color:var(--muted);font-weight:400;font-style:italic;font-size:.74rem;}
+.upc-divider{height:1px;background:var(--rule);margin:10px 0 8px;}
+.upc-empty{grid-column:1/-1;text-align:center;padding:40px 20px;border:2px dashed var(--rule);border-radius:var(--r);}
+.upc-empty-text{color:var(--muted);font-size:.85rem;}
+
 /* ── Responsive ── */
 @media(max-width:600px){
   .page-wrap{padding:0 16px 60px}
   header{padding:24px 0 18px}
-  .field-row{grid-template-columns:1fr}
+  .field-row,.field-row-3{grid-template-columns:1fr}
   .modal-hd,.modal-body{padding-left:18px;padding-right:18px}
   .inline-row{flex-direction:column}
 }
@@ -301,113 +344,41 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
         <button class="info-tab active" onclick="switchInfoTab('guest')">👤 For Guests</button>
         <button class="info-tab" onclick="switchInfoTab('admin')">🔑 For Admins</button>
       </div>
-
-      <!-- Guest Panel -->
       <div class="info-panel active" id="info-panel-guest">
         <div class="info-section">
           <div class="info-section-title">Browsing &amp; signing up</div>
-          <div class="info-step">
-            <div class="info-step-num">1</div>
-            <div class="info-step-text">On the home screen you see all <strong>Categories</strong> (e.g. "Sports Events", "Club Trips"). Click any card to open it.</div>
-          </div>
-          <div class="info-step">
-            <div class="info-step-num">2</div>
-            <div class="info-step-text">Inside a category you see all <strong>Lists</strong> — each one has a date, a title, and a slot progress bar showing how many spots are taken.</div>
-          </div>
-          <div class="info-step">
-            <div class="info-step-num">3</div>
-            <div class="info-step-text">Click a list card to open its detail view. You'll see all individual <strong>slots</strong>. Green slots are free, grey slots are already taken.</div>
-          </div>
-          <div class="info-step">
-            <div class="info-step-num">4</div>
-            <div class="info-step-text">Click any <strong>free slot</strong> (it will highlight in green), then enter your <strong>nickname</strong> and press "Sign up ✓". Your name is saved instantly.</div>
-          </div>
+          <div class="info-step"><div class="info-step-num">1</div><div class="info-step-text">On the home screen you see all <strong>Categories</strong> and a live <strong>Upcoming Events</strong> dashboard. Click any card to open it.</div></div>
+          <div class="info-step"><div class="info-step-num">2</div><div class="info-step-text">Inside a category you see all <strong>Lists</strong> — each one has a date, optional time, and a slot progress bar.</div></div>
+          <div class="info-step"><div class="info-step-num">3</div><div class="info-step-text">Click a list card to open its detail view. Click any <strong>free slot</strong>, enter your nickname and press "Sign up ✓".</div></div>
         </div>
-
         <div class="info-section">
-          <div class="info-section-title">Creating a new list</div>
-          <div class="info-step">
-            <div class="info-step-num">5</div>
-            <div class="info-step-text">Inside any category, click <strong>"+ New List"</strong> to create your own sign-up list. Give it a title, pick a date, and set the number of slots.</div>
-          </div>
-          <div class="info-step">
-            <div class="info-step-num">6</div>
-            <div class="info-step-text">If you create a list with the <strong>same title and date</strong> as an existing one, it is automatically renamed "Team 1", "Team 2", etc. — handy for splitting groups.</div>
-          </div>
+          <div class="info-section-title">Upcoming dashboard</div>
+          <div class="info-step"><div class="info-step-num">4</div><div class="info-step-text">The home screen shows all <strong>upcoming events</strong> with live countdowns. Cards turn <strong style="color:var(--yellow)">yellow</strong> when &lt; 1 hour remains, <strong style="color:var(--red)">red &amp; pulsing</strong> within 15 minutes.</div></div>
+          <div class="info-step"><div class="info-step-num">5</div><div class="info-step-text">Once an event's time has passed, it <strong>disappears</strong> from the dashboard automatically.</div></div>
         </div>
-
         <div class="info-section">
           <div class="info-section-title">Removing your sign-up</div>
-          <div class="info-step">
-            <div class="info-step-num">7</div>
-            <div class="info-step-text">Open the list detail, hover over your slot and click the small <strong>✕</strong> button that appears. A form will ask for your name (must match exactly) and a short reason.</div>
-          </div>
-          <div class="info-step">
-            <div class="info-step-num">8</div>
-            <div class="info-step-text">Your <strong>removal request</strong> is sent to the admin for review. The admin can accept (slot is freed) or deny your request. You will not see a confirmation — just wait.</div>
-          </div>
+          <div class="info-step"><div class="info-step-num">6</div><div class="info-step-text">Open the list detail, hover your slot and click <strong>✕</strong>. Enter your name and a reason — the admin reviews and accepts or denies your request.</div></div>
         </div>
-
-        <div class="info-note"><strong>Tip:</strong> The "Participants" dashboard below the list cards shows all names at a glance — useful to check if your name was saved correctly.</div>
-        <div class="info-warn"><strong>Note:</strong> Guests cannot delete lists or categories. If you need something removed urgently, contact an admin directly.</div>
+        <div class="info-note"><strong>Tip:</strong> The "Participants" dashboard below the list cards shows all names at a glance.</div>
+        <div class="info-warn"><strong>Note:</strong> Guests cannot delete lists or categories. Contact an admin if needed.</div>
       </div>
-
-      <!-- Admin Panel -->
       <div class="info-panel" id="info-panel-admin">
         <div class="info-section">
           <div class="info-section-title">Logging in</div>
-          <div class="info-step">
-            <div class="info-step-num">1</div>
-            <div class="info-step-text">Click <strong>"Admin Login"</strong> in the top-right corner and enter the admin password (set via the <code style="font-family:monospace;font-size:.8em;background:var(--paper2);padding:1px 5px;border-radius:3px">ADMIN_PASSWORD</code> environment variable in Railway).</div>
-          </div>
-          <div class="info-step">
-            <div class="info-step-num">2</div>
-            <div class="info-step-text">Once logged in, a green <strong>"Admin"</strong> badge appears and additional controls become visible across the app. Your session lasts 24 hours.</div>
-          </div>
+          <div class="info-step"><div class="info-step-num">1</div><div class="info-step-text">Click <strong>"Admin Login"</strong> and enter the admin password (set via <code style="font-family:monospace;font-size:.8em;background:var(--paper2);padding:1px 5px;border-radius:3px">ADMIN_PASSWORD</code> env var in Railway). Session lasts 24 hours.</div></div>
         </div>
-
         <div class="info-section">
-          <div class="info-section-title">Managing categories</div>
-          <div class="info-step">
-            <div class="info-step-num">3</div>
-            <div class="info-step-text">Click <strong>"+ New Category"</strong> on the home screen. Give it a name, an optional description, and choose a colour from the presets.</div>
-          </div>
-          <div class="info-step">
-            <div class="info-step-num">4</div>
-            <div class="info-step-text">Hover any category card to reveal <strong>✏️ Edit</strong> and <strong>🗑 Delete</strong> buttons. Deleting a category removes all its lists and sign-ups permanently.</div>
-          </div>
+          <div class="info-section-title">Managing categories &amp; lists</div>
+          <div class="info-step"><div class="info-step-num">2</div><div class="info-step-text">Click <strong>"+ New Category"</strong> on the home screen. Hover cards to reveal ✏️ Edit and 🗑 Delete buttons.</div></div>
+          <div class="info-step"><div class="info-step-num">3</div><div class="info-step-text">When creating a list, you can set an optional <strong>Uhrzeit (time)</strong>. This powers the live countdown on the home screen dashboard.</div></div>
+          <div class="info-step"><div class="info-step-num">4</div><div class="info-step-text">Inside a list detail, hover a <strong>taken slot</strong> and click ✕ to immediately remove the sign-up.</div></div>
         </div>
-
         <div class="info-section">
-          <div class="info-section-title">Managing lists &amp; slots</div>
-          <div class="info-step">
-            <div class="info-step-num">5</div>
-            <div class="info-step-text">Inside a category, hover any list card to reveal the <strong>🗑 Delete</strong> button. This removes all sign-ups in that list too.</div>
-          </div>
-          <div class="info-step">
-            <div class="info-step-num">6</div>
-            <div class="info-step-text">Open any list detail and hover a <strong>taken slot</strong> — a ✕ button appears. Click it to <strong>immediately remove</strong> the sign-up without needing approval.</div>
-          </div>
+          <div class="info-section-title">Removal requests</div>
+          <div class="info-step"><div class="info-step-num">5</div><div class="info-step-text">When a guest requests removal, a <strong>red badge</strong> appears on 🔔 Requests. Click to review and accept or deny each request.</div></div>
         </div>
-
-        <div class="info-section">
-          <div class="info-section-title">Handling removal requests</div>
-          <div class="info-step">
-            <div class="info-step-num">7</div>
-            <div class="info-step-text">When a guest submits a removal request, a <strong>red badge</strong> appears on the 🔔 Requests button in the header. The count updates every 15 seconds automatically.</div>
-          </div>
-          <div class="info-step">
-            <div class="info-step-num">8</div>
-            <div class="info-step-text">Click 🔔 <strong>Requests</strong> to review each pending request. You can see the person's name, which slot and list it concerns, the date, and their stated reason.</div>
-          </div>
-          <div class="info-step">
-            <div class="info-step-num">9</div>
-            <div class="info-step-text">Click <strong>"✓ Accept"</strong> to free the slot immediately, or <strong>"✗ Deny"</strong> to dismiss the request and leave the sign-up intact.</div>
-          </div>
-        </div>
-
-        <div class="info-note"><strong>Tip:</strong> The "Participants" dashboard below the list cards gives you a full overview of all names across every list in the current category — great for a quick headcount.</div>
-        <div class="info-warn"><strong>Remember:</strong> All deletes (categories, lists, slots) are permanent and cannot be undone. Always double-check before confirming.</div>
+        <div class="info-warn"><strong>Remember:</strong> All deletes are permanent and cannot be undone.</div>
       </div>
     </div>
   </div>
@@ -423,7 +394,7 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
     <div class="modal-body">
       <div class="field">
         <label>Name *</label>
-        <input type="text" id="cat-name" placeholder="e.g. Sports Events, Club Trips…" maxlength="80"/>
+        <input type="text" id="cat-name" placeholder="e.g. Ele-Raids, Clol" maxlength="80"/>
       </div>
       <div class="field">
         <label>Description</label>
@@ -452,10 +423,14 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
         <label>Title *</label>
         <input type="text" id="list-title" placeholder="e.g. Summer Hike 2025" maxlength="120"/>
       </div>
-      <div class="field-row">
+      <div class="field-row-3">
         <div class="field">
           <label>Date *</label>
           <input type="date" id="list-date"/>
+        </div>
+        <div class="field">
+          <label>Uhrzeit</label>
+          <input type="time" id="list-time" placeholder="–"/>
         </div>
         <div class="field">
           <label>Slots *</label>
@@ -466,6 +441,7 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
         <label>Description</label>
         <textarea id="list-desc" placeholder="Meeting point, rules, bring what…"></textarea>
       </div>
+      <div class="field-hint" style="margin-bottom:16px">💡 Uhrzeit ist optional — wird für den Live-Countdown auf der Startseite verwendet.</div>
       <button class="btn btn-fill" style="width:100%;padding:12px;margin-top:4px" onclick="submitList()">Create List →</button>
     </div>
   </div>
@@ -534,12 +510,13 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 // State
 // ─────────────────────────────────────────────────────────────────────────────
 let isAdmin = false;
-let view = 'categories';   // 'categories' | 'lists'
+let view = 'categories';
 let activeCatId = null;
 let activeCatData = null;
 let detailListId = null;
 let detailListData = null;
 let pickedSlot = null;
+let upcomingInterval = null;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
@@ -569,14 +546,45 @@ function openModal(id) { $(id).classList.add('open'); }
 function closeModal(id) { $(id).classList.remove('open'); }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Countdown helpers
+// ─────────────────────────────────────────────────────────────────────────────
+function getEventDateTime(event_date, event_time) {
+  if (!event_date) return null;
+  if (!event_time) return null;
+  return new Date(`${event_date}T${event_time}:00`);
+}
+
+function getMsUntil(dt) {
+  return dt - Date.now();
+}
+
+function formatCountdown(ms) {
+  if (ms <= 0) return 'Jetzt!';
+  const s = Math.floor(ms / 1000);
+  const m = Math.floor(s / 60);
+  const h = Math.floor(m / 60);
+  const d = Math.floor(h / 24);
+  if (d > 0) return `in ${d}d ${h % 24}h`;
+  if (h > 0) return `in ${h}h ${m % 60}min`;
+  if (m > 0) return `in ${m}min ${s % 60}s`;
+  return `in ${s}s`;
+}
+
+// urgency: 'normal' | 'warn' (< 60min) | 'hot' (< 15min) | 'gone' (passed)
+function getUrgency(ms) {
+  if (ms <= 0) return 'gone';
+  if (ms < 15 * 60 * 1000) return 'hot';
+  if (ms < 60 * 60 * 1000) return 'warn';
+  return 'normal';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Info Modal
 // ─────────────────────────────────────────────────────────────────────────────
 function openInfo() {
-  // Auto-switch to admin tab if logged in
   switchInfoTab(isAdmin ? 'admin' : 'guest');
   openModal('bd-info');
 }
-
 function switchInfoTab(tab) {
   document.querySelectorAll('.info-tab').forEach((btn, i) => {
     const tabs = ['guest', 'admin'];
@@ -665,14 +673,199 @@ async function goHome() {
 async function openCategory(id) {
   view = 'lists';
   activeCatId = id;
+  stopUpcomingTicker();
   updateBreadcrumb();
   await renderLists();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UPCOMING DASHBOARD (Home)
+// ─────────────────────────────────────────────────────────────────────────────
+let upcomingData = [];
+
+function stopUpcomingTicker() {
+  if (upcomingInterval) { clearInterval(upcomingInterval); upcomingInterval = null; }
+}
+
+async function renderUpcoming() {
+  const section = $('upcoming-section');
+  if (!section) return;
+
+  upcomingData = await api('/api/lists/upcoming');
+
+  // Filter: only lists with a time set, and time not yet passed
+  const now = Date.now();
+  const timedLists = upcomingData.filter(l => {
+    if (!l.event_time) return false; // no time = don't show in countdown
+    const dt = getEventDateTime(l.event_date, l.event_time);
+    if (!dt) return false;
+    return dt.getTime() > now; // only future
+  });
+
+  // Also show today's lists without time (they never expire from dashboard)
+  const today = new Date().toISOString().slice(0, 10);
+  const untimedToday = upcomingData.filter(l => !l.event_time && l.event_date === today);
+
+  const all = [...timedLists, ...untimedToday].sort((a, b) => {
+    const da = getEventDateTime(a.event_date, a.event_time);
+    const db2 = getEventDateTime(b.event_date, b.event_time);
+    if (da && db2) return da - db2;
+    if (da) return -1;
+    if (db2) return 1;
+    return a.event_date.localeCompare(b.event_date);
+  });
+
+  drawUpcomingCards(all);
+
+  // Start / restart ticker
+  stopUpcomingTicker();
+  if (timedLists.length > 0) {
+    upcomingInterval = setInterval(() => tickUpcoming(), 1000);
+  }
+}
+
+function drawUpcomingCards(lists) {
+  const grid = document.querySelector('.upcoming-grid');
+  if (!grid) return;
+
+  if (!lists.length) {
+    grid.innerHTML = `<div class="upc-empty"><div class="upc-empty-text">Keine bevorstehenden Events heute.</div></div>`;
+    return;
+  }
+
+  grid.innerHTML = lists.map(l => buildUpcomingCard(l)).join('');
+}
+
+function buildUpcomingCard(l) {
+  const dt = getEventDateTime(l.event_date, l.event_time);
+  const ms = dt ? getMsUntil(dt) : null;
+  const urgency = ms !== null ? getUrgency(ms) : 'normal';
+  const countdown = ms !== null ? formatCountdown(ms) : null;
+
+  let urgencyClass = '';
+  if (urgency === 'warn') urgencyClass = 'urgency-warn';
+  if (urgency === 'hot') urgencyClass = 'urgency-hot';
+
+  let countdownChip = '';
+  if (countdown) {
+    const cls = urgency === 'hot' ? 'hot' : urgency === 'warn' ? 'warn' : '';
+    countdownChip = `<span class="upc-chip upc-chip-countdown ${cls}" data-list-id="${l.id}">⏱ ${esc(countdown)}</span>`;
+  }
+
+  const timeChip = l.event_time
+    ? `<span class="upc-chip upc-chip-time">🕐 ${esc(l.event_time)}</span>`
+    : '';
+
+  const slotsFree = l.slots - (l.filled || 0);
+  const slotsChip = `<span class="upc-chip upc-chip-slots">${l.filled || 0}/${l.slots} belegt</span>`;
+
+  // Show up to 5 names
+  const MAX_SHOWN = 5;
+  const signups = l.signups || [];
+  const nameMap = {};
+  signups.forEach(s => { nameMap[s.slot_number] = s.nickname; });
+  const rows = Array.from({length: Math.min(l.slots, MAX_SHOWN)}, (_, i) => {
+    const n = i + 1;
+    const name = nameMap[n];
+    return `<div class="upc-name-row">
+      <span class="upc-slot-num">${n}.</span>
+      <span class="upc-slot-name ${name ? '' : 'free'}">${name ? esc(name) : 'frei'}</span>
+    </div>`;
+  }).join('');
+  const hasMore = l.slots > MAX_SHOWN ? 'has-more' : '';
+  const moreLabel = l.slots > MAX_SHOWN ? `<div style="font-size:.68rem;color:var(--muted);font-family:'JetBrains Mono',monospace;padding-top:4px">+${l.slots - MAX_SHOWN} weitere…</div>` : '';
+
+  const catClickTarget = l.category_id;
+
+  return `<div class="upc-card ${urgencyClass}" data-list-id="${l.id}" onclick="openCategoryFromUpcoming(${catClickTarget},${l.id})">
+    <div class="upc-top-bar" style="background:${esc(l.category_color || '#1a4a7a')}"></div>
+    <div class="upc-body">
+      <div class="upc-cat-label">
+        <span class="upc-cat-dot" style="background:${esc(l.category_color || '#1a4a7a')}"></span>
+        ${esc(l.category_name)}
+      </div>
+      <div class="upc-title">${esc(l.title)}</div>
+      <div class="upc-meta">
+        <span class="upc-chip upc-chip-date">📅 ${fmtDate(l.event_date)}</span>
+        ${timeChip}
+        ${countdownChip}
+        ${slotsChip}
+      </div>
+      <div class="upc-divider"></div>
+      <div class="upc-names ${hasMore}">${rows}</div>
+      ${moreLabel}
+    </div>
+  </div>`;
+}
+
+function tickUpcoming() {
+  // Update each card's countdown chip; remove cards whose time passed
+  const now = Date.now();
+  let anyRemoved = false;
+
+  upcomingData.forEach(l => {
+    if (!l.event_time) return;
+    const dt = getEventDateTime(l.event_date, l.event_time);
+    if (!dt) return;
+    const ms = getMsUntil(dt);
+    const urgency = getUrgency(ms);
+
+    const card = document.querySelector(`.upc-card[data-list-id="${l.id}"]`);
+    if (!card) return;
+
+    if (urgency === 'gone') {
+      // Fade out and remove
+      card.style.transition = 'opacity .6s, transform .6s';
+      card.style.opacity = '0';
+      card.style.transform = 'scale(.95)';
+      setTimeout(() => {
+        card.remove();
+        upcomingData = upcomingData.filter(x => x.id !== l.id);
+      }, 650);
+      anyRemoved = true;
+      return;
+    }
+
+    // Update countdown chip
+    const chip = card.querySelector('[data-list-id="' + l.id + '"].upc-chip-countdown');
+    if (chip) {
+      chip.textContent = `⏱ ${formatCountdown(ms)}`;
+      chip.className = `upc-chip upc-chip-countdown${urgency === 'hot' ? ' hot' : urgency === 'warn' ? ' warn' : ''}`;
+    }
+
+    // Update card urgency class
+    card.classList.remove('urgency-warn', 'urgency-hot');
+    if (urgency === 'warn') card.classList.add('urgency-warn');
+    if (urgency === 'hot') card.classList.add('urgency-hot');
+  });
+
+  // If all removed, show empty state
+  if (anyRemoved) {
+    setTimeout(() => {
+      const grid = document.querySelector('.upcoming-grid');
+      if (grid && !grid.querySelector('.upc-card')) {
+        grid.innerHTML = `<div class="upc-empty"><div class="upc-empty-text">Keine bevorstehenden Events mehr heute.</div></div>`;
+        stopUpcomingTicker();
+      }
+    }, 700);
+  }
+}
+
+async function openCategoryFromUpcoming(catId, listId) {
+  view = 'lists';
+  activeCatId = catId;
+  stopUpcomingTicker();
+  updateBreadcrumb();
+  await renderLists();
+  // Auto-open the list detail
+  setTimeout(() => openDetail(listId), 200);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Categories view
 // ─────────────────────────────────────────────────────────────────────────────
 async function renderCategories() {
+  stopUpcomingTicker();
   updateBreadcrumb();
   updateBackBar();
   const cats = await api('/api/categories');
@@ -687,45 +880,55 @@ async function renderCategories() {
       <div class="view-hd-left">
         <div class="view-label">Overview</div>
         <div class="view-title">All Categories</div>
-        ${cats.length ? `<div class="view-desc">${cats.length} categor${cats.length!==1?'ies':'y'}</div>` : ''}
+        ${cats.length ? `<div class="view-desc">${cats.length} Kategori${cats.length!==1?'en':'e'}</div>` : ''}
       </div>
       ${adminActions}
     </div>
-    <div id="cat-grid"></div>`;
+    <div id="cat-grid"></div>
+    <div id="upcoming-section">
+      <div class="upcoming-hd">
+        <span class="upcoming-live-dot"></span>
+        Bevorstehende Events
+      </div>
+      <div class="upcoming-grid"></div>
+    </div>`;
 
   const grid = $('cat-grid');
   if (!cats.length) {
     grid.innerHTML = `<div class="empty"><span class="empty-icon">🗂️</span><div class="empty-text">${isAdmin ? 'No categories yet.<br>Create your first one above!' : 'No categories have been created yet.'}</div></div>`;
-    return;
+  } else {
+    grid.innerHTML = cats.map(c => {
+      const pct = c.total_slots ? Math.round(c.total_signups / c.total_slots * 100) : 0;
+      const adminBtns = isAdmin ? `
+        <div class="cat-actions">
+          <button class="btn btn-xs" onclick="event.stopPropagation();editCatModal(${c.id})" title="Edit">✏️</button>
+          <button class="btn btn-xs btn-red" onclick="event.stopPropagation();deleteCat(${c.id})" title="Delete">🗑</button>
+        </div>` : '';
+      return `<div class="cat-card" onclick="openCategory(${c.id})">
+        <div class="cat-stripe" style="background:${esc(c.color)}"></div>
+        ${adminBtns}
+        <div class="cat-body">
+          <div class="cat-name">${esc(c.name)}</div>
+          <div class="cat-desc">${c.description ? esc(c.description) : '<em style="opacity:.5">No description</em>'}</div>
+          <div class="cat-stats">
+            <span><strong>${c.list_count}</strong> Liste${c.list_count!==1?'n':''}</span>
+            <span><strong>${c.total_signups}</strong> / ${c.total_slots} Slots</span>
+            ${c.total_slots ? `<span><strong>${pct}%</strong> belegt</span>` : ''}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
   }
 
-  grid.innerHTML = cats.map(c => {
-    const pct = c.total_slots ? Math.round(c.total_signups / c.total_slots * 100) : 0;
-    const adminBtns = isAdmin ? `
-      <div class="cat-actions">
-        <button class="btn btn-xs" onclick="event.stopPropagation();editCatModal(${c.id})" title="Edit">✏️</button>
-        <button class="btn btn-xs btn-red" onclick="event.stopPropagation();deleteCat(${c.id})" title="Delete">🗑</button>
-      </div>` : '';
-    return `<div class="cat-card" onclick="openCategory(${c.id})">
-      <div class="cat-stripe" style="background:${esc(c.color)}"></div>
-      ${adminBtns}
-      <div class="cat-body">
-        <div class="cat-name">${esc(c.name)}</div>
-        <div class="cat-desc">${c.description ? esc(c.description) : '<em style="opacity:.5">No description</em>'}</div>
-        <div class="cat-stats">
-          <span><strong>${c.list_count}</strong> list${c.list_count!==1?'s':''}</span>
-          <span><strong>${c.total_signups}</strong> / ${c.total_slots} slots filled</span>
-          ${c.total_slots ? `<span><strong>${pct}%</strong> full</span>` : ''}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+  // Render upcoming after DOM is ready
+  renderUpcoming();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Lists view (inside a category)
+// Lists view
 // ─────────────────────────────────────────────────────────────────────────────
 async function renderLists() {
+  stopUpcomingTicker();
   const data = await api(`/api/categories/${activeCatId}`);
   activeCatData = data;
   updateBreadcrumb();
@@ -765,21 +968,22 @@ async function renderLists() {
     const delBtn = `<button class="card-del-btn" onclick="event.stopPropagation();deleteList(${l.id})" title="Delete list">🗑</button>`;
     const teamMatch = l.title.match(/^(.*?)\s*(\(Team \d+\))$/);
     const displayTitle = teamMatch ? `${esc(teamMatch[1])} <strong>${esc(teamMatch[2])}</strong>` : esc(l.title);
+    const timeLabel = l.event_time ? ` · <span style="color:var(--blue)">🕐 ${esc(l.event_time)}</span>` : '';
     return `<div class="list-card" onclick="openDetail(${l.id})">
       <div class="list-card-top-bar" style="background:${esc(data.color)}"></div>
       ${delBtn}
-      <div class="card-date">📅 ${fmtDate(l.event_date)}</div>
+      <div class="card-date">📅 ${fmtDate(l.event_date)}${timeLabel}</div>
       <div class="card-title">${displayTitle}</div>
       ${l.description ? `<div class="card-desc">${esc(l.description)}</div>` : ''}
       <div class="slot-meter"><div class="slot-fill ${mc}" style="width:${pct}%"></div></div>
       <div class="card-slots">
-        <span><strong>${l.filled}</strong> / ${l.slots} filled</span>
-        <span>${free > 0 ? `${free} open` : '<span style="color:var(--red)">full</span>'}</span>
+        <span><strong>${l.filled}</strong> / ${l.slots} belegt</span>
+        <span>${free > 0 ? `${free} frei` : '<span style="color:var(--red)">voll</span>'}</span>
       </div>
     </div>`;
   }).join('');
 
-  // ── Names Dashboard ──
+  // Dashboard
   const dashEl = document.createElement('div');
   dashEl.className = 'dashboard';
   dashEl.innerHTML = `<div class="dashboard-hd">👥 Participants</div><div class="dashboard-grid" id="dashboard-grid"></div>`;
@@ -802,7 +1006,7 @@ async function renderLists() {
       <div class="dash-col-top-bar" style="background:${esc(data.color)}"></div>
       <div class="dash-col-hd">
         <div class="dash-col-title">${esc(baseTitle)}${teamLabel ? ` <strong>${esc(teamLabel)}</strong>` : ''}</div>
-        <div class="dash-col-date">📅 ${fmtDate(l.event_date)}</div>
+        <div class="dash-col-date">📅 ${fmtDate(l.event_date)}${l.event_time ? ` · 🕐 ${esc(l.event_time)}` : ''}</div>
       </div>
       <ul class="dash-names">${rows}</ul>
     </div>`;
@@ -819,12 +1023,10 @@ function buildColorPicker(selected) {
       onclick="selectColor('${c}')"></div>`).join('');
   $('cat-color').value = selected;
 }
-
 function selectColor(c) {
   $('cat-color').value = c;
   document.querySelectorAll('.color-dot').forEach(d => d.classList.toggle('active', d.title === c));
 }
-
 function openCatModal(prefill=null) {
   $('cat-modal-title').textContent = 'New Category';
   $('cat-name').value = prefill?.name || '';
@@ -834,7 +1036,6 @@ function openCatModal(prefill=null) {
   openModal('bd-cat');
   setTimeout(() => $('cat-name').focus(), 60);
 }
-
 async function editCatModal(id) {
   const data = await api(`/api/categories/${id}`);
   $('cat-modal-title').textContent = 'Edit Category';
@@ -845,7 +1046,6 @@ async function editCatModal(id) {
   openModal('bd-cat');
   setTimeout(() => $('cat-name').focus(), 60);
 }
-
 async function submitCategory() {
   const name = $('cat-name').value.trim();
   const description = $('cat-desc').value.trim();
@@ -864,7 +1064,6 @@ async function submitCategory() {
   closeModal('bd-cat');
   render();
 }
-
 async function deleteCat(id) {
   if (!confirm('Delete this category and all its lists? This cannot be undone.')) return;
   const r = await api(`/api/categories/${id}`, 'DELETE');
@@ -880,6 +1079,7 @@ async function deleteCat(id) {
 function openListModal() {
   $('list-title').value = '';
   $('list-date').value = new Date().toISOString().slice(0, 10);
+  $('list-time').value = '';
   $('list-slots').value = '10';
   $('list-desc').value = '';
   openModal('bd-list');
@@ -889,6 +1089,7 @@ function openListModal() {
 async function submitList() {
   const title = $('list-title').value.trim();
   const event_date = $('list-date').value;
+  const event_time = $('list-time').value.trim();
   const slots = parseInt($('list-slots').value) || 0;
   const description = $('list-desc').value.trim();
   if (!title || !event_date || !slots) return toast('Please fill in all required fields.', true);
@@ -903,6 +1104,7 @@ async function submitList() {
         title: `${title} (Team 1)`,
         description: first.description,
         event_date: first.event_date,
+        event_time: first.event_time || '',
         slots: first.slots,
         category_id: activeCatId
       });
@@ -910,7 +1112,7 @@ async function submitList() {
     finalTitle = `${title} (Team ${dupes.length + 1})`;
   }
 
-  const r = await api('/api/lists', 'POST', { category_id: activeCatId, title: finalTitle, description, event_date, slots });
+  const r = await api('/api/lists', 'POST', { category_id: activeCatId, title: finalTitle, description, event_date, event_time, slots });
   if (r.error) return toast(r.error, true);
   toast('List created ✓');
   closeModal('bd-list');
@@ -939,10 +1141,12 @@ async function openDetail(id) {
   const free = data.slots - (data.signups?.length || 0);
   const pc = free === 0 ? 'pill-red' : free <= 3 ? 'pill-yellow' : 'pill-green';
   const catColor = activeCatData?.color || '#1a4a7a';
+  const timeChip = data.event_time ? `<span class="pill pill-blue">🕐 ${esc(data.event_time)}</span>` : '';
   $('det-pills').innerHTML = `
     <span class="pill pill-blue">📅 ${fmtDate(data.event_date)}</span>
-    <span class="pill pill-blue">🪑 ${data.slots} slots</span>
-    <span class="pill ${pc}">${free > 0 ? `✔ ${free} open` : '✖ Full'}</span>`;
+    ${timeChip}
+    <span class="pill pill-blue">🪑 ${data.slots} Slots</span>
+    <span class="pill ${pc}">${free > 0 ? `✔ ${free} frei` : '✖ Voll'}</span>`;
   $('det-desc').textContent = data.description || 'No description provided.';
   $('det-desc').style.color = data.description ? '' : 'var(--muted)';
   renderSlots(catColor);
@@ -1001,12 +1205,14 @@ async function submitSignup(slotNum) {
   detailListData = data;
   const free = data.slots - (data.signups?.length || 0);
   const pc = free === 0 ? 'pill-red' : free <= 3 ? 'pill-yellow' : 'pill-green';
+  const timeChip = data.event_time ? `<span class="pill pill-blue">🕐 ${esc(data.event_time)}</span>` : '';
   $('det-pills').innerHTML = `
     <span class="pill pill-blue">📅 ${fmtDate(data.event_date)}</span>
-    <span class="pill pill-blue">🪑 ${data.slots} slots</span>
-    <span class="pill ${pc}">${free > 0 ? `✔ ${free} open` : '✖ Full'}</span>`;
+    ${timeChip}
+    <span class="pill pill-blue">🪑 ${data.slots} Slots</span>
+    <span class="pill ${pc}">${free > 0 ? `✔ ${free} frei` : '✖ Voll'}</span>`;
   renderSlots();
-  renderLists();
+  if (view === 'lists') renderLists();
 }
 
 async function removeSignup(slotNum) {
@@ -1016,7 +1222,7 @@ async function removeSignup(slotNum) {
   const data = await api(`/api/lists/${detailListId}`);
   detailListData = data;
   renderSlots();
-  renderLists();
+  if (view === 'lists') renderLists();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1097,7 +1303,7 @@ async function acceptRequest(id) {
     const data = await api(`/api/lists/${detailListId}`);
     detailListData = data;
     renderSlots();
-    renderLists();
+    if (view === 'lists') renderLists();
   }
 }
 
