@@ -463,11 +463,11 @@ async function renderLists() {
   updateBreadcrumb();
   const mv = $('main-view');
 
-  const adminActions = isAdmin ? `
+  const adminActions = `
     <div class="view-hd-actions">
       <button class="btn btn-fill" onclick="openListModal()">+ New List</button>
-      <button class="btn btn-xs" onclick="editCatModal(${data.id})" title="Edit category">✏️ Edit</button>
-    </div>` : '';
+      ${isAdmin ? `<button class="btn btn-xs" onclick="editCatModal(${data.id})" title="Edit category">✏️ Edit</button>` : ''}
+    </div>`;
 
   mv.innerHTML = `
     <div class="view-hd">
@@ -485,7 +485,7 @@ async function renderLists() {
 
   const grid = $('list-grid');
   if (!data.lists || !data.lists.length) {
-    grid.innerHTML = `<div class="empty"><span class="empty-icon">📋</span><div class="empty-text">${isAdmin ? 'No lists in this category yet.<br>Create your first one above!' : 'No lists in this category yet.'}</div></div>`;
+    grid.innerHTML = `<div class="empty"><span class="empty-icon">📋</span><div class="empty-text">No lists in this category yet.<br>Create your first one above!</div></div>`;
     return;
   }
 
@@ -493,7 +493,7 @@ async function renderLists() {
     const pct = l.slots ? Math.round(l.filled / l.slots * 100) : 0;
     const mc = pct >= 100 ? 'full' : pct >= 70 ? 'warn' : '';
     const free = l.slots - l.filled;
-    const delBtn = isAdmin ? `<button class="card-del-btn" onclick="event.stopPropagation();deleteList(${l.id})" title="Delete list">🗑</button>` : '';
+    const delBtn = `<button class="card-del-btn" onclick="event.stopPropagation();deleteList(${l.id})" title="Delete list">🗑</button>`;
     return `<div class="list-card" onclick="openDetail(${l.id})">
       <div class="list-card-top-bar" style="background:${esc(data.color)}"></div>
       ${delBtn}
