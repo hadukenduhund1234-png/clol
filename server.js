@@ -155,7 +155,7 @@ app.get('/api/lists/:id', (req, res) => {
   res.json({ ...list, signups });
 });
 
-app.post('/api/lists', requireAuth, (req, res) => {
+app.post('/api/lists', (req, res) => {
   const { category_id, title, description, event_date, slots } = req.body;
   if (!title?.trim() || !event_date || !slots || !category_id)
     return res.status(400).json({ error: 'Missing fields' });
