@@ -161,6 +161,22 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .toast.err{border-left-color:var(--red)}
 @keyframes toastIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
 
+/* ── Names Dashboard ── */
+.dashboard{margin-top:48px;}
+.dashboard-hd{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid var(--ink);}
+.dashboard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+.dash-col{background:#fff;border:2px solid var(--ink);border-radius:var(--r);box-shadow:4px 4px 0 var(--ink);overflow:hidden;}
+.dash-col-hd{padding:12px 14px;border-bottom:2px solid var(--ink);}
+.dash-col-title{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;line-height:1.2;margin-bottom:3px;}
+.dash-col-date{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--blue);font-weight:600;}
+.dash-col-top-bar{height:4px;}
+.dash-names{list-style:none;padding:10px 0;}
+.dash-name-row{display:flex;align-items:center;gap:8px;padding:5px 14px;font-size:.82rem;border-bottom:1px solid var(--paper2);}
+.dash-name-row:last-child{border-bottom:none}
+.dash-num{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);min-width:18px;}
+.dash-name{font-weight:600;color:var(--ink);}
+.dash-name.free{color:var(--muted);font-weight:400;font-style:italic;}
+
 /* ── Responsive ── */
 @media(max-width:600px){
   .page-wrap{padding:0 16px 60px}
@@ -505,6 +521,32 @@ async function renderLists() {
         <span><strong>${l.filled}</strong> / ${l.slots} filled</span>
         <span>${free > 0 ? `${free} open` : '<span style="color:var(--red)">full</span>'}</span>
       </div>
+    </div>`;
+  }).join('');
+
+  // ── Names Dashboard ──
+  const dashEl = document.createElement('div');
+  dashEl.className = 'dashboard';
+  dashEl.innerHTML = `<div class="dashboard-hd">👥 Teilnehmerlisten</div><div class="dashboard-grid" id="dashboard-grid"></div>`;
+  mv.appendChild(dashEl);
+
+  const dashGrid = document.getElementById('dashboard-grid');
+  const details = await Promise.all(data.lists.map(l => api(`/api/lists/${l.id}`)));
+  dashGrid.innerHTML = details.map(l => {
+    const rows = Array.from({length: l.slots}, (_, i) => {
+      const signup = l.signups.find(s => s.slot_number === i + 1);
+      return `<li class="dash-name-row">
+        <span class="dash-num">${i + 1}.</span>
+        <span class="dash-name ${signup ? '' : 'free'}">${signup ? esc(signup.nickname) : 'frei'}</span>
+      </li>`;
+    }).join('');
+    return `<div class="dash-col">
+      <div class="dash-col-top-bar" style="background:${esc(data.color)}"></div>
+      <div class="dash-col-hd">
+        <div class="dash-col-title">${esc(l.title)}</div>
+        <div class="dash-col-date">📅 ${fmtDate(l.event_date)}</div>
+      </div>
+      <ul class="dash-names">${rows}</ul>
     </div>`;
   }).join('');
 }
