@@ -53,15 +53,25 @@ db.exec(`
     status TEXT DEFAULT 'pending',
     created_at TEXT DEFAULT (datetime('now'))
   );
+  CREATE TABLE IF NOT EXISTS marketplace_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nickname TEXT NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT DEFAULT '',
+    image_data TEXT DEFAULT '',
+    created_at TEXT DEFAULT (datetime('now'))
+  );
 `);
 
 // Migrations for existing DBs
 try { db.prepare("ALTER TABLE lists ADD COLUMN event_time TEXT DEFAULT ''").run(); } catch(e) {}
 try { db.prepare("ALTER TABLE lists ADD COLUMN channel INTEGER DEFAULT 1").run(); } catch(e) {}
+try { db.prepare("ALTER TABLE marketplace_items ADD COLUMN image_data TEXT DEFAULT ''").run(); } catch(e) {}
 
 db.prepare("DELETE FROM sessions WHERE created_at < datetime('now', '-24 hours')").run();
 
-app.use(express.json());
+// Increase JSON body limit for base64 image uploads (up to 8MB)
+app.use(express.json({ limit: '8mb' }));
 
 // ── Auth ───────────────────────────────────────────────────────────────────
 
@@ -281,6 +291,37 @@ app.post('/api/delete-requests/:id/accept', requireAuth, (req, res) => {
 
 app.post('/api/delete-requests/:id/deny', requireAuth, (req, res) => {
   db.prepare("UPDATE delete_requests SET status = 'denied' WHERE id = ?").run(req.params.id);
+  res.json({ ok: true });
+});
+
+// ── Marketplace ────────────────────────────────────────────────────────────
+
+// Get all marketplace items (no image data in list, for performance)
+app.get('/api/marketplace', (_req, res) => {
+  const items = db.prepare('SELECT id, nickname, title, description, created_at FROM marketplace_items ORDER BY created_at DESC').all();
+  res.json(items);
+});
+
+// Get single marketplace item with image
+app.get('/api/marketplace/:id', (req, res) => {
+  const item = db.prepare('SELECT * FROM marketplace_items WHERE id = ?').get(req.params.id);
+  if (!item) return res.status(404).json({ error: 'Not found' });
+  res.json(item);
+});
+
+// Create marketplace item (anyone)
+app.post('/api/marketplace', (req, res) => {
+  const { nickname, title, description, image_data } = req.body;
+  if (!nickname?.trim() || !title?.trim() || !description?.trim())
+    return res.status(400).json({ error: 'Nickname, title and description are required' });
+  const r = db.prepare('INSERT INTO marketplace_items (nickname, title, description, image_data) VALUES (?,?,?,?)')
+    .run(nickname.trim(), title.trim(), description.trim(), image_data?.trim() || '');
+  res.json({ id: r.lastInsertRowid });
+});
+
+// Delete marketplace item (admin only)
+app.delete('/api/marketplace/:id', requireAuth, (req, res) => {
+  db.prepare('DELETE FROM marketplace_items WHERE id = ?').run(req.params.id);
   res.json({ ok: true });
 });
 
