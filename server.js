@@ -90,7 +90,7 @@ app.post('/api/auth/logout', (req, res) => {
 // ── Static ─────────────────────────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ── Categories ─────────────────────────────────────────────────────────────
+// ── Categories (nur Admin) ─────────────────────────────────────────────────
 
 app.get('/api/categories', (_req, res) => {
   const cats = db.prepare(`
@@ -136,7 +136,6 @@ app.put('/api/categories/:id', requireAuth, (req, res) => {
 });
 
 app.delete('/api/categories/:id', requireAuth, (req, res) => {
-  // cascade: delete signups → lists → category
   const lists = db.prepare('SELECT id FROM lists WHERE category_id = ?').all(req.params.id);
   for (const l of lists) {
     db.prepare('DELETE FROM signups WHERE list_id = ?').run(l.id);
@@ -146,7 +145,7 @@ app.delete('/api/categories/:id', requireAuth, (req, res) => {
   res.json({ ok: true });
 });
 
-// ── Lists ──────────────────────────────────────────────────────────────────
+// ── Lists (Gäste dürfen erstellen & löschen) ───────────────────────────────
 
 app.get('/api/lists/:id', (req, res) => {
   const list = db.prepare('SELECT * FROM lists WHERE id = ?').get(req.params.id);
@@ -165,7 +164,7 @@ app.post('/api/lists', (req, res) => {
   res.json({ id: r.lastInsertRowid });
 });
 
-app.delete('/api/lists/:id', requireAuth, (req, res) => {
+app.delete('/api/lists/:id', (req, res) => {
   db.prepare('DELETE FROM signups WHERE list_id = ?').run(req.params.id);
   db.prepare('DELETE FROM lists WHERE id = ?').run(req.params.id);
   res.json({ ok: true });
