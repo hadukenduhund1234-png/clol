@@ -11,7 +11,7 @@
 :root{
   --paper:#f5f0e8;--paper2:#ede7d6;--ink:#1a1208;--ink2:#3d3020;
   --muted:#8a7a62;--rule:#c9bda8;--red:#c0392b;--green:#2d6a4f;
-  --blue:#1a4a7a;--yellow:#c8960c;--r:6px;
+  --blue:#1a4a7a;--yellow:#c8960c;--purple:#6a2d9a;--r:6px;
 }
 html{scroll-behavior:smooth}
 body{
@@ -61,12 +61,7 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .view-hd-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start;margin-top:4px;}
 
 #cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;}
-.cat-card{
-  background:#fff;border:2px solid var(--ink);border-radius:var(--r);
-  padding:0;cursor:pointer;position:relative;
-  box-shadow:4px 4px 0 var(--ink);transition:box-shadow .15s,transform .15s;
-  overflow:hidden;display:flex;flex-direction:column;
-}
+.cat-card{background:#fff;border:2px solid var(--ink);border-radius:var(--r);padding:0;cursor:pointer;position:relative;box-shadow:4px 4px 0 var(--ink);transition:box-shadow .15s,transform .15s;overflow:hidden;display:flex;flex-direction:column;}
 .cat-card:hover{box-shadow:7px 7px 0 var(--ink);transform:translate(-2px,-2px);}
 .cat-stripe{height:6px;flex-shrink:0;}
 .cat-body{padding:20px 22px 22px;flex:1;display:flex;flex-direction:column;}
@@ -91,6 +86,9 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .card-slots strong{color:var(--ink)}
 .card-del-btn{position:absolute;top:12px;right:10px;background:none;border:none;cursor:pointer;font-size:.9rem;opacity:0;transition:opacity .15s;color:var(--red);padding:3px 5px;}
 .list-card:hover .card-del-btn{opacity:1}
+
+/* Channel badge on list cards */
+.ch-badge{display:inline-flex;align-items:center;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:600;background:var(--purple);color:#fff;padding:2px 8px;border-radius:99px;margin-left:6px;vertical-align:middle;}
 
 .empty{grid-column:1/-1;text-align:center;padding:70px 20px;border:2px dashed var(--rule);border-radius:var(--r);}
 .empty-icon{font-size:3rem;margin-bottom:14px;display:block}
@@ -137,7 +135,11 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .field input[type=time]{font-family:'JetBrains Mono',monospace}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .field-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.field-row-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px}
 .field-hint{font-size:.72rem;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace;}
+
+/* Channel select styling */
+.field select#list-channel{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--purple);}
 
 .color-presets{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
 .color-dot{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:transform .15s,border-color .15s;flex-shrink:0;}
@@ -151,7 +153,7 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 
 .detail-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
 .pill{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:600;padding:4px 12px;border-radius:99px;border:1.5px solid currentColor;}
-.pill-blue{color:var(--blue)}.pill-green{color:var(--green)}.pill-red{color:var(--red)}.pill-yellow{color:var(--yellow)}
+.pill-blue{color:var(--blue)}.pill-green{color:var(--green)}.pill-red{color:var(--red)}.pill-yellow{color:var(--yellow)}.pill-purple{color:var(--purple)}
 .detail-desc-block{font-size:.88rem;color:var(--ink2);line-height:1.6;margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid var(--rule);}
 .slots-hd{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
 .slots-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(116px,1fr));gap:8px;margin-bottom:18px;}
@@ -184,7 +186,8 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .dash-col{background:#fff;border:2px solid var(--ink);border-radius:var(--r);box-shadow:4px 4px 0 var(--ink);overflow:hidden;}
 .dash-col-hd{padding:12px 14px;border-bottom:2px solid var(--ink);}
 .dash-col-title{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;line-height:1.2;margin-bottom:3px;}
-.dash-col-date{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--blue);font-weight:600;}
+.dash-col-meta{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--blue);font-weight:600;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.dash-col-ch{background:var(--purple);color:#fff;border-radius:99px;padding:1px 7px;font-size:.6rem;font-weight:600;}
 .dash-col-top-bar{height:4px;}
 .dash-names{list-style:none;padding:10px 0;}
 .dash-name-row{display:flex;align-items:center;gap:8px;padding:5px 14px;font-size:.82rem;border-bottom:1px solid var(--paper2);}
@@ -210,12 +213,7 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .upcoming-live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse-dot 1.8s ease-in-out infinite;}
 @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
 .upcoming-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
-.upc-card{
-  background:#fff;border:2px solid var(--ink);border-radius:var(--r);
-  box-shadow:4px 4px 0 var(--ink);overflow:hidden;
-  transition:box-shadow .15s,transform .15s;
-  cursor:pointer;
-}
+.upc-card{background:#fff;border:2px solid var(--ink);border-radius:var(--r);box-shadow:4px 4px 0 var(--ink);overflow:hidden;transition:box-shadow .15s,transform .15s;cursor:pointer;}
 .upc-card:hover{box-shadow:7px 7px 0 var(--ink);transform:translate(-2px,-2px);}
 .upc-card.urgency-warn{border-color:var(--yellow);box-shadow:4px 4px 0 var(--yellow);}
 .upc-card.urgency-warn:hover{box-shadow:7px 7px 0 var(--yellow);}
@@ -235,7 +233,7 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .upc-chip-countdown.warn{color:var(--yellow);}
 .upc-chip-countdown.hot{color:var(--red);}
 .upc-chip-slots{color:var(--muted);}
-/* ── Compact inline participants row ── */
+.upc-chip-ch{background:var(--purple);color:#fff;border-color:var(--purple);}
 .upc-divider{height:1px;background:var(--rule);margin:8px 0 7px;}
 .upc-participants{display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
 .upc-participant-chip{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:600;background:var(--paper2);border:1px solid var(--rule);border-radius:99px;padding:2px 8px;color:var(--ink2);white-space:nowrap;}
@@ -247,7 +245,7 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 @media(max-width:600px){
   .page-wrap{padding:0 16px 60px}
   header{padding:24px 0 18px}
-  .field-row,.field-row-3{grid-template-columns:1fr}
+  .field-row,.field-row-3,.field-row-4{grid-template-columns:1fr}
   .modal-hd,.modal-body{padding-left:18px;padding-right:18px}
   .inline-row{flex-direction:column}
 }
@@ -279,7 +277,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
   </div>
 
   <div class="breadcrumb" id="breadcrumb"></div>
-
   <div id="main-view"></div>
 
 </div>
@@ -321,12 +318,12 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
         <div class="info-section">
           <div class="info-section-title">Browsing &amp; signing up</div>
           <div class="info-step"><div class="info-step-num">1</div><div class="info-step-text">At the top of the home screen you see the live <strong>Upcoming Events</strong> dashboard. Below that are all <strong>Categories</strong>. Click any card to open it.</div></div>
-          <div class="info-step"><div class="info-step-num">2</div><div class="info-step-text">Inside a category you see all <strong>Lists</strong> — each one has a date, optional time, and a slot progress bar.</div></div>
+          <div class="info-step"><div class="info-step-num">2</div><div class="info-step-text">Inside a category you see all <strong>Lists</strong> — each one has a date, optional time, channel, and a slot progress bar.</div></div>
           <div class="info-step"><div class="info-step-num">3</div><div class="info-step-text">Click a list card to open its detail view. Click any <strong>free slot</strong>, enter your nickname and press "Sign up ✓".</div></div>
         </div>
         <div class="info-section">
           <div class="info-section-title">Upcoming dashboard</div>
-          <div class="info-step"><div class="info-step-num">4</div><div class="info-step-text">The dashboard shows all <strong>upcoming events</strong> with live countdowns. Cards turn <strong style="color:var(--yellow)">yellow</strong> when &lt; 1 hour remains, <strong style="color:var(--red)">red &amp; pulsing</strong> within 15 minutes.</div></div>
+          <div class="info-step"><div class="info-step-num">4</div><div class="info-step-text">The dashboard shows all <strong>upcoming events</strong> with live countdowns and their channel. Cards turn <strong style="color:var(--yellow)">yellow</strong> when &lt; 1 hour remains, <strong style="color:var(--red)">red &amp; pulsing</strong> within 15 minutes.</div></div>
           <div class="info-step"><div class="info-step-num">5</div><div class="info-step-text">Once an event's time has passed, it <strong>disappears</strong> from the dashboard automatically.</div></div>
         </div>
         <div class="info-section">
@@ -344,7 +341,7 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
         <div class="info-section">
           <div class="info-section-title">Managing categories &amp; lists</div>
           <div class="info-step"><div class="info-step-num">2</div><div class="info-step-text">Click <strong>"+ New Category"</strong> on the home screen. Hover cards to reveal ✏️ Edit and 🗑 Delete buttons.</div></div>
-          <div class="info-step"><div class="info-step-num">3</div><div class="info-step-text">When creating a list, you can set an optional <strong>time</strong>. This powers the live countdown on the home screen dashboard.</div></div>
+          <div class="info-step"><div class="info-step-num">3</div><div class="info-step-text">When creating a list, set the <strong>Channel (1–7)</strong> along with date and optional time. The channel is shown everywhere — cards, dashboard, and detail view.</div></div>
           <div class="info-step"><div class="info-step-num">4</div><div class="info-step-text">Inside a list detail, hover a <strong>taken slot</strong> and click ✕ to immediately remove the sign-up.</div></div>
         </div>
         <div class="info-section">
@@ -394,7 +391,7 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
         <label>Title *</label>
         <input type="text" id="list-title" placeholder="e.g. Summer Hike 2025" maxlength="120"/>
       </div>
-      <div class="field-row-3">
+      <div class="field-row-4">
         <div class="field">
           <label>Date *</label>
           <input type="date" id="list-date"/>
@@ -406,6 +403,18 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
         <div class="field">
           <label>Slots *</label>
           <input type="number" id="list-slots" min="1" max="500" value="10"/>
+        </div>
+        <div class="field">
+          <label>Channel *</label>
+          <select id="list-channel">
+            <option value="1">Channel 1</option>
+            <option value="2">Channel 2</option>
+            <option value="3">Channel 3</option>
+            <option value="4">Channel 4</option>
+            <option value="5">Channel 5</option>
+            <option value="6">Channel 6</option>
+            <option value="7">Channel 7</option>
+          </select>
         </div>
       </div>
       <div class="field">
@@ -491,6 +500,7 @@ const fmtDate = iso => {
   const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   return `${+d} ${mo[+m-1]} ${y}`;
 };
+const chLabel = ch => ch ? `<span class="ch-badge">Ch.${ch}</span>` : '';
 const COLORS = ['#1a4a7a','#2d6a4f','#c0392b','#7b3fa0','#c8960c','#1a6a6a','#8a4a1a','#3a3a8a','#5a1a4a','#1a5a2a'];
 
 async function api(url, method='GET', body=null) {
@@ -536,8 +546,7 @@ function openInfo() {
 }
 function switchInfoTab(tab) {
   document.querySelectorAll('.info-tab').forEach((btn, i) => {
-    const tabs = ['guest', 'admin'];
-    btn.classList.toggle('active', tabs[i] === tab);
+    btn.classList.toggle('active', ['guest','admin'][i] === tab);
   });
   document.querySelectorAll('.info-panel').forEach(panel => {
     panel.classList.toggle('active', panel.id === `info-panel-${tab}`);
@@ -631,20 +640,15 @@ function stopUpcomingTicker() {
 async function renderUpcoming() {
   const section = $('upcoming-section');
   if (!section) return;
-
   upcomingData = await api('/api/lists/upcoming');
-
   const now = Date.now();
   const timedLists = upcomingData.filter(l => {
     if (!l.event_time) return false;
     const dt = getEventDateTime(l.event_date, l.event_time);
-    if (!dt) return false;
-    return dt.getTime() > now;
+    return dt && dt.getTime() > now;
   });
-
   const today = new Date().toISOString().slice(0, 10);
   const untimedToday = upcomingData.filter(l => !l.event_time && l.event_date === today);
-
   const all = [...timedLists, ...untimedToday].sort((a, b) => {
     const da = getEventDateTime(a.event_date, a.event_time);
     const db2 = getEventDateTime(b.event_date, b.event_time);
@@ -653,13 +657,9 @@ async function renderUpcoming() {
     if (db2) return 1;
     return a.event_date.localeCompare(b.event_date);
   });
-
   drawUpcomingCards(all);
-
   stopUpcomingTicker();
-  if (timedLists.length > 0) {
-    upcomingInterval = setInterval(() => tickUpcoming(), 1000);
-  }
+  if (timedLists.length > 0) upcomingInterval = setInterval(() => tickUpcoming(), 1000);
 }
 
 function drawUpcomingCards(lists) {
@@ -688,32 +688,23 @@ function buildUpcomingCard(l) {
     countdownChip = `<span class="upc-chip upc-chip-countdown ${cls}" data-list-id="${l.id}">⏱ ${esc(countdown)}</span>`;
   }
 
-  const timeChip = l.event_time
-    ? `<span class="upc-chip upc-chip-time">🕐 ${esc(l.event_time)}</span>`
-    : '';
-
+  const timeChip = l.event_time ? `<span class="upc-chip upc-chip-time">🕐 ${esc(l.event_time)}</span>` : '';
   const slotsChip = `<span class="upc-chip upc-chip-slots">${l.filled || 0}/${l.slots} filled</span>`;
+  const channelChip = l.channel ? `<span class="upc-chip upc-chip-ch">Ch.${l.channel}</span>` : '';
 
-  // Compact inline participant chips
   const MAX_SHOWN = 6;
   const signups = l.signups || [];
   const nameMap = {};
   signups.forEach(s => { nameMap[s.slot_number] = s.nickname; });
-
   const chips = Array.from({length: Math.min(l.slots, MAX_SHOWN)}, (_, i) => {
     const n = i + 1;
     const name = nameMap[n];
-    if (name) {
-      return `<span class="upc-participant-chip">${esc(name)}</span>`;
-    } else {
-      return `<span class="upc-free-chip">#${n} free</span>`;
-    }
+    return name
+      ? `<span class="upc-participant-chip">${esc(name)}</span>`
+      : `<span class="upc-free-chip">#${n} free</span>`;
   });
-
   const remaining = l.slots - MAX_SHOWN;
-  if (remaining > 0) {
-    chips.push(`<span class="upc-more-chip">+${remaining}</span>`);
-  }
+  if (remaining > 0) chips.push(`<span class="upc-more-chip">+${remaining}</span>`);
 
   return `<div class="upc-card ${urgencyClass}" data-list-id="${l.id}" onclick="openCategoryFromUpcoming(${l.category_id},${l.id})">
     <div class="upc-top-bar" style="background:${esc(l.category_color || '#1a4a7a')}"></div>
@@ -727,6 +718,7 @@ function buildUpcomingCard(l) {
         <span class="upc-chip upc-chip-date">📅 ${fmtDate(l.event_date)}</span>
         ${timeChip}
         ${countdownChip}
+        ${channelChip}
         ${slotsChip}
       </div>
       <div class="upc-divider"></div>
@@ -736,42 +728,32 @@ function buildUpcomingCard(l) {
 }
 
 function tickUpcoming() {
-  const now = Date.now();
   let anyRemoved = false;
-
   upcomingData.forEach(l => {
     if (!l.event_time) return;
     const dt = getEventDateTime(l.event_date, l.event_time);
     if (!dt) return;
     const ms = getMsUntil(dt);
     const urgency = getUrgency(ms);
-
     const card = document.querySelector(`.upc-card[data-list-id="${l.id}"]`);
     if (!card) return;
-
     if (urgency === 'gone') {
       card.style.transition = 'opacity .6s, transform .6s';
       card.style.opacity = '0';
       card.style.transform = 'scale(.95)';
-      setTimeout(() => {
-        card.remove();
-        upcomingData = upcomingData.filter(x => x.id !== l.id);
-      }, 650);
+      setTimeout(() => { card.remove(); upcomingData = upcomingData.filter(x => x.id !== l.id); }, 650);
       anyRemoved = true;
       return;
     }
-
-    const chip = card.querySelector('[data-list-id="' + l.id + '"].upc-chip-countdown');
+    const chip = card.querySelector(`[data-list-id="${l.id}"].upc-chip-countdown`);
     if (chip) {
       chip.textContent = `⏱ ${formatCountdown(ms)}`;
       chip.className = `upc-chip upc-chip-countdown${urgency === 'hot' ? ' hot' : urgency === 'warn' ? ' warn' : ''}`;
     }
-
     card.classList.remove('urgency-warn', 'urgency-hot');
     if (urgency === 'warn') card.classList.add('urgency-warn');
     if (urgency === 'hot') card.classList.add('urgency-hot');
   });
-
   if (anyRemoved) {
     setTimeout(() => {
       const grid = document.querySelector('.upcoming-grid');
@@ -799,17 +781,12 @@ async function renderCategories() {
   updateBackBar();
   const cats = await api('/api/categories');
   const mv = $('main-view');
-
   const adminActions = isAdmin
     ? `<div class="view-hd-actions"><button class="btn btn-fill" onclick="openCatModal()">+ New Category</button></div>`
     : '';
-
   mv.innerHTML = `
     <div id="upcoming-section">
-      <div class="upcoming-hd">
-        <span class="upcoming-live-dot"></span>
-        Upcoming Events
-      </div>
+      <div class="upcoming-hd"><span class="upcoming-live-dot"></span>Upcoming Events</div>
       <div class="upcoming-grid"></div>
     </div>
     <div class="view-hd">
@@ -821,7 +798,6 @@ async function renderCategories() {
       ${adminActions}
     </div>
     <div id="cat-grid"></div>`;
-
   const grid = $('cat-grid');
   if (!cats.length) {
     grid.innerHTML = `<div class="empty"><span class="empty-icon">🗂️</span><div class="empty-text">${isAdmin ? 'No categories yet.<br>Create your first one above!' : 'No categories have been created yet.'}</div></div>`;
@@ -848,7 +824,6 @@ async function renderCategories() {
       </div>`;
     }).join('');
   }
-
   renderUpcoming();
 }
 
@@ -860,13 +835,11 @@ async function renderLists() {
   updateBreadcrumb();
   updateBackBar();
   const mv = $('main-view');
-
   const adminActions = `
     <div class="view-hd-actions">
       <button class="btn btn-fill" onclick="openListModal()">+ New List</button>
       ${isAdmin ? `<button class="btn btn-xs" onclick="editCatModal(${data.id})" title="Edit category">✏️ Edit</button>` : ''}
     </div>`;
-
   mv.innerHTML = `
     <div class="view-hd">
       <div class="view-hd-left">
@@ -880,13 +853,11 @@ async function renderLists() {
       ${adminActions}
     </div>
     <div id="list-grid"></div>`;
-
   const grid = $('list-grid');
   if (!data.lists || !data.lists.length) {
     grid.innerHTML = `<div class="empty"><span class="empty-icon">📋</span><div class="empty-text">No lists in this category yet.<br>Create your first one above!</div></div>`;
     return;
   }
-
   grid.innerHTML = data.lists.map(l => {
     const pct = l.slots ? Math.round(l.filled / l.slots * 100) : 0;
     const mc = pct >= 100 ? 'full' : pct >= 70 ? 'warn' : '';
@@ -895,10 +866,11 @@ async function renderLists() {
     const teamMatch = l.title.match(/^(.*?)\s*(\(Team \d+\))$/);
     const displayTitle = teamMatch ? `${esc(teamMatch[1])} <strong>${esc(teamMatch[2])}</strong>` : esc(l.title);
     const timeLabel = l.event_time ? ` · <span style="color:var(--blue)">🕐 ${esc(l.event_time)}</span>` : '';
+    const channelLabel = l.channel ? ` · ${chLabel(l.channel)}` : '';
     return `<div class="list-card" onclick="openDetail(${l.id})">
       <div class="list-card-top-bar" style="background:${esc(data.color)}"></div>
       ${delBtn}
-      <div class="card-date">📅 ${fmtDate(l.event_date)}${timeLabel}</div>
+      <div class="card-date">📅 ${fmtDate(l.event_date)}${timeLabel}${channelLabel}</div>
       <div class="card-title">${displayTitle}</div>
       ${l.description ? `<div class="card-desc">${esc(l.description)}</div>` : ''}
       <div class="slot-meter"><div class="slot-fill ${mc}" style="width:${pct}%"></div></div>
@@ -931,7 +903,10 @@ async function renderLists() {
       <div class="dash-col-top-bar" style="background:${esc(data.color)}"></div>
       <div class="dash-col-hd">
         <div class="dash-col-title">${esc(baseTitle)}${teamLabel ? ` <strong>${esc(teamLabel)}</strong>` : ''}</div>
-        <div class="dash-col-date">📅 ${fmtDate(l.event_date)}${l.event_time ? ` · 🕐 ${esc(l.event_time)}` : ''}</div>
+        <div class="dash-col-meta">
+          <span>📅 ${fmtDate(l.event_date)}${l.event_time ? ` · 🕐 ${esc(l.event_time)}` : ''}</span>
+          ${l.channel ? `<span class="dash-col-ch">Ch.${l.channel}</span>` : ''}
+        </div>
       </div>
       <ul class="dash-names">${rows}</ul>
     </div>`;
@@ -1002,6 +977,7 @@ function openListModal() {
   $('list-date').value = new Date().toISOString().slice(0, 10);
   $('list-time').value = '';
   $('list-slots').value = '10';
+  $('list-channel').value = '1';
   $('list-desc').value = '';
   openModal('bd-list');
   setTimeout(() => $('list-title').focus(), 60);
@@ -1012,6 +988,7 @@ async function submitList() {
   const event_date = $('list-date').value;
   const event_time = $('list-time').value.trim();
   const slots = parseInt($('list-slots').value) || 0;
+  const channel = parseInt($('list-channel').value) || 1;
   const description = $('list-desc').value.trim();
   if (!title || !event_date || !slots) return toast('Please fill in all required fields.', true);
 
@@ -1027,13 +1004,14 @@ async function submitList() {
         event_date: first.event_date,
         event_time: first.event_time || '',
         slots: first.slots,
+        channel: first.channel || 1,
         category_id: activeCatId
       });
     }
     finalTitle = `${title} (Team ${dupes.length + 1})`;
   }
 
-  const r = await api('/api/lists', 'POST', { category_id: activeCatId, title: finalTitle, description, event_date, event_time, slots });
+  const r = await api('/api/lists', 'POST', { category_id: activeCatId, title: finalTitle, description, event_date, event_time, slots, channel });
   if (r.error) return toast(r.error, true);
   toast('List created ✓');
   closeModal('bd-list');
@@ -1057,23 +1035,28 @@ async function openDetail(id) {
   const data = await api(`/api/lists/${id}`);
   detailListData = data;
   $('det-title').textContent = data.title;
-  const free = data.slots - (data.signups?.length || 0);
-  const pc = free === 0 ? 'pill-red' : free <= 3 ? 'pill-yellow' : 'pill-green';
-  const timeChip = data.event_time ? `<span class="pill pill-blue">🕐 ${esc(data.event_time)}</span>` : '';
-  $('det-pills').innerHTML = `
-    <span class="pill pill-blue">📅 ${fmtDate(data.event_date)}</span>
-    ${timeChip}
-    <span class="pill pill-blue">🪑 ${data.slots} Slots</span>
-    <span class="pill ${pc}">${free > 0 ? `✔ ${free} free` : '✖ Full'}</span>`;
+  renderDetailPills(data);
   $('det-desc').textContent = data.description || 'No description provided.';
   $('det-desc').style.color = data.description ? '' : 'var(--muted)';
   renderSlots();
   openModal('bd-detail');
 }
 
+function renderDetailPills(data) {
+  const free = data.slots - (data.signups?.length || 0);
+  const pc = free === 0 ? 'pill-red' : free <= 3 ? 'pill-yellow' : 'pill-green';
+  const timeChip = data.event_time ? `<span class="pill pill-blue">🕐 ${esc(data.event_time)}</span>` : '';
+  const channelChip = data.channel ? `<span class="pill pill-purple">📡 Channel ${data.channel}</span>` : '';
+  $('det-pills').innerHTML = `
+    <span class="pill pill-blue">📅 ${fmtDate(data.event_date)}</span>
+    ${timeChip}
+    ${channelChip}
+    <span class="pill pill-blue">🪑 ${data.slots} Slots</span>
+    <span class="pill ${pc}">${free > 0 ? `✔ ${free} free` : '✖ Full'}</span>`;
+}
+
 function renderSlots() {
   if (!detailListData) return;
-  const catColor = activeCatData?.color || '#1a4a7a';
   const tm = {};
   (detailListData.signups || []).forEach(s => tm[s.slot_number] = s.nickname);
   $('det-slots').innerHTML = Array.from({ length: detailListData.slots }, (_, i) => {
@@ -1121,14 +1104,7 @@ async function submitSignup(slotNum) {
   $('det-signup').innerHTML = '';
   const data = await api(`/api/lists/${detailListId}`);
   detailListData = data;
-  const free = data.slots - (data.signups?.length || 0);
-  const pc = free === 0 ? 'pill-red' : free <= 3 ? 'pill-yellow' : 'pill-green';
-  const timeChip = data.event_time ? `<span class="pill pill-blue">🕐 ${esc(data.event_time)}</span>` : '';
-  $('det-pills').innerHTML = `
-    <span class="pill pill-blue">📅 ${fmtDate(data.event_date)}</span>
-    ${timeChip}
-    <span class="pill pill-blue">🪑 ${data.slots} Slots</span>
-    <span class="pill ${pc}">${free > 0 ? `✔ ${free} free` : '✖ Full'}</span>`;
+  renderDetailPills(data);
   renderSlots();
   if (view === 'lists') renderLists();
 }

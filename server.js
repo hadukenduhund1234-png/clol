@@ -55,10 +55,9 @@ db.exec(`
   );
 `);
 
-// Add event_time column if it doesn't exist (migration for existing DBs)
-try {
-  db.prepare("ALTER TABLE lists ADD COLUMN event_time TEXT DEFAULT ''").run();
-} catch(e) { /* column already exists */ }
+// Migrations for existing DBs
+try { db.prepare("ALTER TABLE lists ADD COLUMN event_time TEXT DEFAULT ''").run(); } catch(e) {}
+try { db.prepare("ALTER TABLE lists ADD COLUMN channel INTEGER DEFAULT 1").run(); } catch(e) {}
 
 db.prepare("DELETE FROM sessions WHERE created_at < datetime('now', '-24 hours')").run();
 
@@ -163,7 +162,6 @@ app.delete('/api/categories/:id', requireAuth, (req, res) => {
 // ── Lists ──────────────────────────────────────────────────────────────────
 
 app.get('/api/lists/upcoming', (_req, res) => {
-  // Returns lists with event_date >= today, sorted by date+time, with signups
   const lists = db.prepare(`
     SELECT l.*, c.name as category_name, c.color as category_color,
       COUNT(s.id) AS filled
@@ -176,7 +174,6 @@ app.get('/api/lists/upcoming', (_req, res) => {
     LIMIT 20
   `).all();
 
-  // Fetch signups for each list
   const result = lists.map(l => {
     const signups = db.prepare('SELECT * FROM signups WHERE list_id = ? ORDER BY slot_number').all(l.id);
     return { ...l, signups };
@@ -193,22 +190,24 @@ app.get('/api/lists/:id', (req, res) => {
 });
 
 app.post('/api/lists', (req, res) => {
-  const { category_id, title, description, event_date, event_time, slots } = req.body;
+  const { category_id, title, description, event_date, event_time, slots, channel } = req.body;
   if (!title?.trim() || !event_date || !slots || !category_id)
     return res.status(400).json({ error: 'Missing fields' });
   const n = Math.min(Math.max(parseInt(slots) || 1, 1), 500);
-  const r = db.prepare('INSERT INTO lists (category_id, title, description, event_date, event_time, slots) VALUES (?,?,?,?,?,?)')
-    .run(category_id, title.trim(), description?.trim() || '', event_date, event_time?.trim() || '', n);
+  const ch = Math.min(Math.max(parseInt(channel) || 1, 1), 7);
+  const r = db.prepare('INSERT INTO lists (category_id, title, description, event_date, event_time, slots, channel) VALUES (?,?,?,?,?,?,?)')
+    .run(category_id, title.trim(), description?.trim() || '', event_date, event_time?.trim() || '', n, ch);
   res.json({ id: r.lastInsertRowid });
 });
 
 app.put('/api/lists/:id', (req, res) => {
-  const { title, description, event_date, event_time, slots } = req.body;
+  const { title, description, event_date, event_time, slots, channel } = req.body;
   if (!title?.trim() || !event_date || !slots)
     return res.status(400).json({ error: 'Missing fields' });
   const n = Math.min(Math.max(parseInt(slots) || 1, 1), 500);
-  db.prepare('UPDATE lists SET title=?, description=?, event_date=?, event_time=?, slots=? WHERE id=?')
-    .run(title.trim(), description?.trim() || '', event_date, event_time?.trim() || '', n, req.params.id);
+  const ch = Math.min(Math.max(parseInt(channel) || 1, 1), 7);
+  db.prepare('UPDATE lists SET title=?, description=?, event_date=?, event_time=?, slots=?, channel=? WHERE id=?')
+    .run(title.trim(), description?.trim() || '', event_date, event_time?.trim() || '', n, ch, req.params.id);
   res.json({ ok: true });
 });
 
