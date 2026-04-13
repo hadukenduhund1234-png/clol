@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Listify</title>
+<title>Chronomancer's Book</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -177,6 +177,19 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .dash-name{font-weight:600;color:var(--ink);}
 .dash-name.free{color:var(--muted);font-weight:400;font-style:italic;}
 
+/* ── Delete Request Badge ── */
+#btn-requests{position:relative;}
+.req-badge{position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;font-family:'JetBrains Mono',monospace;border-radius:99px;padding:2px 6px;min-width:18px;text-align:center;pointer-events:none;}
+
+/* ── Delete Request Modal ── */
+.req-list{display:flex;flex-direction:column;gap:12px;}
+.req-item{background:#fff;border:2px solid var(--ink);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
+.req-item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;}
+.req-item-info{font-size:.85rem;line-height:1.5;}
+.req-item-name{font-weight:700;font-family:'Playfair Display',serif;font-size:1rem;}
+.req-item-reason{font-size:.8rem;color:var(--muted);font-style:italic;border-left:3px solid var(--rule);padding-left:10px;margin-top:2px;}
+.req-item-actions{display:flex;gap:8px;flex-shrink:0;}
+
 /* ── Responsive ── */
 @media(max-width:600px){
   .page-wrap{padding:0 16px 60px}
@@ -193,11 +206,12 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
   <!-- ── Header ── -->
   <header>
     <div>
-      <div class="wordmark">List<em>ify</em></div>
-      <div class="tagline">Sign-up lists · organized by category</div>
+      <div class="wordmark">Chrono<em>mancer's</em> Book</div>
+      <div class="tagline">Family management · organized by category</div>
     </div>
     <div class="header-right">
       <span id="admin-badge" class="admin-badge" style="display:none">🔑 Admin</span>
+      <button id="btn-requests" class="btn btn-sm" onclick="openRequests()" style="display:none">🔔 Requests</button>
       <button id="btn-login"  class="btn btn-green" onclick="openLogin()">🔒 Admin Login</button>
       <button id="btn-logout" class="btn btn-sm btn-red" onclick="doLogout()" style="display:none">Sign out</button>
     </div>
@@ -311,6 +325,45 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 
 <div id="toasts"></div>
 
+<!-- Delete Requests (Admin) -->
+<div class="backdrop" id="bd-requests">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title">🔔 Pending Removal Requests</div>
+      <button class="modal-close" onclick="closeModal('bd-requests')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="req-list-wrap"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Guest Delete Request -->
+<div class="backdrop" id="bd-del-req">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-title">Request Slot Removal</div>
+      <button class="modal-close" onclick="closeModal('bd-del-req')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:18px;line-height:1.5">
+        Enter your name exactly as it appears in the slot, and a short reason.<br>
+        The admin will review and remove you if approved.
+      </p>
+      <div class="field">
+        <label>Your name (must match slot) *</label>
+        <input type="text" id="delreq-name" placeholder="Your nickname…" maxlength="60"/>
+      </div>
+      <div class="field">
+        <label>Reason *</label>
+        <textarea id="delreq-reason" placeholder="e.g. Can't make it, schedule conflict…" style="min-height:70px"></textarea>
+      </div>
+      <div class="error-msg" id="delreq-err">Name does not match the slot.</div>
+      <button class="btn btn-fill" style="width:100%;padding:12px;margin-top:4px" onclick="submitDeleteRequest()">Send Request →</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ─────────────────────────────────────────────────────────────────────────────
 // State
@@ -362,6 +415,8 @@ function applyAdminUI(admin) {
   $('admin-badge').style.display = admin ? 'inline-flex' : 'none';
   $('btn-login').style.display  = admin ? 'none' : '';
   $('btn-logout').style.display = admin ? '' : 'none';
+  $('btn-requests').style.display = admin ? '' : 'none';
+  if (admin) pollRequests();
   render();
 }
 function openLogin() {
@@ -510,11 +565,13 @@ async function renderLists() {
     const mc = pct >= 100 ? 'full' : pct >= 70 ? 'warn' : '';
     const free = l.slots - l.filled;
     const delBtn = `<button class="card-del-btn" onclick="event.stopPropagation();deleteList(${l.id})" title="Delete list">🗑</button>`;
+    const teamMatch = l.title.match(/^(.*?)\s*(\(Team \d+\))$/);
+    const displayTitle = teamMatch ? `${esc(teamMatch[1])} <strong>${esc(teamMatch[2])}</strong>` : esc(l.title);
     return `<div class="list-card" onclick="openDetail(${l.id})">
       <div class="list-card-top-bar" style="background:${esc(data.color)}"></div>
       ${delBtn}
       <div class="card-date">📅 ${fmtDate(l.event_date)}</div>
-      <div class="card-title">${esc(l.title)}</div>
+      <div class="card-title">${displayTitle}</div>
       ${l.description ? `<div class="card-desc">${esc(l.description)}</div>` : ''}
       <div class="slot-meter"><div class="slot-fill ${mc}" style="width:${pct}%"></div></div>
       <div class="card-slots">
@@ -533,6 +590,9 @@ async function renderLists() {
   const dashGrid = document.getElementById('dashboard-grid');
   const details = await Promise.all(data.lists.map(l => api(`/api/lists/${l.id}`)));
   dashGrid.innerHTML = details.map(l => {
+    const teamMatch = l.title.match(/^(.*?)\s*(\(Team \d+\))$/);
+    const baseTitle = teamMatch ? teamMatch[1] : l.title;
+    const teamLabel = teamMatch ? teamMatch[2] : '';
     const rows = Array.from({length: l.slots}, (_, i) => {
       const signup = l.signups.find(s => s.slot_number === i + 1);
       return `<li class="dash-name-row">
@@ -543,7 +603,7 @@ async function renderLists() {
     return `<div class="dash-col">
       <div class="dash-col-top-bar" style="background:${esc(data.color)}"></div>
       <div class="dash-col-hd">
-        <div class="dash-col-title">${esc(l.title)}</div>
+        <div class="dash-col-title">${esc(baseTitle)}${teamLabel ? ` <strong>${esc(teamLabel)}</strong>` : ''}</div>
         <div class="dash-col-date">📅 ${fmtDate(l.event_date)}</div>
       </div>
       <ul class="dash-names">${rows}</ul>
@@ -634,7 +694,27 @@ async function submitList() {
   const slots = parseInt($('list-slots').value) || 0;
   const description = $('list-desc').value.trim();
   if (!title || !event_date || !slots) return toast('Please fill in all required fields.', true);
-  const r = await api('/api/lists', 'POST', { category_id: activeCatId, title, description, event_date, slots });
+
+  // Check for duplicate title+date in this category → auto-assign Team number
+  const existing = await api(`/api/categories/${activeCatId}`);
+  const dupes = (existing.lists || []).filter(l => l.title === title && l.event_date === event_date);
+  let finalTitle = title;
+  if (dupes.length > 0) {
+    // If first duplicate has no team label yet, rename it to Team 1
+    const first = dupes[0];
+    if (!first.title.match(/\(Team \d+\)$/)) {
+      await api(`/api/lists/${first.id}`, 'PUT', {
+        title: `${title} (Team 1)`,
+        description: first.description,
+        event_date: first.event_date,
+        slots: first.slots,
+        category_id: activeCatId
+      });
+    }
+    finalTitle = `${title} (Team ${dupes.length + 1})`;
+  }
+
+  const r = await api('/api/lists', 'POST', { category_id: activeCatId, title: finalTitle, description, event_date, slots });
   if (r.error) return toast(r.error, true);
   toast('List created ✓');
   closeModal('bd-list');
@@ -680,10 +760,15 @@ function renderSlots(catColor) {
   (detailListData.signups || []).forEach(s => tm[s.slot_number] = s.nickname);
   $('det-slots').innerHTML = Array.from({ length: detailListData.slots }, (_, i) => {
     const n = i + 1, name = tm[n], taken = !!name, picked = pickedSlot === n;
+    const delBtn = taken
+      ? isAdmin
+        ? `<button class="slot-del" onclick="event.stopPropagation();removeSignup(${n})" title="Remove">✕</button>`
+        : `<button class="slot-del" onclick="event.stopPropagation();openDeleteRequest(${n})" title="Request removal">✕</button>`
+      : '';
     return `<div class="slot ${taken?'taken':'free'}${picked?' picked':''}" onclick="${taken?'':'pickSlot('+n+')'}">
       <div class="slot-n">Slot ${n}</div>
       <div class="slot-who">${taken ? esc(name) : '+ Sign up'}</div>
-      ${taken && isAdmin ? `<button class="slot-del" onclick="event.stopPropagation();removeSignup(${n})" title="Remove">✕</button>` : ''}
+      ${delBtn}
     </div>`;
   }).join('');
 }
@@ -739,13 +824,102 @@ async function removeSignup(slotNum) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Delete Requests
+// ─────────────────────────────────────────────────────────────────────────────
+let pendingDelSlot = null;
+
+async function pollRequests() {
+  const r = await api('/api/delete-requests/count');
+  const btn = $('btn-requests');
+  if (!btn) return;
+  const existing = btn.querySelector('.req-badge');
+  if (existing) existing.remove();
+  if (r.count > 0) {
+    const badge = document.createElement('span');
+    badge.className = 'req-badge';
+    badge.textContent = r.count;
+    btn.appendChild(badge);
+  }
+  setTimeout(pollRequests, 15000);
+}
+
+async function openRequests() {
+  const rows = await api('/api/delete-requests');
+  const wrap = $('req-list-wrap');
+  if (!rows.length) {
+    wrap.innerHTML = `<div style="text-align:center;padding:30px;color:var(--muted);font-size:.88rem">No pending requests 🎉</div>`;
+  } else {
+    wrap.innerHTML = `<div class="req-list">${rows.map(r => `
+      <div class="req-item" id="req-${r.id}">
+        <div class="req-item-top">
+          <div class="req-item-info">
+            <div class="req-item-name">${esc(r.nickname)}</div>
+            <div style="font-size:.78rem;color:var(--muted);font-family:'JetBrains Mono',monospace">
+              ${esc(r.list_title)} · Slot #${r.slot_number} · ${fmtDate(r.event_date)}
+            </div>
+          </div>
+          <div class="req-item-actions">
+            <button class="btn btn-sm btn-green" onclick="acceptRequest(${r.id})">✓ Accept</button>
+            <button class="btn btn-sm btn-red" onclick="denyRequest(${r.id})">✗ Deny</button>
+          </div>
+        </div>
+        ${r.reason ? `<div class="req-item-reason">"${esc(r.reason)}"</div>` : ''}
+      </div>`).join('')}</div>`;
+  }
+  openModal('bd-requests');
+}
+
+function openDeleteRequest(slotNum) {
+  pendingDelSlot = slotNum;
+  $('delreq-name').value = '';
+  $('delreq-reason').value = '';
+  $('delreq-err').style.display = 'none';
+  openModal('bd-del-req');
+  setTimeout(() => $('delreq-name').focus(), 60);
+}
+
+async function submitDeleteRequest() {
+  const nickname = $('delreq-name').value.trim();
+  const reason = $('delreq-reason').value.trim();
+  if (!nickname || !reason) return toast('Please fill in both fields.', true);
+  const r = await api(`/api/lists/${detailListId}/signup/${pendingDelSlot}/request-delete`, 'POST', { nickname, reason });
+  if (r.error) {
+    $('delreq-err').textContent = r.error;
+    $('delreq-err').style.display = 'block';
+    return;
+  }
+  closeModal('bd-del-req');
+  toast('Removal request sent to admin ✓');
+}
+
+async function acceptRequest(id) {
+  await api(`/api/delete-requests/${id}/accept`, 'POST');
+  toast('Request accepted — slot cleared ✓');
+  document.getElementById(`req-${id}`)?.remove();
+  pollRequests();
+  if (detailListId) {
+    const data = await api(`/api/lists/${detailListId}`);
+    detailListData = data;
+    renderSlots();
+    renderLists();
+  }
+}
+
+async function denyRequest(id) {
+  await api(`/api/delete-requests/${id}/deny`, 'POST');
+  toast('Request denied.');
+  document.getElementById(`req-${id}`)?.remove();
+  pollRequests();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Keyboard / backdrop
 // ─────────────────────────────────────────────────────────────────────────────
-['bd-login','bd-cat','bd-list','bd-detail'].forEach(id => {
+['bd-login','bd-cat','bd-list','bd-detail','bd-requests','bd-del-req'].forEach(id => {
   $(id).addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(id); });
 });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') ['bd-login','bd-cat','bd-list','bd-detail'].forEach(closeModal);
+  if (e.key === 'Escape') ['bd-login','bd-cat','bd-list','bd-detail','bd-requests','bd-del-req'].forEach(closeModal);
   if (e.key === 'Enter' && $('bd-login').classList.contains('open')) doLogin();
   if (e.key === 'Enter' && $('bd-cat').classList.contains('open')) submitCategory();
   if (e.key === 'Enter' && $('bd-list').classList.contains('open')) submitList();

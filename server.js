@@ -43,6 +43,15 @@ db.exec(`
     token TEXT PRIMARY KEY,
     created_at TEXT DEFAULT (datetime('now'))
   );
+  CREATE TABLE IF NOT EXISTS delete_requests (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    list_id INTEGER NOT NULL REFERENCES lists(id),
+    slot_number INTEGER NOT NULL,
+    nickname TEXT NOT NULL,
+    reason TEXT DEFAULT '',
+    status TEXT DEFAULT 'pending',
+    created_at TEXT DEFAULT (datetime('now'))
+  );
 `);
 
 db.prepare("DELETE FROM sessions WHERE created_at < datetime('now', '-24 hours')").run();
@@ -164,6 +173,16 @@ app.post('/api/lists', (req, res) => {
   res.json({ id: r.lastInsertRowid });
 });
 
+app.put('/api/lists/:id', (req, res) => {
+  const { title, description, event_date, slots } = req.body;
+  if (!title?.trim() || !event_date || !slots)
+    return res.status(400).json({ error: 'Missing fields' });
+  const n = Math.min(Math.max(parseInt(slots) || 1, 1), 500);
+  db.prepare('UPDATE lists SET title=?, description=?, event_date=?, slots=? WHERE id=?')
+    .run(title.trim(), description?.trim() || '', event_date, n, req.params.id);
+  res.json({ ok: true });
+});
+
 app.delete('/api/lists/:id', (req, res) => {
   db.prepare('DELETE FROM signups WHERE list_id = ?').run(req.params.id);
   db.prepare('DELETE FROM lists WHERE id = ?').run(req.params.id);
@@ -189,7 +208,52 @@ app.post('/api/lists/:id/signup', (req, res) => {
 
 app.delete('/api/lists/:id/signup/:slot', requireAuth, (req, res) => {
   db.prepare('DELETE FROM signups WHERE list_id = ? AND slot_number = ?').run(req.params.id, req.params.slot);
+  db.prepare('DELETE FROM delete_requests WHERE list_id = ? AND slot_number = ? AND status = ?').run(req.params.id, req.params.slot, 'pending');
   res.json({ ok: true });
 });
 
-app.listen(PORT, () => console.log(`✔ Listify running on port ${PORT}`));
+// ── Delete Requests ────────────────────────────────────────────────────────
+
+app.get('/api/delete-requests', requireAuth, (req, res) => {
+  const rows = db.prepare(`
+    SELECT dr.*, l.title as list_title, l.event_date
+    FROM delete_requests dr
+    JOIN lists l ON l.id = dr.list_id
+    WHERE dr.status = 'pending'
+    ORDER BY dr.created_at ASC
+  `).all();
+  res.json(rows);
+});
+
+app.get('/api/delete-requests/count', (req, res) => {
+  const row = db.prepare("SELECT COUNT(*) as count FROM delete_requests WHERE status = 'pending'").get();
+  res.json({ count: row.count });
+});
+
+app.post('/api/lists/:id/signup/:slot/request-delete', (req, res) => {
+  const { nickname, reason } = req.body;
+  if (!nickname?.trim()) return res.status(400).json({ error: 'Nickname required' });
+  const signup = db.prepare('SELECT * FROM signups WHERE list_id = ? AND slot_number = ?').get(req.params.id, req.params.slot);
+  if (!signup) return res.status(404).json({ error: 'Slot not found' });
+  if (signup.nickname !== nickname.trim()) return res.status(403).json({ error: 'Name does not match the slot' });
+  const existing = db.prepare("SELECT id FROM delete_requests WHERE list_id = ? AND slot_number = ? AND status = 'pending'").get(req.params.id, req.params.slot);
+  if (existing) return res.status(409).json({ error: 'A request is already pending for this slot' });
+  db.prepare('INSERT INTO delete_requests (list_id, slot_number, nickname, reason) VALUES (?,?,?,?)')
+    .run(req.params.id, req.params.slot, nickname.trim(), reason?.trim() || '');
+  res.json({ ok: true });
+});
+
+app.post('/api/delete-requests/:id/accept', requireAuth, (req, res) => {
+  const req2 = db.prepare('SELECT * FROM delete_requests WHERE id = ?').get(req.params.id);
+  if (!req2) return res.status(404).json({ error: 'Request not found' });
+  db.prepare('DELETE FROM signups WHERE list_id = ? AND slot_number = ?').run(req2.list_id, req2.slot_number);
+  db.prepare("UPDATE delete_requests SET status = 'accepted' WHERE id = ?").run(req.params.id);
+  res.json({ ok: true });
+});
+
+app.post('/api/delete-requests/:id/deny', requireAuth, (req, res) => {
+  db.prepare("UPDATE delete_requests SET status = 'denied' WHERE id = ?").run(req.params.id);
+  res.json({ ok: true });
+});
+
+app.listen(PORT, () => console.log(`✔ Chronomancer's Book running on port ${PORT}`));
