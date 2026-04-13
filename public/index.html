@@ -527,7 +527,7 @@ async function renderLists() {
   // ── Names Dashboard ──
   const dashEl = document.createElement('div');
   dashEl.className = 'dashboard';
-  dashEl.innerHTML = `<div class="dashboard-hd">👥 Teilnehmerlisten</div><div class="dashboard-grid" id="dashboard-grid"></div>`;
+  dashEl.innerHTML = `<div class="dashboard-hd">👥 Participants</div><div class="dashboard-grid" id="dashboard-grid"></div>`;
   mv.appendChild(dashEl);
 
   const dashGrid = document.getElementById('dashboard-grid');
@@ -537,7 +537,7 @@ async function renderLists() {
       const signup = l.signups.find(s => s.slot_number === i + 1);
       return `<li class="dash-name-row">
         <span class="dash-num">${i + 1}.</span>
-        <span class="dash-name ${signup ? '' : 'free'}">${signup ? esc(signup.nickname) : 'frei'}</span>
+        <span class="dash-name ${signup ? '' : 'free'}">${signup ? esc(signup.nickname) : 'free'}</span>
       </li>`;
     }).join('');
     return `<div class="dash-col">
