@@ -41,12 +41,22 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .btn-green:hover{background:var(--green);color:#fff}
 .btn-sm{padding:6px 14px;font-size:.8rem}
 .btn-xs{padding:4px 10px;font-size:.75rem;border-width:1.5px}
+.btn-info{border-color:var(--blue);color:var(--blue);background:transparent}
+.btn-info:hover{background:var(--blue);color:#fff}
 
 /* ── Breadcrumb ── */
 .breadcrumb{display:flex;align-items:center;gap:8px;padding:24px 0 0;font-size:.82rem;color:var(--muted);font-family:'JetBrains Mono',monospace;flex-wrap:wrap;}
 .breadcrumb a{color:var(--blue);cursor:pointer;text-decoration:none;}
 .breadcrumb a:hover{text-decoration:underline}
 .breadcrumb-sep{color:var(--rule)}
+
+/* ── Back button bar ── */
+#back-bar{display:none;padding:20px 0 0;align-items:center;gap:12px;}
+#back-bar.visible{display:flex}
+.back-btn{display:inline-flex;align-items:center;gap:7px;font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:.85rem;border:2px solid var(--ink);border-radius:var(--r);padding:8px 18px;cursor:pointer;transition:all .15s;background:transparent;color:var(--ink);}
+.back-btn:hover{background:var(--ink);color:var(--paper)}
+.back-btn-arrow{font-size:1rem;line-height:1}
+#back-bar-cat-name{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);}
 
 /* ── View headers ── */
 .view-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 0 28px;gap:16px;flex-wrap:wrap;border-bottom:2px solid var(--ink);margin-bottom:32px;}
@@ -100,12 +110,33 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .backdrop.open{display:flex}
 .modal{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r);box-shadow:8px 8px 0 var(--ink);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:popIn .22s cubic-bezier(.34,1.56,.64,1);}
 .modal.wide{max-width:700px}
+.modal.info-modal{max-width:600px}
 @keyframes popIn{from{opacity:0;transform:scale(.92) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .modal-hd{padding:26px 26px 18px;border-bottom:2px solid var(--ink);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
 .modal-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;line-height:1.2}
 .modal-close{background:none;border:none;cursor:pointer;font-size:1.2rem;color:var(--muted);padding:2px 6px;transition:color .15s;flex-shrink:0;}
 .modal-close:hover{color:var(--red)}
 .modal-body{padding:22px 26px 26px}
+
+/* ── Info Modal ── */
+.info-tabs{display:flex;gap:0;border:2px solid var(--ink);border-radius:var(--r);overflow:hidden;margin-bottom:24px;}
+.info-tab{flex:1;padding:10px 16px;font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;border:none;background:transparent;color:var(--muted);transition:all .15s;text-align:center;}
+.info-tab:first-child{border-right:2px solid var(--ink);}
+.info-tab.active{background:var(--ink);color:var(--paper);}
+.info-panel{display:none;}
+.info-panel.active{display:block;}
+.info-section{margin-bottom:22px;}
+.info-section:last-child{margin-bottom:0}
+.info-section-title{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--rule);}
+.info-step{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;}
+.info-step:last-child{margin-bottom:0}
+.info-step-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:600;background:var(--ink);color:var(--paper);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.info-step-text{font-size:.85rem;line-height:1.55;color:var(--ink2);}
+.info-step-text strong{color:var(--ink);font-weight:600;}
+.info-note{background:#fff;border:1.5px solid var(--rule);border-left:4px solid var(--blue);border-radius:var(--r);padding:10px 14px;font-size:.81rem;color:var(--muted);line-height:1.5;margin-top:14px;}
+.info-note strong{color:var(--blue);}
+.info-warn{background:rgba(192,57,43,.06);border:1.5px solid var(--rule);border-left:4px solid var(--red);border-radius:var(--r);padding:10px 14px;font-size:.81rem;color:var(--muted);line-height:1.5;margin-top:10px;}
+.info-warn strong{color:var(--red);}
 
 /* ── Form ── */
 .field{margin-bottom:18px}
@@ -211,11 +242,21 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
     </div>
     <div class="header-right">
       <span id="admin-badge" class="admin-badge" style="display:none">🔑 Admin</span>
+      <button class="btn btn-sm btn-info" onclick="openInfo()" title="How to use this app">ℹ️ How it works</button>
       <button id="btn-requests" class="btn btn-sm" onclick="openRequests()" style="display:none">🔔 Requests</button>
       <button id="btn-login"  class="btn btn-green" onclick="openLogin()">🔒 Admin Login</button>
       <button id="btn-logout" class="btn btn-sm btn-red" onclick="doLogout()" style="display:none">Sign out</button>
     </div>
   </header>
+
+  <!-- ── Back Button Bar ── -->
+  <div id="back-bar">
+    <button class="back-btn" onclick="goHome()">
+      <span class="back-btn-arrow">←</span>
+      Back to Categories
+    </button>
+    <span id="back-bar-cat-name"></span>
+  </div>
 
   <!-- ── Breadcrumb ── -->
   <div class="breadcrumb" id="breadcrumb"></div>
@@ -236,7 +277,7 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
     </div>
     <div class="modal-body">
       <div class="login-icon">🔑</div>
-      <div class="login-sub">Admins can create, edit and delete categories & lists.<br>Anyone can sign up for open slots.</div>
+      <div class="login-sub">Admins can create, edit and delete categories &amp; lists.<br>Anyone can sign up for open slots.</div>
       <div class="error-msg" id="login-err">Incorrect password — please try again.</div>
       <div class="field">
         <label>Password</label>
@@ -244,6 +285,130 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
         <div class="field-hint">Set via ADMIN_PASSWORD environment variable in Railway.</div>
       </div>
       <button class="btn btn-fill" style="width:100%;padding:12px" onclick="doLogin()">Log in →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Info / Help Modal -->
+<div class="backdrop" id="bd-info">
+  <div class="modal info-modal">
+    <div class="modal-hd">
+      <div class="modal-title">ℹ️ How it works</div>
+      <button class="modal-close" onclick="closeModal('bd-info')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="info-tabs">
+        <button class="info-tab active" onclick="switchInfoTab('guest')">👤 For Guests</button>
+        <button class="info-tab" onclick="switchInfoTab('admin')">🔑 For Admins</button>
+      </div>
+
+      <!-- Guest Panel -->
+      <div class="info-panel active" id="info-panel-guest">
+        <div class="info-section">
+          <div class="info-section-title">Browsing &amp; signing up</div>
+          <div class="info-step">
+            <div class="info-step-num">1</div>
+            <div class="info-step-text">On the home screen you see all <strong>Categories</strong> (e.g. "Sports Events", "Club Trips"). Click any card to open it.</div>
+          </div>
+          <div class="info-step">
+            <div class="info-step-num">2</div>
+            <div class="info-step-text">Inside a category you see all <strong>Lists</strong> — each one has a date, a title, and a slot progress bar showing how many spots are taken.</div>
+          </div>
+          <div class="info-step">
+            <div class="info-step-num">3</div>
+            <div class="info-step-text">Click a list card to open its detail view. You'll see all individual <strong>slots</strong>. Green slots are free, grey slots are already taken.</div>
+          </div>
+          <div class="info-step">
+            <div class="info-step-num">4</div>
+            <div class="info-step-text">Click any <strong>free slot</strong> (it will highlight in green), then enter your <strong>nickname</strong> and press "Sign up ✓". Your name is saved instantly.</div>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <div class="info-section-title">Creating a new list</div>
+          <div class="info-step">
+            <div class="info-step-num">5</div>
+            <div class="info-step-text">Inside any category, click <strong>"+ New List"</strong> to create your own sign-up list. Give it a title, pick a date, and set the number of slots.</div>
+          </div>
+          <div class="info-step">
+            <div class="info-step-num">6</div>
+            <div class="info-step-text">If you create a list with the <strong>same title and date</strong> as an existing one, it is automatically renamed "Team 1", "Team 2", etc. — handy for splitting groups.</div>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <div class="info-section-title">Removing your sign-up</div>
+          <div class="info-step">
+            <div class="info-step-num">7</div>
+            <div class="info-step-text">Open the list detail, hover over your slot and click the small <strong>✕</strong> button that appears. A form will ask for your name (must match exactly) and a short reason.</div>
+          </div>
+          <div class="info-step">
+            <div class="info-step-num">8</div>
+            <div class="info-step-text">Your <strong>removal request</strong> is sent to the admin for review. The admin can accept (slot is freed) or deny your request. You will not see a confirmation — just wait.</div>
+          </div>
+        </div>
+
+        <div class="info-note"><strong>Tip:</strong> The "Participants" dashboard below the list cards shows all names at a glance — useful to check if your name was saved correctly.</div>
+        <div class="info-warn"><strong>Note:</strong> Guests cannot delete lists or categories. If you need something removed urgently, contact an admin directly.</div>
+      </div>
+
+      <!-- Admin Panel -->
+      <div class="info-panel" id="info-panel-admin">
+        <div class="info-section">
+          <div class="info-section-title">Logging in</div>
+          <div class="info-step">
+            <div class="info-step-num">1</div>
+            <div class="info-step-text">Click <strong>"Admin Login"</strong> in the top-right corner and enter the admin password (set via the <code style="font-family:monospace;font-size:.8em;background:var(--paper2);padding:1px 5px;border-radius:3px">ADMIN_PASSWORD</code> environment variable in Railway).</div>
+          </div>
+          <div class="info-step">
+            <div class="info-step-num">2</div>
+            <div class="info-step-text">Once logged in, a green <strong>"Admin"</strong> badge appears and additional controls become visible across the app. Your session lasts 24 hours.</div>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <div class="info-section-title">Managing categories</div>
+          <div class="info-step">
+            <div class="info-step-num">3</div>
+            <div class="info-step-text">Click <strong>"+ New Category"</strong> on the home screen. Give it a name, an optional description, and choose a colour from the presets.</div>
+          </div>
+          <div class="info-step">
+            <div class="info-step-num">4</div>
+            <div class="info-step-text">Hover any category card to reveal <strong>✏️ Edit</strong> and <strong>🗑 Delete</strong> buttons. Deleting a category removes all its lists and sign-ups permanently.</div>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <div class="info-section-title">Managing lists &amp; slots</div>
+          <div class="info-step">
+            <div class="info-step-num">5</div>
+            <div class="info-step-text">Inside a category, hover any list card to reveal the <strong>🗑 Delete</strong> button. This removes all sign-ups in that list too.</div>
+          </div>
+          <div class="info-step">
+            <div class="info-step-num">6</div>
+            <div class="info-step-text">Open any list detail and hover a <strong>taken slot</strong> — a ✕ button appears. Click it to <strong>immediately remove</strong> the sign-up without needing approval.</div>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <div class="info-section-title">Handling removal requests</div>
+          <div class="info-step">
+            <div class="info-step-num">7</div>
+            <div class="info-step-text">When a guest submits a removal request, a <strong>red badge</strong> appears on the 🔔 Requests button in the header. The count updates every 15 seconds automatically.</div>
+          </div>
+          <div class="info-step">
+            <div class="info-step-num">8</div>
+            <div class="info-step-text">Click 🔔 <strong>Requests</strong> to review each pending request. You can see the person's name, which slot and list it concerns, the date, and their stated reason.</div>
+          </div>
+          <div class="info-step">
+            <div class="info-step-num">9</div>
+            <div class="info-step-text">Click <strong>"✓ Accept"</strong> to free the slot immediately, or <strong>"✗ Deny"</strong> to dismiss the request and leave the sign-up intact.</div>
+          </div>
+        </div>
+
+        <div class="info-note"><strong>Tip:</strong> The "Participants" dashboard below the list cards gives you a full overview of all names across every list in the current category — great for a quick headcount.</div>
+        <div class="info-warn"><strong>Remember:</strong> All deletes (categories, lists, slots) are permanent and cannot be undone. Always double-check before confirming.</div>
+      </div>
     </div>
   </div>
 </div>
@@ -404,6 +569,25 @@ function openModal(id) { $(id).classList.add('open'); }
 function closeModal(id) { $(id).classList.remove('open'); }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Info Modal
+// ─────────────────────────────────────────────────────────────────────────────
+function openInfo() {
+  // Auto-switch to admin tab if logged in
+  switchInfoTab(isAdmin ? 'admin' : 'guest');
+  openModal('bd-info');
+}
+
+function switchInfoTab(tab) {
+  document.querySelectorAll('.info-tab').forEach((btn, i) => {
+    const tabs = ['guest', 'admin'];
+    btn.classList.toggle('active', tabs[i] === tab);
+  });
+  document.querySelectorAll('.info-panel').forEach(panel => {
+    panel.classList.toggle('active', panel.id === `info-panel-${tab}`);
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Auth
 // ─────────────────────────────────────────────────────────────────────────────
 async function checkAuth() {
@@ -448,6 +632,17 @@ async function render() {
   else await renderLists();
 }
 
+function updateBackBar() {
+  const bar = $('back-bar');
+  if (view === 'lists') {
+    bar.classList.add('visible');
+    $('back-bar-cat-name').textContent = activeCatData ? `/ ${activeCatData.name}` : '';
+  } else {
+    bar.classList.remove('visible');
+    $('back-bar-cat-name').textContent = '';
+  }
+}
+
 function updateBreadcrumb() {
   const bc = $('breadcrumb');
   if (view === 'categories') {
@@ -463,6 +658,7 @@ async function goHome() {
   activeCatId = null;
   activeCatData = null;
   updateBreadcrumb();
+  updateBackBar();
   await renderCategories();
 }
 
@@ -478,6 +674,7 @@ async function openCategory(id) {
 // ─────────────────────────────────────────────────────────────────────────────
 async function renderCategories() {
   updateBreadcrumb();
+  updateBackBar();
   const cats = await api('/api/categories');
   const mv = $('main-view');
 
@@ -532,6 +729,7 @@ async function renderLists() {
   const data = await api(`/api/categories/${activeCatId}`);
   activeCatData = data;
   updateBreadcrumb();
+  updateBackBar();
   const mv = $('main-view');
 
   const adminActions = `
@@ -695,12 +893,10 @@ async function submitList() {
   const description = $('list-desc').value.trim();
   if (!title || !event_date || !slots) return toast('Please fill in all required fields.', true);
 
-  // Check for duplicate title+date in this category → auto-assign Team number
   const existing = await api(`/api/categories/${activeCatId}`);
   const dupes = (existing.lists || []).filter(l => l.title === title && l.event_date === event_date);
   let finalTitle = title;
   if (dupes.length > 0) {
-    // If first duplicate has no team label yet, rename it to Team 1
     const first = dupes[0];
     if (!first.title.match(/\(Team \d+\)$/)) {
       await api(`/api/lists/${first.id}`, 'PUT', {
@@ -915,11 +1111,11 @@ async function denyRequest(id) {
 // ─────────────────────────────────────────────────────────────────────────────
 // Keyboard / backdrop
 // ─────────────────────────────────────────────────────────────────────────────
-['bd-login','bd-cat','bd-list','bd-detail','bd-requests','bd-del-req'].forEach(id => {
+['bd-login','bd-cat','bd-list','bd-detail','bd-requests','bd-del-req','bd-info'].forEach(id => {
   $(id).addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(id); });
 });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') ['bd-login','bd-cat','bd-list','bd-detail','bd-requests','bd-del-req'].forEach(closeModal);
+  if (e.key === 'Escape') ['bd-login','bd-cat','bd-list','bd-detail','bd-requests','bd-del-req','bd-info'].forEach(closeModal);
   if (e.key === 'Enter' && $('bd-login').classList.contains('open')) doLogin();
   if (e.key === 'Enter' && $('bd-cat').classList.contains('open')) submitCategory();
   if (e.key === 'Enter' && $('bd-list').classList.contains('open')) submitList();
