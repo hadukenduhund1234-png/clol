@@ -19,10 +19,8 @@ body{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
 }
 
-/* ── Layout ── */
 .page-wrap{max-width:1120px;margin:0 auto;padding:0 32px 100px}
 
-/* ── Header ── */
 header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;}
 .wordmark{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,3.6rem);font-weight:900;line-height:1;letter-spacing:-0.03em;}
 .wordmark em{font-style:normal;color:var(--red);border-bottom:4px solid var(--red)}
@@ -30,7 +28,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .admin-badge{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:600;background:var(--green);color:#fff;padding:5px 12px;border-radius:99px;}
 
-/* ── Buttons ── */
 .btn{font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:.875rem;border:2px solid var(--ink);border-radius:var(--r);padding:9px 20px;cursor:pointer;transition:all .15s;background:transparent;color:var(--ink);white-space:nowrap;}
 .btn:hover{background:var(--ink);color:var(--paper)}
 .btn-fill{background:var(--ink);color:var(--paper)}
@@ -44,13 +41,11 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .btn-info{border-color:var(--blue);color:var(--blue);background:transparent}
 .btn-info:hover{background:var(--blue);color:#fff}
 
-/* ── Breadcrumb ── */
 .breadcrumb{display:flex;align-items:center;gap:8px;padding:24px 0 0;font-size:.82rem;color:var(--muted);font-family:'JetBrains Mono',monospace;flex-wrap:wrap;}
 .breadcrumb a{color:var(--blue);cursor:pointer;text-decoration:none;}
 .breadcrumb a:hover{text-decoration:underline}
 .breadcrumb-sep{color:var(--rule)}
 
-/* ── Back button bar ── */
 #back-bar{display:none;padding:20px 0 0;align-items:center;gap:12px;}
 #back-bar.visible{display:flex}
 .back-btn{display:inline-flex;align-items:center;gap:7px;font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:.85rem;border:2px solid var(--ink);border-radius:var(--r);padding:8px 18px;cursor:pointer;transition:all .15s;background:transparent;color:var(--ink);}
@@ -58,7 +53,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .back-btn-arrow{font-size:1rem;line-height:1}
 #back-bar-cat-name{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);}
 
-/* ── View headers ── */
 .view-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 0 28px;gap:16px;flex-wrap:wrap;border-bottom:2px solid var(--ink);margin-bottom:32px;}
 .view-hd-left{}
 .view-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
@@ -66,7 +60,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .view-desc{font-size:.88rem;color:var(--muted);margin-top:8px;line-height:1.5;max-width:500px;}
 .view-hd-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-start;margin-top:4px;}
 
-/* ── Category Grid ── */
 #cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;}
 .cat-card{
   background:#fff;border:2px solid var(--ink);border-radius:var(--r);
@@ -84,7 +77,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .cat-actions{position:absolute;top:14px;right:12px;display:flex;gap:6px;opacity:0;transition:opacity .15s;}
 .cat-card:hover .cat-actions{opacity:1}
 
-/* ── List Grid ── */
 #list-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;}
 .list-card{background:#fff;border:2px solid var(--ink);border-radius:var(--r);padding:22px;cursor:pointer;position:relative;box-shadow:4px 4px 0 var(--ink);transition:box-shadow .15s,transform .15s;overflow:hidden;}
 .list-card:hover{box-shadow:7px 7px 0 var(--ink);transform:translate(-2px,-2px);}
@@ -100,12 +92,10 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .card-del-btn{position:absolute;top:12px;right:10px;background:none;border:none;cursor:pointer;font-size:.9rem;opacity:0;transition:opacity .15s;color:var(--red);padding:3px 5px;}
 .list-card:hover .card-del-btn{opacity:1}
 
-/* ── Empty ── */
 .empty{grid-column:1/-1;text-align:center;padding:70px 20px;border:2px dashed var(--rule);border-radius:var(--r);}
 .empty-icon{font-size:3rem;margin-bottom:14px;display:block}
 .empty-text{color:var(--muted);font-size:.88rem;line-height:1.6}
 
-/* ── Modals ── */
 .backdrop{display:none;position:fixed;inset:0;background:rgba(26,18,8,.58);backdrop-filter:blur(3px);z-index:200;align-items:center;justify-content:center;padding:20px;}
 .backdrop.open{display:flex}
 .modal{background:var(--paper);border:2px solid var(--ink);border-radius:var(--r);box-shadow:8px 8px 0 var(--ink);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:popIn .22s cubic-bezier(.34,1.56,.64,1);}
@@ -118,7 +108,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .modal-close:hover{color:var(--red)}
 .modal-body{padding:22px 26px 26px}
 
-/* ── Info Modal ── */
 .info-tabs{display:flex;gap:0;border:2px solid var(--ink);border-radius:var(--r);overflow:hidden;margin-bottom:24px;}
 .info-tab{flex:1;padding:10px 16px;font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;border:none;background:transparent;color:var(--muted);transition:all .15s;text-align:center;}
 .info-tab:first-child{border-right:2px solid var(--ink);}
@@ -138,7 +127,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .info-warn{background:rgba(192,57,43,.06);border:1.5px solid var(--rule);border-left:4px solid var(--red);border-radius:var(--r);padding:10px 14px;font-size:.81rem;color:var(--muted);line-height:1.5;margin-top:10px;}
 .info-warn strong{color:var(--red);}
 
-/* ── Form ── */
 .field{margin-bottom:18px}
 .field label{display:block;font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-family:'JetBrains Mono',monospace;}
 .field input,.field textarea,.field select{width:100%;background:#fff;border:2px solid var(--ink);border-radius:var(--r);padding:10px 14px;font-family:'Instrument Sans',sans-serif;font-size:.93rem;color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s;}
@@ -151,19 +139,16 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .field-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
 .field-hint{font-size:.72rem;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace;}
 
-/* ── Color picker row ── */
 .color-presets{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
 .color-dot{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:transform .15s,border-color .15s;flex-shrink:0;}
 .color-dot:hover{transform:scale(1.15)}
 .color-dot.active{border-color:var(--ink);transform:scale(1.1)}
 
-/* ── Login modal ── */
 #bd-login .modal{max-width:380px}
 .login-icon{text-align:center;font-size:2.6rem;margin-bottom:8px}
 .login-sub{text-align:center;font-size:.83rem;color:var(--muted);margin-bottom:22px;line-height:1.5}
 .error-msg{background:rgba(192,57,43,.08);border:1.5px solid var(--red);color:var(--red);border-radius:var(--r);padding:9px 14px;font-size:.8rem;margin-bottom:14px;display:none;}
 
-/* ── Detail (list) modal ── */
 .detail-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
 .pill{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:600;padding:4px 12px;border-radius:99px;border:1.5px solid currentColor;}
 .pill-blue{color:var(--blue)}.pill-green{color:var(--green)}.pill-red{color:var(--red)}.pill-yellow{color:var(--yellow)}
@@ -188,13 +173,11 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .inline-row input{flex:1;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r);padding:9px 13px;font-family:'Instrument Sans',sans-serif;font-size:.88rem;color:var(--ink);outline:none;}
 .inline-row input:focus{border-color:var(--green)}
 
-/* ── Toasts ── */
 #toasts{position:fixed;bottom:26px;right:26px;z-index:999;display:flex;flex-direction:column;gap:9px;pointer-events:none;}
 .toast{background:var(--ink);color:var(--paper);padding:12px 16px;border-radius:var(--r);font-size:.83rem;font-weight:500;box-shadow:4px 4px 0 rgba(0,0,0,.28);animation:toastIn .22s cubic-bezier(.34,1.56,.64,1);border-left:4px solid var(--green);max-width:300px;}
 .toast.err{border-left-color:var(--red)}
 @keyframes toastIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
 
-/* ── Names Dashboard ── */
 .dashboard{margin-top:48px;}
 .dashboard-hd{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid var(--ink);}
 .dashboard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
@@ -210,11 +193,9 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .dash-name{font-weight:600;color:var(--ink);}
 .dash-name.free{color:var(--muted);font-weight:400;font-style:italic;}
 
-/* ── Delete Request Badge ── */
 #btn-requests{position:relative;}
 .req-badge{position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;font-family:'JetBrains Mono',monospace;border-radius:99px;padding:2px 6px;min-width:18px;text-align:center;pointer-events:none;}
 
-/* ── Delete Request Modal ── */
 .req-list{display:flex;flex-direction:column;gap:12px;}
 .req-item{background:#fff;border:2px solid var(--ink);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:8px;}
 .req-item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;}
@@ -223,8 +204,8 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .req-item-reason{font-size:.8rem;color:var(--muted);font-style:italic;border-left:3px solid var(--rule);padding-left:10px;margin-top:2px;}
 .req-item-actions{display:flex;gap:8px;flex-shrink:0;}
 
-/* ── UPCOMING DASHBOARD (Home) ── */
-#upcoming-section{margin-top:52px;}
+/* ── UPCOMING DASHBOARD ── */
+#upcoming-section{margin-top:36px;margin-bottom:48px;}
 .upcoming-hd{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid var(--ink);display:flex;align-items:center;gap:10px;}
 .upcoming-live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse-dot 1.8s ease-in-out infinite;}
 @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
@@ -242,11 +223,11 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 @keyframes hot-pulse{0%,100%{box-shadow:4px 4px 0 var(--red)}50%{box-shadow:4px 4px 0 rgba(192,57,43,.3),0 0 12px rgba(192,57,43,.25)}}
 .upc-card.urgency-hot:hover{box-shadow:7px 7px 0 var(--red);animation:none;}
 .upc-top-bar{height:5px;}
-.upc-body{padding:16px 18px 14px;}
-.upc-cat-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:5px;display:flex;align-items:center;gap:5px;}
+.upc-body{padding:14px 16px 13px;}
+.upc-cat-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:4px;display:flex;align-items:center;gap:5px;}
 .upc-cat-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.upc-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;line-height:1.25;margin-bottom:10px;}
-.upc-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.upc-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;line-height:1.25;margin-bottom:8px;}
+.upc-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
 .upc-chip{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:600;padding:3px 9px;border-radius:99px;border:1.5px solid currentColor;}
 .upc-chip-date{color:var(--blue);}
 .upc-chip-time{color:var(--blue);}
@@ -254,17 +235,15 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .upc-chip-countdown.warn{color:var(--yellow);}
 .upc-chip-countdown.hot{color:var(--red);}
 .upc-chip-slots{color:var(--muted);}
-.upc-names{display:flex;flex-direction:column;gap:3px;max-height:110px;overflow:hidden;position:relative;}
-.upc-names.has-more::after{content:'';position:absolute;bottom:0;left:0;right:0;height:28px;background:linear-gradient(transparent,#fff);}
-.upc-name-row{display:flex;align-items:center;gap:7px;font-size:.78rem;}
-.upc-slot-num{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);min-width:16px;}
-.upc-slot-name{font-weight:600;color:var(--ink);}
-.upc-slot-name.free{color:var(--muted);font-weight:400;font-style:italic;font-size:.74rem;}
-.upc-divider{height:1px;background:var(--rule);margin:10px 0 8px;}
+/* ── Compact inline participants row ── */
+.upc-divider{height:1px;background:var(--rule);margin:8px 0 7px;}
+.upc-participants{display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
+.upc-participant-chip{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:600;background:var(--paper2);border:1px solid var(--rule);border-radius:99px;padding:2px 8px;color:var(--ink2);white-space:nowrap;}
+.upc-free-chip{font-family:'JetBrains Mono',monospace;font-size:.62rem;background:transparent;border:1px dashed var(--rule);border-radius:99px;padding:2px 8px;color:var(--muted);white-space:nowrap;}
+.upc-more-chip{font-family:'JetBrains Mono',monospace;font-size:.62rem;background:var(--ink);color:var(--paper);border-radius:99px;padding:2px 8px;white-space:nowrap;}
 .upc-empty{grid-column:1/-1;text-align:center;padding:40px 20px;border:2px dashed var(--rule);border-radius:var(--r);}
 .upc-empty-text{color:var(--muted);font-size:.85rem;}
 
-/* ── Responsive ── */
 @media(max-width:600px){
   .page-wrap{padding:0 16px 60px}
   header{padding:24px 0 18px}
@@ -277,7 +256,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 <body>
 <div class="page-wrap">
 
-  <!-- ── Header ── -->
   <header>
     <div>
       <div class="wordmark">Chrono<em>mancer's</em> Book</div>
@@ -292,7 +270,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
     </div>
   </header>
 
-  <!-- ── Back Button Bar ── -->
   <div id="back-bar">
     <button class="back-btn" onclick="goHome()">
       <span class="back-btn-arrow">←</span>
@@ -301,17 +278,14 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
     <span id="back-bar-cat-name"></span>
   </div>
 
-  <!-- ── Breadcrumb ── -->
   <div class="breadcrumb" id="breadcrumb"></div>
 
-  <!-- ── Main view ── -->
   <div id="main-view"></div>
 
 </div>
 
 <!-- ────── MODALS ────── -->
 
-<!-- Login -->
 <div class="backdrop" id="bd-login">
   <div class="modal">
     <div class="modal-hd">
@@ -332,7 +306,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
   </div>
 </div>
 
-<!-- Info / Help Modal -->
 <div class="backdrop" id="bd-info">
   <div class="modal info-modal">
     <div class="modal-hd">
@@ -347,13 +320,13 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
       <div class="info-panel active" id="info-panel-guest">
         <div class="info-section">
           <div class="info-section-title">Browsing &amp; signing up</div>
-          <div class="info-step"><div class="info-step-num">1</div><div class="info-step-text">On the home screen you see all <strong>Categories</strong> and a live <strong>Upcoming Events</strong> dashboard. Click any card to open it.</div></div>
+          <div class="info-step"><div class="info-step-num">1</div><div class="info-step-text">At the top of the home screen you see the live <strong>Upcoming Events</strong> dashboard. Below that are all <strong>Categories</strong>. Click any card to open it.</div></div>
           <div class="info-step"><div class="info-step-num">2</div><div class="info-step-text">Inside a category you see all <strong>Lists</strong> — each one has a date, optional time, and a slot progress bar.</div></div>
           <div class="info-step"><div class="info-step-num">3</div><div class="info-step-text">Click a list card to open its detail view. Click any <strong>free slot</strong>, enter your nickname and press "Sign up ✓".</div></div>
         </div>
         <div class="info-section">
           <div class="info-section-title">Upcoming dashboard</div>
-          <div class="info-step"><div class="info-step-num">4</div><div class="info-step-text">The home screen shows all <strong>upcoming events</strong> with live countdowns. Cards turn <strong style="color:var(--yellow)">yellow</strong> when &lt; 1 hour remains, <strong style="color:var(--red)">red &amp; pulsing</strong> within 15 minutes.</div></div>
+          <div class="info-step"><div class="info-step-num">4</div><div class="info-step-text">The dashboard shows all <strong>upcoming events</strong> with live countdowns. Cards turn <strong style="color:var(--yellow)">yellow</strong> when &lt; 1 hour remains, <strong style="color:var(--red)">red &amp; pulsing</strong> within 15 minutes.</div></div>
           <div class="info-step"><div class="info-step-num">5</div><div class="info-step-text">Once an event's time has passed, it <strong>disappears</strong> from the dashboard automatically.</div></div>
         </div>
         <div class="info-section">
@@ -371,7 +344,7 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
         <div class="info-section">
           <div class="info-section-title">Managing categories &amp; lists</div>
           <div class="info-step"><div class="info-step-num">2</div><div class="info-step-text">Click <strong>"+ New Category"</strong> on the home screen. Hover cards to reveal ✏️ Edit and 🗑 Delete buttons.</div></div>
-          <div class="info-step"><div class="info-step-num">3</div><div class="info-step-text">When creating a list, you can set an optional <strong>Uhrzeit (time)</strong>. This powers the live countdown on the home screen dashboard.</div></div>
+          <div class="info-step"><div class="info-step-num">3</div><div class="info-step-text">When creating a list, you can set an optional <strong>time</strong>. This powers the live countdown on the home screen dashboard.</div></div>
           <div class="info-step"><div class="info-step-num">4</div><div class="info-step-text">Inside a list detail, hover a <strong>taken slot</strong> and click ✕ to immediately remove the sign-up.</div></div>
         </div>
         <div class="info-section">
@@ -384,7 +357,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
   </div>
 </div>
 
-<!-- Create / Edit Category -->
 <div class="backdrop" id="bd-cat">
   <div class="modal">
     <div class="modal-hd">
@@ -411,7 +383,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
   </div>
 </div>
 
-<!-- Create List -->
 <div class="backdrop" id="bd-list">
   <div class="modal">
     <div class="modal-hd">
@@ -429,7 +400,7 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
           <input type="date" id="list-date"/>
         </div>
         <div class="field">
-          <label>Uhrzeit</label>
+          <label>Time (optional)</label>
           <input type="time" id="list-time" placeholder="–"/>
         </div>
         <div class="field">
@@ -439,15 +410,14 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
       </div>
       <div class="field">
         <label>Description</label>
-        <textarea id="list-desc" placeholder="Meeting point, rules, bring what…"></textarea>
+        <textarea id="list-desc" placeholder="Meeting point, rules, what to bring…"></textarea>
       </div>
-      <div class="field-hint" style="margin-bottom:16px">💡 Uhrzeit ist optional — wird für den Live-Countdown auf der Startseite verwendet.</div>
+      <div class="field-hint" style="margin-bottom:16px">💡 Time is optional — used for the live countdown on the home screen.</div>
       <button class="btn btn-fill" style="width:100%;padding:12px;margin-top:4px" onclick="submitList()">Create List →</button>
     </div>
   </div>
 </div>
 
-<!-- List Detail -->
 <div class="backdrop" id="bd-detail">
   <div class="modal wide">
     <div class="modal-hd">
@@ -466,7 +436,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 
 <div id="toasts"></div>
 
-<!-- Delete Requests (Admin) -->
 <div class="backdrop" id="bd-requests">
   <div class="modal">
     <div class="modal-hd">
@@ -479,7 +448,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
   </div>
 </div>
 
-<!-- Guest Delete Request -->
 <div class="backdrop" id="bd-del-req">
   <div class="modal">
     <div class="modal-hd">
@@ -506,9 +474,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 </div>
 
 <script>
-// ─────────────────────────────────────────────────────────────────────────────
-// State
-// ─────────────────────────────────────────────────────────────────────────────
 let isAdmin = false;
 let view = 'categories';
 let activeCatId = null;
@@ -518,9 +483,6 @@ let detailListData = null;
 let pickedSlot = null;
 let upcomingInterval = null;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Helpers
-// ─────────────────────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const fmtDate = iso => {
@@ -545,21 +507,13 @@ function toast(msg, err=false) {
 function openModal(id) { $(id).classList.add('open'); }
 function closeModal(id) { $(id).classList.remove('open'); }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Countdown helpers
-// ─────────────────────────────────────────────────────────────────────────────
 function getEventDateTime(event_date, event_time) {
-  if (!event_date) return null;
-  if (!event_time) return null;
+  if (!event_date || !event_time) return null;
   return new Date(`${event_date}T${event_time}:00`);
 }
-
-function getMsUntil(dt) {
-  return dt - Date.now();
-}
-
+function getMsUntil(dt) { return dt - Date.now(); }
 function formatCountdown(ms) {
-  if (ms <= 0) return 'Jetzt!';
+  if (ms <= 0) return 'Now!';
   const s = Math.floor(ms / 1000);
   const m = Math.floor(s / 60);
   const h = Math.floor(m / 60);
@@ -569,8 +523,6 @@ function formatCountdown(ms) {
   if (m > 0) return `in ${m}min ${s % 60}s`;
   return `in ${s}s`;
 }
-
-// urgency: 'normal' | 'warn' (< 60min) | 'hot' (< 15min) | 'gone' (passed)
 function getUrgency(ms) {
   if (ms <= 0) return 'gone';
   if (ms < 15 * 60 * 1000) return 'hot';
@@ -578,9 +530,6 @@ function getUrgency(ms) {
   return 'normal';
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Info Modal
-// ─────────────────────────────────────────────────────────────────────────────
 function openInfo() {
   switchInfoTab(isAdmin ? 'admin' : 'guest');
   openModal('bd-info');
@@ -595,9 +544,6 @@ function switchInfoTab(tab) {
   });
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Auth
-// ─────────────────────────────────────────────────────────────────────────────
 async function checkAuth() {
   const r = await api('/api/auth/status');
   applyAdminUI(r.authenticated);
@@ -632,9 +578,6 @@ async function doLogout() {
   applyAdminUI(false);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Routing / render
-// ─────────────────────────────────────────────────────────────────────────────
 async function render() {
   if (view === 'categories') await renderCategories();
   else await renderLists();
@@ -678,9 +621,7 @@ async function openCategory(id) {
   await renderLists();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// UPCOMING DASHBOARD (Home)
-// ─────────────────────────────────────────────────────────────────────────────
+// ── UPCOMING DASHBOARD ──
 let upcomingData = [];
 
 function stopUpcomingTicker() {
@@ -693,16 +634,14 @@ async function renderUpcoming() {
 
   upcomingData = await api('/api/lists/upcoming');
 
-  // Filter: only lists with a time set, and time not yet passed
   const now = Date.now();
   const timedLists = upcomingData.filter(l => {
-    if (!l.event_time) return false; // no time = don't show in countdown
+    if (!l.event_time) return false;
     const dt = getEventDateTime(l.event_date, l.event_time);
     if (!dt) return false;
-    return dt.getTime() > now; // only future
+    return dt.getTime() > now;
   });
 
-  // Also show today's lists without time (they never expire from dashboard)
   const today = new Date().toISOString().slice(0, 10);
   const untimedToday = upcomingData.filter(l => !l.event_time && l.event_date === today);
 
@@ -717,7 +656,6 @@ async function renderUpcoming() {
 
   drawUpcomingCards(all);
 
-  // Start / restart ticker
   stopUpcomingTicker();
   if (timedLists.length > 0) {
     upcomingInterval = setInterval(() => tickUpcoming(), 1000);
@@ -727,12 +665,10 @@ async function renderUpcoming() {
 function drawUpcomingCards(lists) {
   const grid = document.querySelector('.upcoming-grid');
   if (!grid) return;
-
   if (!lists.length) {
-    grid.innerHTML = `<div class="upc-empty"><div class="upc-empty-text">Keine bevorstehenden Events heute.</div></div>`;
+    grid.innerHTML = `<div class="upc-empty"><div class="upc-empty-text">No upcoming events today.</div></div>`;
     return;
   }
-
   grid.innerHTML = lists.map(l => buildUpcomingCard(l)).join('');
 }
 
@@ -756,28 +692,30 @@ function buildUpcomingCard(l) {
     ? `<span class="upc-chip upc-chip-time">🕐 ${esc(l.event_time)}</span>`
     : '';
 
-  const slotsFree = l.slots - (l.filled || 0);
-  const slotsChip = `<span class="upc-chip upc-chip-slots">${l.filled || 0}/${l.slots} belegt</span>`;
+  const slotsChip = `<span class="upc-chip upc-chip-slots">${l.filled || 0}/${l.slots} filled</span>`;
 
-  // Show up to 5 names
-  const MAX_SHOWN = 5;
+  // Compact inline participant chips
+  const MAX_SHOWN = 6;
   const signups = l.signups || [];
   const nameMap = {};
   signups.forEach(s => { nameMap[s.slot_number] = s.nickname; });
-  const rows = Array.from({length: Math.min(l.slots, MAX_SHOWN)}, (_, i) => {
+
+  const chips = Array.from({length: Math.min(l.slots, MAX_SHOWN)}, (_, i) => {
     const n = i + 1;
     const name = nameMap[n];
-    return `<div class="upc-name-row">
-      <span class="upc-slot-num">${n}.</span>
-      <span class="upc-slot-name ${name ? '' : 'free'}">${name ? esc(name) : 'frei'}</span>
-    </div>`;
-  }).join('');
-  const hasMore = l.slots > MAX_SHOWN ? 'has-more' : '';
-  const moreLabel = l.slots > MAX_SHOWN ? `<div style="font-size:.68rem;color:var(--muted);font-family:'JetBrains Mono',monospace;padding-top:4px">+${l.slots - MAX_SHOWN} weitere…</div>` : '';
+    if (name) {
+      return `<span class="upc-participant-chip">${esc(name)}</span>`;
+    } else {
+      return `<span class="upc-free-chip">#${n} free</span>`;
+    }
+  });
 
-  const catClickTarget = l.category_id;
+  const remaining = l.slots - MAX_SHOWN;
+  if (remaining > 0) {
+    chips.push(`<span class="upc-more-chip">+${remaining}</span>`);
+  }
 
-  return `<div class="upc-card ${urgencyClass}" data-list-id="${l.id}" onclick="openCategoryFromUpcoming(${catClickTarget},${l.id})">
+  return `<div class="upc-card ${urgencyClass}" data-list-id="${l.id}" onclick="openCategoryFromUpcoming(${l.category_id},${l.id})">
     <div class="upc-top-bar" style="background:${esc(l.category_color || '#1a4a7a')}"></div>
     <div class="upc-body">
       <div class="upc-cat-label">
@@ -792,14 +730,12 @@ function buildUpcomingCard(l) {
         ${slotsChip}
       </div>
       <div class="upc-divider"></div>
-      <div class="upc-names ${hasMore}">${rows}</div>
-      ${moreLabel}
+      <div class="upc-participants">${chips.join('')}</div>
     </div>
   </div>`;
 }
 
 function tickUpcoming() {
-  // Update each card's countdown chip; remove cards whose time passed
   const now = Date.now();
   let anyRemoved = false;
 
@@ -814,7 +750,6 @@ function tickUpcoming() {
     if (!card) return;
 
     if (urgency === 'gone') {
-      // Fade out and remove
       card.style.transition = 'opacity .6s, transform .6s';
       card.style.opacity = '0';
       card.style.transform = 'scale(.95)';
@@ -826,25 +761,22 @@ function tickUpcoming() {
       return;
     }
 
-    // Update countdown chip
     const chip = card.querySelector('[data-list-id="' + l.id + '"].upc-chip-countdown');
     if (chip) {
       chip.textContent = `⏱ ${formatCountdown(ms)}`;
       chip.className = `upc-chip upc-chip-countdown${urgency === 'hot' ? ' hot' : urgency === 'warn' ? ' warn' : ''}`;
     }
 
-    // Update card urgency class
     card.classList.remove('urgency-warn', 'urgency-hot');
     if (urgency === 'warn') card.classList.add('urgency-warn');
     if (urgency === 'hot') card.classList.add('urgency-hot');
   });
 
-  // If all removed, show empty state
   if (anyRemoved) {
     setTimeout(() => {
       const grid = document.querySelector('.upcoming-grid');
       if (grid && !grid.querySelector('.upc-card')) {
-        grid.innerHTML = `<div class="upc-empty"><div class="upc-empty-text">Keine bevorstehenden Events mehr heute.</div></div>`;
+        grid.innerHTML = `<div class="upc-empty"><div class="upc-empty-text">No more upcoming events today.</div></div>`;
         stopUpcomingTicker();
       }
     }, 700);
@@ -857,13 +789,10 @@ async function openCategoryFromUpcoming(catId, listId) {
   stopUpcomingTicker();
   updateBreadcrumb();
   await renderLists();
-  // Auto-open the list detail
   setTimeout(() => openDetail(listId), 200);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Categories view
-// ─────────────────────────────────────────────────────────────────────────────
+// ── Categories view ──
 async function renderCategories() {
   stopUpcomingTicker();
   updateBreadcrumb();
@@ -876,22 +805,22 @@ async function renderCategories() {
     : '';
 
   mv.innerHTML = `
+    <div id="upcoming-section">
+      <div class="upcoming-hd">
+        <span class="upcoming-live-dot"></span>
+        Upcoming Events
+      </div>
+      <div class="upcoming-grid"></div>
+    </div>
     <div class="view-hd">
       <div class="view-hd-left">
         <div class="view-label">Overview</div>
         <div class="view-title">All Categories</div>
-        ${cats.length ? `<div class="view-desc">${cats.length} Kategori${cats.length!==1?'en':'e'}</div>` : ''}
+        ${cats.length ? `<div class="view-desc">${cats.length} Categor${cats.length!==1?'ies':'y'}</div>` : ''}
       </div>
       ${adminActions}
     </div>
-    <div id="cat-grid"></div>
-    <div id="upcoming-section">
-      <div class="upcoming-hd">
-        <span class="upcoming-live-dot"></span>
-        Bevorstehende Events
-      </div>
-      <div class="upcoming-grid"></div>
-    </div>`;
+    <div id="cat-grid"></div>`;
 
   const grid = $('cat-grid');
   if (!cats.length) {
@@ -911,22 +840,19 @@ async function renderCategories() {
           <div class="cat-name">${esc(c.name)}</div>
           <div class="cat-desc">${c.description ? esc(c.description) : '<em style="opacity:.5">No description</em>'}</div>
           <div class="cat-stats">
-            <span><strong>${c.list_count}</strong> Liste${c.list_count!==1?'n':''}</span>
+            <span><strong>${c.list_count}</strong> List${c.list_count!==1?'s':''}</span>
             <span><strong>${c.total_signups}</strong> / ${c.total_slots} Slots</span>
-            ${c.total_slots ? `<span><strong>${pct}%</strong> belegt</span>` : ''}
+            ${c.total_slots ? `<span><strong>${pct}%</strong> filled</span>` : ''}
           </div>
         </div>
       </div>`;
     }).join('');
   }
 
-  // Render upcoming after DOM is ready
   renderUpcoming();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Lists view
-// ─────────────────────────────────────────────────────────────────────────────
+// ── Lists view ──
 async function renderLists() {
   stopUpcomingTicker();
   const data = await api(`/api/categories/${activeCatId}`);
@@ -977,13 +903,12 @@ async function renderLists() {
       ${l.description ? `<div class="card-desc">${esc(l.description)}</div>` : ''}
       <div class="slot-meter"><div class="slot-fill ${mc}" style="width:${pct}%"></div></div>
       <div class="card-slots">
-        <span><strong>${l.filled}</strong> / ${l.slots} belegt</span>
-        <span>${free > 0 ? `${free} frei` : '<span style="color:var(--red)">voll</span>'}</span>
+        <span><strong>${l.filled}</strong> / ${l.slots} filled</span>
+        <span>${free > 0 ? `${free} free` : '<span style="color:var(--red)">full</span>'}</span>
       </div>
     </div>`;
   }).join('');
 
-  // Dashboard
   const dashEl = document.createElement('div');
   dashEl.className = 'dashboard';
   dashEl.innerHTML = `<div class="dashboard-hd">👥 Participants</div><div class="dashboard-grid" id="dashboard-grid"></div>`;
@@ -1013,9 +938,7 @@ async function renderLists() {
   }).join('');
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Category CRUD
-// ─────────────────────────────────────────────────────────────────────────────
+// ── Category CRUD ──
 function buildColorPicker(selected) {
   const container = $('color-presets');
   container.innerHTML = COLORS.map(c => `
@@ -1073,9 +996,7 @@ async function deleteCat(id) {
   else render();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// List CRUD
-// ─────────────────────────────────────────────────────────────────────────────
+// ── List CRUD ──
 function openListModal() {
   $('list-title').value = '';
   $('list-date').value = new Date().toISOString().slice(0, 10);
@@ -1128,9 +1049,7 @@ async function deleteList(id) {
   renderLists();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// List Detail & Sign-up
-// ─────────────────────────────────────────────────────────────────────────────
+// ── List Detail & Sign-up ──
 async function openDetail(id) {
   detailListId = id;
   pickedSlot = null;
@@ -1140,22 +1059,21 @@ async function openDetail(id) {
   $('det-title').textContent = data.title;
   const free = data.slots - (data.signups?.length || 0);
   const pc = free === 0 ? 'pill-red' : free <= 3 ? 'pill-yellow' : 'pill-green';
-  const catColor = activeCatData?.color || '#1a4a7a';
   const timeChip = data.event_time ? `<span class="pill pill-blue">🕐 ${esc(data.event_time)}</span>` : '';
   $('det-pills').innerHTML = `
     <span class="pill pill-blue">📅 ${fmtDate(data.event_date)}</span>
     ${timeChip}
     <span class="pill pill-blue">🪑 ${data.slots} Slots</span>
-    <span class="pill ${pc}">${free > 0 ? `✔ ${free} frei` : '✖ Voll'}</span>`;
+    <span class="pill ${pc}">${free > 0 ? `✔ ${free} free` : '✖ Full'}</span>`;
   $('det-desc').textContent = data.description || 'No description provided.';
   $('det-desc').style.color = data.description ? '' : 'var(--muted)';
-  renderSlots(catColor);
+  renderSlots();
   openModal('bd-detail');
 }
 
-function renderSlots(catColor) {
+function renderSlots() {
   if (!detailListData) return;
-  catColor = catColor || activeCatData?.color || '#1a4a7a';
+  const catColor = activeCatData?.color || '#1a4a7a';
   const tm = {};
   (detailListData.signups || []).forEach(s => tm[s.slot_number] = s.nickname);
   $('det-slots').innerHTML = Array.from({ length: detailListData.slots }, (_, i) => {
@@ -1210,7 +1128,7 @@ async function submitSignup(slotNum) {
     <span class="pill pill-blue">📅 ${fmtDate(data.event_date)}</span>
     ${timeChip}
     <span class="pill pill-blue">🪑 ${data.slots} Slots</span>
-    <span class="pill ${pc}">${free > 0 ? `✔ ${free} frei` : '✖ Voll'}</span>`;
+    <span class="pill ${pc}">${free > 0 ? `✔ ${free} free` : '✖ Full'}</span>`;
   renderSlots();
   if (view === 'lists') renderLists();
 }
@@ -1225,9 +1143,7 @@ async function removeSignup(slotNum) {
   if (view === 'lists') renderLists();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Delete Requests
-// ─────────────────────────────────────────────────────────────────────────────
+// ── Delete Requests ──
 let pendingDelSlot = null;
 
 async function pollRequests() {
@@ -1314,9 +1230,6 @@ async function denyRequest(id) {
   pollRequests();
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Keyboard / backdrop
-// ─────────────────────────────────────────────────────────────────────────────
 ['bd-login','bd-cat','bd-list','bd-detail','bd-requests','bd-del-req','bd-info'].forEach(id => {
   $(id).addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(id); });
 });
@@ -1327,9 +1240,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && $('bd-list').classList.contains('open')) submitList();
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Boot
-// ─────────────────────────────────────────────────────────────────────────────
 checkAuth();
 </script>
 </body>
