@@ -110,6 +110,7 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .modal.wide{max-width:700px}
 .modal.info-modal{max-width:600px}
 .modal.market-modal{max-width:580px}
+.modal.detail-modal{max-width:640px}
 @keyframes popIn{from{opacity:0;transform:scale(.92) translateY(14px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .modal-hd{padding:26px 26px 18px;border-bottom:2px solid var(--ink);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
 .modal-title{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;line-height:1.2}
@@ -183,13 +184,9 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .slot{border:2px solid var(--rule);border-radius:var(--r);padding:10px 11px;cursor:pointer;transition:all .15s;min-height:64px;display:flex;flex-direction:column;justify-content:center;position:relative;}
 .slot.free:hover{border-color:var(--green);background:rgba(45,106,79,.06)}
 .slot.free.picked{border-color:var(--green);background:rgba(45,106,79,.1);box-shadow:0 0 0 2px var(--green)}
-/* Sure = green */
 .slot.sure{background:rgba(45,106,79,.09);border-color:var(--green);cursor:default;}
-/* Maybe = yellow */
 .slot.maybe{background:rgba(200,150,12,.10);border-color:var(--yellow);cursor:default;}
-/* Standby = orange (replacement for maybe) */
 .slot.standby{background:rgba(211,84,0,.10);border-color:var(--orange);cursor:default;}
-/* Pending delete request = red pulsing */
 .slot.pending-delete{background:rgba(192,57,43,.12)!important;border-color:var(--red)!important;animation:del-pulse 1.3s ease-in-out infinite;}
 @keyframes del-pulse{0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.3)}50%{box-shadow:0 0 0 5px rgba(192,57,43,.0)}}
 
@@ -328,6 +325,11 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .img-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
 .img-upload-label{font-size:.85rem;color:var(--muted);pointer-events:none;}
 .img-upload-preview{width:100%;max-height:260px;object-fit:contain;display:block;border-radius:4px;}
+
+/* ── MARKET PREVIEW on homepage ── */
+#market-preview-section{margin-bottom:36px;}
+.mkt-preview-link{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--purple);cursor:pointer;font-weight:600;text-decoration:none;margin-left:auto;}
+.mkt-preview-link:hover{text-decoration:underline;}
 
 @media(max-width:600px){
   .page-wrap{padding:0 16px 60px}
@@ -554,6 +556,17 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
   </div>
 </div>
 
+<!-- ── Marketplace Detail Modal (Lightbox) ── -->
+<div class="backdrop" id="bd-market-detail">
+  <div class="modal detail-modal">
+    <div class="modal-hd">
+      <div class="modal-title" id="mkt-det-title">–</div>
+      <button class="modal-close" onclick="closeModal('bd-market-detail')">✕</button>
+    </div>
+    <div class="modal-body" id="mkt-det-body"></div>
+  </div>
+</div>
+
 <div id="toasts"></div>
 
 <div class="backdrop" id="bd-requests">
@@ -642,6 +655,7 @@ const TRANSLATIONS = {
     filled:'filled', signups:'signups',
     participants:'👥 Participants',
     normalTime:'Normal', lessThanHour:'< 1 hour', lessThan15:'< 15 min',
+    marketplacePreview:'Latest Listings', viewAll:'→ view all',
   },
   de: {
     tagline:'Familien-Management · nach Kategorien sortiert',
@@ -656,7 +670,7 @@ const TRANSLATIONS = {
     infoStep2:'Innerhalb einer Kategorie siehst du alle <strong>Listen</strong> – mit Datum, optionaler Zeit, Kanal und Slot-Fortschrittsbalken.',
     infoStep3:'Klicke eine Listenkarte an. Klicke auf einen <strong>freien Slot</strong>, gib deinen Nicknamen ein, wähle <strong>Sicher ✅</strong> oder <strong>Vielleicht 🟡</strong> und melde dich an.',
     infoStep4:'Bei <strong>Vielleicht</strong> kann eine zweite Person als <strong>Ersatz 🟠</strong> eingetragen werden.',
-    infoTip:'💡 <strong>Tipp:</strong> Events werden gelb bei &lt;1h, rot und pulsierend bei &lt;15min. Slots mit Löschanfragen leuchten rot.',
+    infoTip:'💡 <strong>Tipp:</strong> Events werden gelb bei &lt;1h, rot und pulsierend bei &lt;15min.',
     adminInfoTitle:'Kategorien & Listen verwalten',
     adminStep1:'Einloggen → <strong>"+ Neue Kategorie"</strong>. Karten hovern für ✏️ Bearbeiten / 🗑 Löschen.',
     adminStep2:'<strong>✏️ Bearbeiten</strong> bei einer Listenkarte um Titel, Datum, Slots oder Kanal zu ändern.',
@@ -700,6 +714,7 @@ const TRANSLATIONS = {
     filled:'belegt', signups:'Anmeldungen',
     participants:'👥 Teilnehmer',
     normalTime:'Normal', lessThanHour:'< 1 Stunde', lessThan15:'< 15 Min',
+    marketplacePreview:'Neueste Anzeigen', viewAll:'→ alle anzeigen',
   },
   it: {
     tagline:'Gestione famiglia · organizzato per categoria',
@@ -711,14 +726,14 @@ const TRANSLATIONS = {
     forGuests:'👤 Per Ospiti', forAdmins:'🔑 Per Admin',
     browsingSignup:'Navigare & iscriversi',
     infoStep1:'In cima vedi la dashboard <strong>Prossimi eventi</strong>. Sotto tutte le <strong>Categorie</strong>.',
-    infoStep2:'All\'interno di una categoria trovi tutte le <strong>Liste</strong> — con data, ora opzionale, canale e barra slot.',
+    infoStep2:'All\'interno di una categoria trovi tutte le <strong>Liste</strong>.',
     infoStep3:'Clicca una scheda lista. Clicca uno <strong>slot libero</strong>, inserisci il tuo nickname, scegli <strong>Sicuro ✅</strong> o <strong>Forse 🟡</strong> e iscriviti.',
     infoStep4:'Con <strong>Forse</strong>, una seconda persona può iscriversi come <strong>Riserva 🟠</strong>.',
-    infoTip:'💡 <strong>Suggerimento:</strong> Gli eventi diventano gialli a &lt;1h, rossi e pulsanti a &lt;15min. Gli slot con richiesta di rimozione lampeggiano in rosso.',
+    infoTip:'💡 <strong>Suggerimento:</strong> Gli eventi diventano gialli a &lt;1h, rossi a &lt;15min.',
     adminInfoTitle:'Gestione categorie & liste',
-    adminStep1:'Accedi → <strong>"+ Nuova Categoria"</strong>. Passa il mouse sulle schede per ✏️ Modifica / 🗑 Elimina.',
-    adminStep2:'Usa <strong>✏️ Modifica</strong> su una scheda lista per cambiare titolo, data, slot o canale.',
-    adminStep3:'Accetta o nega richieste di rimozione tramite 🔔. Le liste scadute vengono <strong>eliminate automaticamente</strong>.',
+    adminStep1:'Accedi → <strong>"+ Nuova Categoria"</strong>.',
+    adminStep2:'Usa <strong>✏️ Modifica</strong> su una scheda lista.',
+    adminStep3:'Accetta o nega richieste di rimozione tramite 🔔.',
     adminStep4:'Nel Mercatino, passa il mouse su un annuncio per il pulsante elimina.',
     adminWarn:'<strong>Nota:</strong> Tutte le eliminazioni sono permanenti.',
     newCategory:'Nuova Categoria', editCategory:'Modifica Categoria',
@@ -732,14 +747,14 @@ const TRANSLATIONS = {
     slotsHint:'Slot — clicca su uno libero per iscriverti',
     signupFor:'Iscrizione per slot', enterNickname:'Il tuo nickname:',
     statusSure:'✅ Sicuro', statusMaybe:'🟡 Forse',
-    standbyNote:'⚠️ Questo è uno slot di riserva — prendi il posto se il "Forse" si cancella.',
+    standbyNote:'⚠️ Questo è uno slot di riserva.',
     signUpBtn:'Iscriviti ✓',
     listAnItem:'🛒 Inserisci un Articolo', yourNickname:'Il tuo Nickname *',
     photoOptional:'Foto (opzionale)', clickToChoosePhoto:'📷 Clicca per scegliere una foto',
     postListing:'Pubblica Annuncio →',
-    pendingRequests:'🔔 Richieste di Rimozione in Attesa',
+    pendingRequests:'🔔 Richieste in Attesa',
     requestSlotRemoval:'Richiedi Rimozione Slot',
-    delReqSub:'Inserisci il tuo nome esattamente come appare nello slot. L\'admin esaminerà la richiesta.',
+    delReqSub:'Inserisci il tuo nome esattamente come appare nello slot.',
     yourName:'Il tuo nome (deve corrispondere allo slot) *', reason:'Motivo *',
     nameMismatch:'Il nome non corrisponde allo slot.',
     sendRequest:'Invia Richiesta →',
@@ -747,7 +762,7 @@ const TRANSLATIONS = {
     noUpcoming:'Nessun evento in programma oggi.',
     noCategories:'Nessuna categoria ancora creata.',
     noCategoriesAdmin:'Nessuna categoria. Creane una qui sopra!',
-    noLists:'Nessuna lista in questa categoria. Creane una qui sopra!',
+    noLists:'Nessuna lista in questa categoria.',
     deleteCategory:'Eliminare questa categoria e tutte le sue liste?',
     deleteList:'Eliminare questa lista e tutte le iscrizioni?',
     deleteMarket:'Eliminare questo annuncio?',
@@ -758,6 +773,7 @@ const TRANSLATIONS = {
     filled:'occupati', signups:'iscrizioni',
     participants:'👥 Partecipanti',
     normalTime:'Normale', lessThanHour:'< 1 ora', lessThan15:'< 15 min',
+    marketplacePreview:'Ultimi Annunci', viewAll:'→ vedi tutti',
   },
   es: {
     tagline:'Gestión familiar · organizado por categoría',
@@ -768,16 +784,16 @@ const TRANSLATIONS = {
     password:'Contraseña', loginBtn:'Iniciar sesión →',
     forGuests:'👤 Para Invitados', forAdmins:'🔑 Para Admins',
     browsingSignup:'Explorar e inscribirse',
-    infoStep1:'Arriba verás el panel de <strong>Próximos Eventos</strong>. Debajo, todas las <strong>Categorías</strong>.',
-    infoStep2:'Dentro de una categoría verás todas las <strong>Listas</strong> — con fecha, hora opcional, canal y barra de slots.',
-    infoStep3:'Haz clic en una lista. Haz clic en un <strong>slot libre</strong>, escribe tu apodo, elige <strong>Seguro ✅</strong> o <strong>Quizás 🟡</strong> y regístrate.',
+    infoStep1:'Arriba verás el panel de <strong>Próximos Eventos</strong>.',
+    infoStep2:'Dentro de una categoría verás todas las <strong>Listas</strong>.',
+    infoStep3:'Haz clic en una lista. Haz clic en un <strong>slot libre</strong> y regístrate.',
     infoStep4:'Si eliges <strong>Quizás</strong>, otra persona puede inscribirse como <strong>Suplente 🟠</strong>.',
-    infoTip:'💡 <strong>Consejo:</strong> Los eventos se vuelven amarillos a &lt;1h y rojos parpadeantes a &lt;15min. Los slots con solicitud de eliminación brillan en rojo.',
+    infoTip:'💡 <strong>Consejo:</strong> Los eventos se vuelven amarillos a &lt;1h y rojos a &lt;15min.',
     adminInfoTitle:'Gestionar categorías y listas',
-    adminStep1:'Inicia sesión → <strong>"+ Nueva Categoría"</strong>. Pasa el cursor para ✏️ Editar / 🗑 Eliminar.',
-    adminStep2:'Usa <strong>✏️ Editar</strong> en una tarjeta de lista para cambiar título, fecha, slots o canal.',
-    adminStep3:'Acepta o deniega solicitudes de eliminación con 🔔. Las listas caducadas se <strong>eliminan automáticamente</strong>.',
-    adminStep4:'En el Mercado, pasa el cursor sobre un anuncio para ver el botón eliminar.',
+    adminStep1:'Inicia sesión → <strong>"+ Nueva Categoría"</strong>.',
+    adminStep2:'Usa <strong>✏️ Editar</strong> en una tarjeta de lista.',
+    adminStep3:'Acepta o deniega solicitudes con 🔔.',
+    adminStep4:'En el Mercado, pasa el cursor sobre un anuncio.',
     adminWarn:'<strong>Nota:</strong> Todas las eliminaciones son permanentes.',
     newCategory:'Nueva Categoría', editCategory:'Editar Categoría',
     name:'Nombre *', description:'Descripción', colour:'Color',
@@ -786,28 +802,28 @@ const TRANSLATIONS = {
     title:'Título *', date:'Fecha *', time:'Hora (opc.)', slots:'Slots *', channel:'Canal *',
     createList:'Crear Lista →', updateList:'Actualizar Lista →',
     legend:'Leyenda:', legendSure:'Seguro ✅', legendMaybe:'Quizás 🟡',
-    legendStandby:'Suplente 🟠', legendFree:'Libre', legendReq:'Solicitud de eliminación ⚠️',
+    legendStandby:'Suplente 🟠', legendFree:'Libre', legendReq:'Solicitud ⚠️',
     slotsHint:'Slots — haz clic en uno libre para inscribirte',
     signupFor:'Inscripción para slot', enterNickname:'Tu apodo:',
     statusSure:'✅ Seguro', statusMaybe:'🟡 Quizás',
-    standbyNote:'⚠️ Este es un slot suplente — ocupas el lugar si el "Quizás" cancela.',
+    standbyNote:'⚠️ Este es un slot suplente.',
     signUpBtn:'Inscribirse ✓',
     listAnItem:'🛒 Publicar Artículo', yourNickname:'Tu Apodo *',
     photoOptional:'Foto (opcional)', clickToChoosePhoto:'📷 Clic para elegir foto',
     postListing:'Publicar Anuncio →',
-    pendingRequests:'🔔 Solicitudes de Eliminación Pendientes',
+    pendingRequests:'🔔 Solicitudes Pendientes',
     requestSlotRemoval:'Solicitar Eliminación de Slot',
-    delReqSub:'Escribe tu nombre exactamente como aparece en el slot. El admin revisará tu solicitud.',
-    yourName:'Tu nombre (debe coincidir con el slot) *', reason:'Motivo *',
-    nameMismatch:'El nombre no coincide con el slot.',
+    delReqSub:'Escribe tu nombre exactamente como aparece en el slot.',
+    yourName:'Tu nombre (debe coincidir) *', reason:'Motivo *',
+    nameMismatch:'El nombre no coincide.',
     sendRequest:'Enviar Solicitud →',
     upcomingEvents:'Próximos Eventos', allCategories:'Todas las Categorías',
     noUpcoming:'No hay eventos hoy.',
     noCategories:'Aún no se han creado categorías.',
     noCategoriesAdmin:'Sin categorías. ¡Crea la primera arriba!',
-    noLists:'Sin listas en esta categoría. ¡Crea la primera arriba!',
+    noLists:'Sin listas en esta categoría.',
     deleteCategory:'¿Eliminar esta categoría y todas sus listas?',
-    deleteList:'¿Eliminar esta lista y todas las inscripciones?',
+    deleteList:'¿Eliminar esta lista?',
     deleteMarket:'¿Eliminar este anuncio?',
     noPending:'Sin solicitudes pendientes 🎉',
     accept:'✓ Aceptar', deny:'✗ Denegar',
@@ -816,6 +832,7 @@ const TRANSLATIONS = {
     filled:'ocupados', signups:'inscripciones',
     participants:'👥 Participantes',
     normalTime:'Normal', lessThanHour:'< 1 hora', lessThan15:'< 15 min',
+    marketplacePreview:'Últimos Anuncios', viewAll:'→ ver todos',
   },
   tr: {
     tagline:'Aile yönetimi · kategoriye göre düzenlenmiş',
@@ -826,16 +843,16 @@ const TRANSLATIONS = {
     password:'Şifre', loginBtn:'Giriş yap →',
     forGuests:'👤 Misafirler için', forAdmins:'🔑 Adminler için',
     browsingSignup:'Göz at & kayıt ol',
-    infoStep1:'Üstte canlı <strong>Yaklaşan Etkinlikler</strong> panosu var. Altında tüm <strong>Kategoriler</strong>.',
-    infoStep2:'Bir kategoride tüm <strong>Listeler</strong> görünür — tarih, opsiyonel saat, kanal ve slot çubuğu ile.',
-    infoStep3:'Bir liste kartına tıkla. <strong>Boş slot</strong>a tıkla, takma adını gir, <strong>Kesin ✅</strong> veya <strong>Belki 🟡</strong> seç ve kaydol.',
-    infoStep4:'<strong>Belki</strong> seçilirse ikinci bir kişi <strong>Yedek 🟠</strong> olarak kaydolabilir.',
-    infoTip:'💡 <strong>İpucu:</strong> Etkinlikler &lt;1sa sarıya, &lt;15dk kırmızıya döner. Silme istekli slotlar kırmızı yanar.',
+    infoStep1:'Üstte canlı <strong>Yaklaşan Etkinlikler</strong> panosu var.',
+    infoStep2:'Bir kategoride tüm <strong>Listeler</strong> görünür.',
+    infoStep3:'Bir liste kartına tıkla. <strong>Boş slot</strong>a tıkla ve kaydol.',
+    infoStep4:'<strong>Belki</strong> seçilirse ikinci kişi <strong>Yedek 🟠</strong> olarak kaydolabilir.',
+    infoTip:'💡 <strong>İpucu:</strong> Etkinlikler &lt;1sa sarıya, &lt;15dk kırmızıya döner.',
     adminInfoTitle:'Kategorileri & listeleri yönet',
-    adminStep1:'Giriş yap → <strong>"+ Yeni Kategori"</strong>. Kartların üzerine gel: ✏️ Düzenle / 🗑 Sil.',
-    adminStep2:'Bir liste kartında <strong>✏️ Düzenle</strong> ile başlık, tarih, slot veya kanalı değiştir.',
-    adminStep3:'🔔 ile slot silme isteklerini kabul et veya reddet. Süresi dolmuş listeler <strong>otomatik silinir</strong>.',
-    adminStep4:'Pazarda bir ilanın üzerine gel, silme düğmesini gör.',
+    adminStep1:'Giriş yap → <strong>"+ Yeni Kategori"</strong>.',
+    adminStep2:'<strong>✏️ Düzenle</strong> ile değişiklik yap.',
+    adminStep3:'🔔 ile istekleri kabul et veya reddet.',
+    adminStep4:'Pazarda ilanın üzerine gel.',
     adminWarn:'<strong>Not:</strong> Tüm silmeler kalıcıdır.',
     newCategory:'Yeni Kategori', editCategory:'Kategoriyi Düzenle',
     name:'Ad *', description:'Açıklama', colour:'Renk',
@@ -848,14 +865,14 @@ const TRANSLATIONS = {
     slotsHint:'Slotlar — kaydolmak için boş birine tıkla',
     signupFor:'Slot için kayıt', enterNickname:'Takma adın:',
     statusSure:'✅ Kesin', statusMaybe:'🟡 Belki',
-    standbyNote:'⚠️ Bu bir yedek slot — "Belki" kişisi iptal ederse sen alırsın.',
+    standbyNote:'⚠️ Bu bir yedek slot.',
     signUpBtn:'Kaydol ✓',
     listAnItem:'🛒 İlan Ver', yourNickname:'Takma Adın *',
     photoOptional:'Fotoğraf (isteğe bağlı)', clickToChoosePhoto:'📷 Fotoğraf seç',
     postListing:'İlanı Yayınla →',
-    pendingRequests:'🔔 Bekleyen Silme İstekleri',
+    pendingRequests:'🔔 Bekleyen İstekler',
     requestSlotRemoval:'Slot Silme İste',
-    delReqSub:'Adını slotta göründüğü gibi yaz. Admin inceleyecek.',
+    delReqSub:'Adını slotta göründüğü gibi yaz.',
     yourName:'Adın (slotla eşleşmeli) *', reason:'Sebep *',
     nameMismatch:'Ad slot ile eşleşmiyor.',
     sendRequest:'İstek Gönder →',
@@ -863,10 +880,10 @@ const TRANSLATIONS = {
     noUpcoming:'Bugün yaklaşan etkinlik yok.',
     noCategories:'Henüz kategori oluşturulmadı.',
     noCategoriesAdmin:'Kategori yok. Yukarıdan ilkini oluştur!',
-    noLists:'Bu kategoride liste yok. Yukarıdan ilkini oluştur!',
-    deleteCategory:'Bu kategoriyi ve tüm listelerini sil? Geri alınamaz.',
-    deleteList:'Bu listeyi ve tüm kayıtları sil? Geri alınamaz.',
-    deleteMarket:'Bu ilanı sil? Geri alınamaz.',
+    noLists:'Bu kategoride liste yok.',
+    deleteCategory:'Bu kategoriyi ve tüm listelerini sil?',
+    deleteList:'Bu listeyi sil?',
+    deleteMarket:'Bu ilanı sil?',
     noPending:'Bekleyen istek yok 🎉',
     accept:'✓ Kabul Et', deny:'✗ Reddet',
     slot:'Slot', free:'boş', full:'Dolu',
@@ -874,6 +891,7 @@ const TRANSLATIONS = {
     filled:'dolu', signups:'kayıt',
     participants:'👥 Katılımcılar',
     normalTime:'Normal', lessThanHour:'< 1 saat', lessThan15:'< 15 dak',
+    marketplacePreview:'Son İlanlar', viewAll:'→ tümünü gör',
   },
   fr: {
     tagline:'Gestion familiale · organisée par catégorie',
@@ -884,16 +902,16 @@ const TRANSLATIONS = {
     password:'Mot de passe', loginBtn:'Se connecter →',
     forGuests:'👤 Pour les Invités', forAdmins:'🔑 Pour les Admins',
     browsingSignup:'Parcourir et s\'inscrire',
-    infoStep1:'En haut se trouve le tableau de bord des <strong>Événements à venir</strong>. En dessous, toutes les <strong>Catégories</strong>.',
-    infoStep2:'À l\'intérieur d\'une catégorie, vous voyez toutes les <strong>Listes</strong> — avec date, heure optionnelle, chaîne et barre de slots.',
-    infoStep3:'Cliquez une carte liste. Cliquez un <strong>slot libre</strong>, entrez votre pseudo, choisissez <strong>Sûr ✅</strong> ou <strong>Peut-être 🟡</strong> et inscrivez-vous.',
+    infoStep1:'En haut se trouve le tableau de bord des <strong>Événements à venir</strong>.',
+    infoStep2:'À l\'intérieur d\'une catégorie, vous voyez toutes les <strong>Listes</strong>.',
+    infoStep3:'Cliquez une carte liste. Cliquez un <strong>slot libre</strong> et inscrivez-vous.',
     infoStep4:'Avec <strong>Peut-être</strong>, une seconde personne peut s\'inscrire comme <strong>Remplaçant 🟠</strong>.',
-    infoTip:'💡 <strong>Astuce :</strong> Les événements deviennent jaunes à &lt;1h, rouges et clignotants à &lt;15min. Les slots avec demande de suppression luisent en rouge.',
+    infoTip:'💡 <strong>Astuce :</strong> Les événements deviennent jaunes à &lt;1h, rouges à &lt;15min.',
     adminInfoTitle:'Gérer catégories & listes',
-    adminStep1:'Connectez-vous → <strong>"+ Nouvelle Catégorie"</strong>. Survolez pour ✏️ Modifier / 🗑 Supprimer.',
-    adminStep2:'Utilisez <strong>✏️ Modifier</strong> sur une carte liste pour changer le titre, la date, les slots ou le canal.',
-    adminStep3:'Acceptez ou refusez les demandes de suppression via 🔔. Les listes expirées sont <strong>supprimées automatiquement</strong>.',
-    adminStep4:'Dans le Marché, survolez une annonce pour voir le bouton supprimer.',
+    adminStep1:'Connectez-vous → <strong>"+ Nouvelle Catégorie"</strong>.',
+    adminStep2:'Utilisez <strong>✏️ Modifier</strong> sur une carte liste.',
+    adminStep3:'Acceptez ou refusez les demandes via 🔔.',
+    adminStep4:'Dans le Marché, survolez une annonce.',
     adminWarn:'<strong>Note :</strong> Toutes les suppressions sont permanentes.',
     newCategory:'Nouvelle Catégorie', editCategory:'Modifier Catégorie',
     name:'Nom *', description:'Description', colour:'Couleur',
@@ -902,28 +920,28 @@ const TRANSLATIONS = {
     title:'Titre *', date:'Date *', time:'Heure (opt.)', slots:'Slots *', channel:'Chaîne *',
     createList:'Créer la Liste →', updateList:'Mettre à jour la Liste →',
     legend:'Légende :', legendSure:'Sûr ✅', legendMaybe:'Peut-être 🟡',
-    legendStandby:'Remplaçant 🟠', legendFree:'Libre', legendReq:'Demande de suppression ⚠️',
+    legendStandby:'Remplaçant 🟠', legendFree:'Libre', legendReq:'Demande ⚠️',
     slotsHint:'Slots — cliquez sur un libre pour vous inscrire',
     signupFor:'Inscription pour le slot', enterNickname:'Votre pseudo :',
     statusSure:'✅ Sûr', statusMaybe:'🟡 Peut-être',
-    standbyNote:'⚠️ C\'est un slot de remplacement — vous prenez la place si le "Peut-être" annule.',
+    standbyNote:'⚠️ C\'est un slot de remplacement.',
     signUpBtn:'S\'inscrire ✓',
     listAnItem:'🛒 Déposer une Annonce', yourNickname:'Votre Pseudo *',
-    photoOptional:'Photo (optionnelle)', clickToChoosePhoto:'📷 Cliquer pour choisir une photo',
+    photoOptional:'Photo (optionnelle)', clickToChoosePhoto:'📷 Cliquer pour choisir',
     postListing:'Publier l\'Annonce →',
-    pendingRequests:'🔔 Demandes de Suppression en Attente',
+    pendingRequests:'🔔 Demandes en Attente',
     requestSlotRemoval:'Demander Suppression de Slot',
-    delReqSub:'Entrez votre nom exactement comme il apparaît dans le slot. L\'admin examinera la demande.',
-    yourName:'Votre nom (doit correspondre au slot) *', reason:'Raison *',
-    nameMismatch:'Le nom ne correspond pas au slot.',
+    delReqSub:'Entrez votre nom exactement comme il apparaît dans le slot.',
+    yourName:'Votre nom (doit correspondre) *', reason:'Raison *',
+    nameMismatch:'Le nom ne correspond pas.',
     sendRequest:'Envoyer la Demande →',
     upcomingEvents:'Événements à venir', allCategories:'Toutes les Catégories',
     noUpcoming:'Aucun événement prévu aujourd\'hui.',
     noCategories:'Aucune catégorie créée pour l\'instant.',
     noCategoriesAdmin:'Aucune catégorie. Créez la première ci-dessus !',
-    noLists:'Aucune liste dans cette catégorie. Créez la première ci-dessus !',
+    noLists:'Aucune liste dans cette catégorie.',
     deleteCategory:'Supprimer cette catégorie et toutes ses listes ?',
-    deleteList:'Supprimer cette liste et toutes les inscriptions ?',
+    deleteList:'Supprimer cette liste ?',
     deleteMarket:'Supprimer cette annonce ?',
     noPending:'Aucune demande en attente 🎉',
     accept:'✓ Accepter', deny:'✗ Refuser',
@@ -932,6 +950,7 @@ const TRANSLATIONS = {
     filled:'remplis', signups:'inscriptions',
     participants:'👥 Participants',
     normalTime:'Normal', lessThanHour:'< 1 heure', lessThan15:'< 15 min',
+    marketplacePreview:'Dernières Annonces', viewAll:'→ voir tout',
   }
 };
 
@@ -961,7 +980,7 @@ let activeCatData = null;
 let detailListId = null;
 let detailListData = null;
 let pickedSlot = null;
-let signupStatus = 'sure'; // 'sure' or 'maybe'
+let signupStatus = 'sure';
 let upcomingInterval = null;
 let marketItems = [];
 let mktImgDataUrl = null;
@@ -1280,6 +1299,94 @@ async function openCategoryFromUpcoming(catId, listId) {
   setTimeout(() => openDetail(listId), 200);
 }
 
+// ── MARKETPLACE PREVIEW on homepage ──────────────────────────────────────
+async function renderMarketplacePreview() {
+  // Remove existing preview if present (e.g. on language switch)
+  const existing = document.getElementById('market-preview-section');
+  if (existing) existing.remove();
+
+  const items = await api('/api/marketplace');
+  const preview = items.slice(0, 2);
+  if (!preview.length) return;
+
+  const section = document.createElement('div');
+  section.id = 'market-preview-section';
+  section.style.marginBottom = '36px';
+
+  section.innerHTML = `
+    <div class="upcoming-hd">
+      🛒 ${t('marketplacePreview')}
+      <a class="mkt-preview-link" onclick="openMarketplace()">${t('viewAll')}</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px" id="mkt-preview-grid"></div>`;
+
+  const upcomingSection = document.getElementById('upcoming-section');
+  if (upcomingSection) {
+    upcomingSection.parentNode.insertBefore(section, upcomingSection);
+  } else {
+    document.getElementById('main-view').appendChild(section);
+  }
+
+  const grid = document.getElementById('mkt-preview-grid');
+  if (!grid) return;
+
+  grid.innerHTML = preview.map(item => {
+    const dateStr = new Date(item.created_at).toLocaleDateString('de-DE', {day:'numeric', month:'short'});
+    return `<div class="market-card" onclick="openMarketDetail(${item.id})" style="cursor:pointer">
+      <div class="market-card-top-bar"></div>
+      <div class="market-card-img-placeholder" id="mkt-prev-img-${item.id}">🏷️</div>
+      <div class="market-card-body">
+        <div class="market-card-title">${esc(item.title)}</div>
+        <div class="market-card-desc">${esc(item.description)}</div>
+        <div class="market-card-footer">
+          <span class="market-card-seller">👤 ${esc(item.nickname)}</span>
+          <span class="market-card-date">${dateStr}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Lazy-load images
+  preview.forEach(async item => {
+    const full = await api(`/api/marketplace/${item.id}`);
+    if (full.image_data) {
+      const ph = document.getElementById(`mkt-prev-img-${item.id}`);
+      if (ph) {
+        const img = document.createElement('img');
+        img.className = 'market-card-img';
+        img.src = full.image_data;
+        img.alt = item.title;
+        img.loading = 'lazy';
+        ph.replaceWith(img);
+      }
+    }
+  });
+}
+
+// ── MARKETPLACE DETAIL LIGHTBOX ───────────────────────────────────────────
+async function openMarketDetail(id) {
+  const item = await api(`/api/marketplace/${id}`);
+  $('mkt-det-title').textContent = item.title;
+  const dateStr = new Date(item.created_at).toLocaleDateString(
+    currentLang === 'de' ? 'de-DE' : currentLang === 'fr' ? 'fr-FR' : currentLang === 'it' ? 'it-IT' : currentLang === 'es' ? 'es-ES' : 'en-GB',
+    {day:'numeric', month:'long', year:'numeric'}
+  );
+  $('mkt-det-body').innerHTML = `
+    ${item.image_data
+      ? `<img src="${esc(item.image_data)}" alt="${esc(item.title)}"
+           style="width:100%;max-height:360px;object-fit:contain;border-radius:var(--r);
+                  background:var(--paper2);margin-bottom:20px;display:block">`
+      : `<div style="height:100px;display:flex;align-items:center;justify-content:center;
+              font-size:3rem;background:var(--paper2);border-radius:var(--r);margin-bottom:20px">🏷️</div>`}
+    <div class="detail-desc-block">${esc(item.description)}</div>
+    <div class="detail-pills">
+      <span class="pill pill-purple">👤 ${esc(item.nickname)}</span>
+      <span class="pill pill-blue">📅 ${esc(dateStr)}</span>
+      ${isAdmin ? `<button class="btn btn-xs btn-red" style="margin-left:auto" onclick="closeModal('bd-market-detail');deleteMarketItem(${item.id})">🗑 ${t('deleteMarket').split('?')[0]}</button>` : ''}
+    </div>`;
+  openModal('bd-market-detail');
+}
+
 // ── Categories ──────────────────────────────────────────────────────────
 async function renderCategories() {
   currentView = 'home';
@@ -1340,6 +1447,7 @@ async function renderCategories() {
     }).join('');
   }
   renderUpcoming();
+  renderMarketplacePreview();
 }
 
 // ── Lists ──────────────────────────────────────────────────────────────────
@@ -1538,7 +1646,6 @@ async function submitList() {
   if (!title || !event_date || !slots) return toast(t('title') + '!', true);
 
   if (editId) {
-    // Editing existing list
     const r = await api(`/api/lists/${editId}`, 'PUT', { title, description, event_date, event_time, slots, channel });
     if (r.error) return toast(r.error, true);
     toast(t('editList') + ' ✓');
@@ -1547,7 +1654,6 @@ async function submitList() {
     return;
   }
 
-  // Creating new list
   const existing = await api(`/api/categories/${activeCatId}`);
   const dupes = (existing.lists || []).filter(l => l.title === title && l.event_date === event_date);
   let finalTitle = title;
@@ -1626,7 +1732,6 @@ function renderSlots() {
     const statusClass = taken ? signup.status : 'free';
     const pendingClass = isPending ? ' pending-delete' : '';
 
-    // Status dot
     const dotColor = taken ? (signup.status === 'maybe' ? 'var(--yellow)' : signup.status === 'standby' ? 'var(--orange)' : 'var(--green)') : 'var(--rule)';
     const dotHtml = `<span class="status-dot" style="background:${dotColor}"></span>`;
 
@@ -1643,14 +1748,10 @@ function renderSlots() {
       ? (signup.status === 'maybe' ? '🟡' : signup.status === 'standby' ? '🟠' : '✅')
       : '';
 
-    // For a maybe slot: allow standby registration
     let clickHandler = '';
     if (!taken) {
       clickHandler = `onclick="pickSlot(${n}, 'free')"`;
     } else if (taken && signup.status === 'maybe' && !pending.has(n)) {
-      // Check if standby slot exists right after
-      const nextSlot = tm[n]; // same slot is 'maybe', user can register standby
-      // We allow standby on the same slot by clicking maybe slot
       clickHandler = `onclick="pickStandbySlot(${n})"`;
     }
 
@@ -1713,10 +1814,7 @@ async function submitSignup(slotNum) {
   const nick = ($('nick-input')?.value || '').trim();
   if (!nick) return toast(t('yourNickname') + '!', true);
   const r = await api(`/api/lists/${detailListId}/signup`, 'POST', { slot_number: slotNum, nickname: nick, status: signupStatus });
-  if (r.error) {
-    toast(r.error, true);
-    return;
-  }
+  if (r.error) { toast(r.error, true); return; }
   toast(`${nick} → #${slotNum} ✓`);
   pickedSlot = null;
   $('det-signup').innerHTML = '';
@@ -1728,13 +1826,9 @@ async function submitSignup(slotNum) {
 }
 
 async function submitSignupStandby(slotNum) {
-  // Standby is a separate slot (slot number + 0.5 doesn't exist in DB)
-  // We implement standby as a second signup in a new slot using status='standby'
-  // First check the maybe slot exists
   const signup = (detailListData.signups || []).find(s => s.slot_number === slotNum);
   if (!signup || signup.status !== 'maybe') return toast('No maybe on this slot.', true);
 
-  // Find a free slot for standby
   const takenSlots = new Set((detailListData.signups || []).map(s => s.slot_number));
   let standbySlot = null;
   for (let i = 1; i <= detailListData.slots; i++) {
@@ -1830,7 +1924,6 @@ async function submitDeleteRequest() {
   }
   closeModal('bd-del-req');
   toast(t('sendRequest') + ' ✓');
-  // Refresh slots to show red highlight
   const data = await api(`/api/lists/${detailListId}`);
   detailListData = data;
   renderSlots();
@@ -1893,9 +1986,9 @@ async function renderMarketGrid() {
     return;
   }
   grid.innerHTML = marketItems.map(item => {
-    const delBtn = isAdmin ? `<button class="market-card-del" onclick="deleteMarketItem(${item.id})">🗑 Delete</button>` : '';
+    const delBtn = isAdmin ? `<button class="market-card-del" onclick="event.stopPropagation();deleteMarketItem(${item.id})">🗑 Delete</button>` : '';
     const dateStr = new Date(item.created_at).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
-    return `<div class="market-card" id="mkt-card-${item.id}">
+    return `<div class="market-card" id="mkt-card-${item.id}" onclick="openMarketDetail(${item.id})" style="cursor:pointer">
       <div class="market-card-top-bar"></div>
       ${delBtn}
       <div class="market-card-img-placeholder" id="mkt-img-${item.id}">🏷️</div>
@@ -1933,6 +2026,9 @@ async function deleteMarketItem(id) {
   toast('Deleted.');
   marketItems = marketItems.filter(i => i.id !== id);
   renderMarketGrid();
+  // Refresh homepage preview if visible
+  const prev = document.getElementById('market-preview-section');
+  if (prev) renderMarketplacePreview();
 }
 
 function openMarketNew() {
@@ -1979,11 +2075,11 @@ async function submitMarketItem() {
 }
 
 // ── Modal keyboard & backdrop ──────────────────────────────────────────────
-['bd-login','bd-cat','bd-list','bd-detail','bd-requests','bd-del-req','bd-info','bd-market-new'].forEach(id => {
+['bd-login','bd-cat','bd-list','bd-detail','bd-requests','bd-del-req','bd-info','bd-market-new','bd-market-detail'].forEach(id => {
   $(id).addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(id); });
 });
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') ['bd-login','bd-cat','bd-list','bd-detail','bd-requests','bd-del-req','bd-info','bd-market-new'].forEach(closeModal);
+  if (e.key === 'Escape') ['bd-login','bd-cat','bd-list','bd-detail','bd-requests','bd-del-req','bd-info','bd-market-new','bd-market-detail'].forEach(closeModal);
   if (e.key === 'Enter' && $('bd-login').classList.contains('open')) doLogin();
   if (e.key === 'Enter' && $('bd-cat').classList.contains('open')) submitCategory();
 });
