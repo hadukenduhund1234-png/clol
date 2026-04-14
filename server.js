@@ -37,6 +37,7 @@ db.exec(`
     list_id INTEGER NOT NULL REFERENCES lists(id),
     slot_number INTEGER NOT NULL,
     nickname TEXT NOT NULL,
+    status TEXT DEFAULT 'sure',
     signed_at TEXT DEFAULT (datetime('now')),
     UNIQUE(list_id, slot_number)
   );
@@ -67,10 +68,35 @@ db.exec(`
 try { db.prepare("ALTER TABLE lists ADD COLUMN event_time TEXT DEFAULT ''").run(); } catch(e) {}
 try { db.prepare("ALTER TABLE lists ADD COLUMN channel INTEGER DEFAULT 1").run(); } catch(e) {}
 try { db.prepare("ALTER TABLE marketplace_items ADD COLUMN image_data TEXT DEFAULT ''").run(); } catch(e) {}
+try { db.prepare("ALTER TABLE signups ADD COLUMN status TEXT DEFAULT 'sure'").run(); } catch(e) {}
 
 db.prepare("DELETE FROM sessions WHERE created_at < datetime('now', '-24 hours')").run();
 
-// Increase JSON body limit for base64 image uploads (up to 8MB)
+// Auto-delete expired lists (event_date + event_time passed)
+function deleteExpiredLists() {
+  const now = new Date();
+  const lists = db.prepare("SELECT * FROM lists WHERE event_time != ''").all();
+  for (const l of lists) {
+    const dt = new Date(`${l.event_date}T${l.event_time}:00`);
+    if (dt < now) {
+      db.prepare('DELETE FROM signups WHERE list_id = ?').run(l.id);
+      db.prepare('DELETE FROM delete_requests WHERE list_id = ?').run(l.id);
+      db.prepare('DELETE FROM lists WHERE id = ?').run(l.id);
+      console.log(`Auto-deleted expired list: ${l.title} (${l.event_date} ${l.event_time})`);
+    }
+  }
+  // Also delete untimed lists from past dates
+  const pastUntimed = db.prepare("SELECT * FROM lists WHERE event_time = '' AND event_date < date('now')").all();
+  for (const l of pastUntimed) {
+    db.prepare('DELETE FROM signups WHERE list_id = ?').run(l.id);
+    db.prepare('DELETE FROM delete_requests WHERE list_id = ?').run(l.id);
+    db.prepare('DELETE FROM lists WHERE id = ?').run(l.id);
+    console.log(`Auto-deleted past untimed list: ${l.title} (${l.event_date})`);
+  }
+}
+deleteExpiredLists();
+setInterval(deleteExpiredLists, 60 * 1000); // every minute
+
 app.use(express.json({ limit: '8mb' }));
 
 // ── Auth ───────────────────────────────────────────────────────────────────
@@ -163,6 +189,7 @@ app.delete('/api/categories/:id', requireAuth, (req, res) => {
   const lists = db.prepare('SELECT id FROM lists WHERE category_id = ?').all(req.params.id);
   for (const l of lists) {
     db.prepare('DELETE FROM signups WHERE list_id = ?').run(l.id);
+    db.prepare('DELETE FROM delete_requests WHERE list_id = ?').run(l.id);
   }
   db.prepare('DELETE FROM lists WHERE category_id = ?').run(req.params.id);
   db.prepare('DELETE FROM categories WHERE id = ?').run(req.params.id);
@@ -196,7 +223,9 @@ app.get('/api/lists/:id', (req, res) => {
   const list = db.prepare('SELECT * FROM lists WHERE id = ?').get(req.params.id);
   if (!list) return res.status(404).json({ error: 'Not found' });
   const signups = db.prepare('SELECT * FROM signups WHERE list_id = ? ORDER BY slot_number').all(req.params.id);
-  res.json({ ...list, signups });
+  // Attach pending delete requests per slot
+  const pendingSlots = db.prepare("SELECT slot_number FROM delete_requests WHERE list_id = ? AND status = 'pending'").all(req.params.id).map(r => r.slot_number);
+  res.json({ ...list, signups, pendingDeleteSlots: pendingSlots });
 });
 
 app.post('/api/lists', (req, res) => {
@@ -223,6 +252,7 @@ app.put('/api/lists/:id', (req, res) => {
 
 app.delete('/api/lists/:id', (req, res) => {
   db.prepare('DELETE FROM signups WHERE list_id = ?').run(req.params.id);
+  db.prepare('DELETE FROM delete_requests WHERE list_id = ?').run(req.params.id);
   db.prepare('DELETE FROM lists WHERE id = ?').run(req.params.id);
   res.json({ ok: true });
 });
@@ -230,14 +260,15 @@ app.delete('/api/lists/:id', (req, res) => {
 // ── Signups ────────────────────────────────────────────────────────────────
 
 app.post('/api/lists/:id/signup', (req, res) => {
-  const { slot_number, nickname } = req.body;
+  const { slot_number, nickname, status } = req.body;
   if (!nickname?.trim() || slot_number == null) return res.status(400).json({ error: 'Missing fields' });
   const list = db.prepare('SELECT * FROM lists WHERE id = ?').get(req.params.id);
   if (!list) return res.status(404).json({ error: 'List not found' });
   if (slot_number < 1 || slot_number > list.slots) return res.status(400).json({ error: 'Invalid slot' });
+  const validStatus = ['sure', 'maybe'].includes(status) ? status : 'sure';
   try {
-    db.prepare('INSERT INTO signups (list_id, slot_number, nickname) VALUES (?,?,?)')
-      .run(req.params.id, slot_number, nickname.trim());
+    db.prepare('INSERT INTO signups (list_id, slot_number, nickname, status) VALUES (?,?,?,?)')
+      .run(req.params.id, slot_number, nickname.trim(), validStatus);
     res.json({ ok: true });
   } catch {
     res.status(409).json({ error: 'Slot already taken' });
@@ -296,20 +327,17 @@ app.post('/api/delete-requests/:id/deny', requireAuth, (req, res) => {
 
 // ── Marketplace ────────────────────────────────────────────────────────────
 
-// Get all marketplace items (no image data in list, for performance)
 app.get('/api/marketplace', (_req, res) => {
   const items = db.prepare('SELECT id, nickname, title, description, created_at FROM marketplace_items ORDER BY created_at DESC').all();
   res.json(items);
 });
 
-// Get single marketplace item with image
 app.get('/api/marketplace/:id', (req, res) => {
   const item = db.prepare('SELECT * FROM marketplace_items WHERE id = ?').get(req.params.id);
   if (!item) return res.status(404).json({ error: 'Not found' });
   res.json(item);
 });
 
-// Create marketplace item (anyone)
 app.post('/api/marketplace', (req, res) => {
   const { nickname, title, description, image_data } = req.body;
   if (!nickname?.trim() || !title?.trim() || !description?.trim())
@@ -319,7 +347,6 @@ app.post('/api/marketplace', (req, res) => {
   res.json({ id: r.lastInsertRowid });
 });
 
-// Delete marketplace item (admin only)
 app.delete('/api/marketplace/:id', requireAuth, (req, res) => {
   db.prepare('DELETE FROM marketplace_items WHERE id = ?').run(req.params.id);
   res.json({ ok: true });

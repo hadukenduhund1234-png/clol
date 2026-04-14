@@ -12,6 +12,7 @@
   --paper:#f5f0e8;--paper2:#ede7d6;--ink:#1a1208;--ink2:#3d3020;
   --muted:#8a7a62;--rule:#c9bda8;--red:#c0392b;--green:#2d6a4f;
   --blue:#1a4a7a;--yellow:#c8960c;--purple:#6a2d9a;--r:6px;
+  --orange:#d35400;
 }
 html{scroll-behavior:smooth}
 body{
@@ -28,6 +29,12 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .admin-badge{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:600;background:var(--green);color:#fff;padding:5px 12px;border-radius:99px;}
 
+/* Language switcher */
+.lang-switcher{display:flex;gap:3px;border:2px solid var(--rule);border-radius:var(--r);overflow:hidden;flex-shrink:0;}
+.lang-btn{background:transparent;border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:600;padding:5px 8px;color:var(--muted);transition:all .15s;white-space:nowrap;}
+.lang-btn:hover{background:var(--paper2);color:var(--ink)}
+.lang-btn.active{background:var(--ink);color:var(--paper)}
+
 .btn{font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:.875rem;border:2px solid var(--ink);border-radius:var(--r);padding:9px 20px;cursor:pointer;transition:all .15s;background:transparent;color:var(--ink);white-space:nowrap;}
 .btn:hover{background:var(--ink);color:var(--paper)}
 .btn-fill{background:var(--ink);color:var(--paper)}
@@ -42,6 +49,8 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .btn-info:hover{background:var(--blue);color:#fff}
 .btn-market{border-color:var(--purple);color:var(--purple);background:transparent}
 .btn-market:hover{background:var(--purple);color:#fff}
+.btn-yellow{border-color:var(--yellow);color:var(--yellow);background:transparent}
+.btn-yellow:hover{background:var(--yellow);color:#fff}
 
 .breadcrumb{display:flex;align-items:center;gap:8px;padding:24px 0 0;font-size:.82rem;color:var(--muted);font-family:'JetBrains Mono',monospace;flex-wrap:wrap;}
 .breadcrumb a{color:var(--blue);cursor:pointer;text-decoration:none;}
@@ -52,11 +61,9 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 #back-bar.visible{display:flex}
 .back-btn{display:inline-flex;align-items:center;gap:7px;font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:.85rem;border:2px solid var(--ink);border-radius:var(--r);padding:8px 18px;cursor:pointer;transition:all .15s;background:transparent;color:var(--ink);}
 .back-btn:hover{background:var(--ink);color:var(--paper)}
-.back-btn-arrow{font-size:1rem;line-height:1}
 #back-bar-cat-name{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);}
 
 .view-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 0 28px;gap:16px;flex-wrap:wrap;border-bottom:2px solid var(--ink);margin-bottom:32px;}
-.view-hd-left{}
 .view-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
 .view-title{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:900;line-height:1.1;letter-spacing:-0.02em;}
 .view-desc{font-size:.88rem;color:var(--muted);margin-top:8px;line-height:1.5;max-width:500px;}
@@ -88,6 +95,8 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .card-slots strong{color:var(--ink)}
 .card-del-btn{position:absolute;top:12px;right:10px;background:none;border:none;cursor:pointer;font-size:.9rem;opacity:0;transition:opacity .15s;color:var(--red);padding:3px 5px;}
 .list-card:hover .card-del-btn{opacity:1}
+.card-admin-btns{position:absolute;top:12px;right:10px;display:flex;gap:4px;opacity:0;transition:opacity .15s;}
+.list-card:hover .card-admin-btns{opacity:1}
 
 .ch-badge{display:inline-flex;align-items:center;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:600;background:var(--purple);color:#fff;padding:2px 8px;border-radius:99px;margin-left:6px;vertical-align:middle;}
 
@@ -140,8 +149,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .field-row-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px}
 .field-hint{font-size:.72rem;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace;}
 
-.field select#list-channel{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--purple);}
-
 .color-presets{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
 .color-dot{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:transform .15s,border-color .15s;flex-shrink:0;}
 .color-dot:hover{transform:scale(1.15)}
@@ -152,29 +159,70 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .login-sub{text-align:center;font-size:.83rem;color:var(--muted);margin-bottom:22px;line-height:1.5}
 .error-msg{background:rgba(192,57,43,.08);border:1.5px solid var(--red);color:var(--red);border-radius:var(--r);padding:9px 14px;font-size:.8rem;margin-bottom:14px;display:none;}
 
+/* ── LEGEND ── */
+.legend-box{background:#fff;border:2px solid var(--ink);border-radius:var(--r);padding:14px 16px;margin-bottom:18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+.legend-title{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-right:6px;flex-shrink:0;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:.78rem;font-weight:600;color:var(--ink2);}
+.legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;border:2px solid rgba(0,0,0,.15);}
+.legend-dot-sure{background:var(--green);}
+.legend-dot-maybe{background:var(--yellow);}
+.legend-dot-standby{background:var(--orange);}
+.legend-dot-free{background:#fff;border:2px dashed var(--rule);}
+.legend-dot-req{background:var(--red);}
+.legend-sep{color:var(--rule);margin:0 2px;}
+
+/* ── DETAIL / SLOTS ── */
 .detail-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
 .pill{font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:600;padding:4px 12px;border-radius:99px;border:1.5px solid currentColor;}
 .pill-blue{color:var(--blue)}.pill-green{color:var(--green)}.pill-red{color:var(--red)}.pill-yellow{color:var(--yellow)}.pill-purple{color:var(--purple)}
 .detail-desc-block{font-size:.88rem;color:var(--ink2);line-height:1.6;margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid var(--rule);}
-.slots-hd{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.slots-hd{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
 .slots-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(116px,1fr));gap:8px;margin-bottom:18px;}
-.slot{border:2px solid var(--rule);border-radius:var(--r);padding:10px 11px;cursor:pointer;transition:all .15s;min-height:60px;display:flex;flex-direction:column;justify-content:center;position:relative;}
+
+/* Slot states */
+.slot{border:2px solid var(--rule);border-radius:var(--r);padding:10px 11px;cursor:pointer;transition:all .15s;min-height:64px;display:flex;flex-direction:column;justify-content:center;position:relative;}
 .slot.free:hover{border-color:var(--green);background:rgba(45,106,79,.06)}
 .slot.free.picked{border-color:var(--green);background:rgba(45,106,79,.1);box-shadow:0 0 0 2px var(--green)}
-.slot.taken{background:var(--paper2);cursor:default;border-color:var(--rule);}
-.slot-n{font-family:'JetBrains Mono',monospace;font-size:.63rem;color:var(--muted);margin-bottom:3px;}
+/* Sure = green */
+.slot.sure{background:rgba(45,106,79,.09);border-color:var(--green);cursor:default;}
+/* Maybe = yellow */
+.slot.maybe{background:rgba(200,150,12,.10);border-color:var(--yellow);cursor:default;}
+/* Standby = orange (replacement for maybe) */
+.slot.standby{background:rgba(211,84,0,.10);border-color:var(--orange);cursor:default;}
+/* Pending delete request = red pulsing */
+.slot.pending-delete{background:rgba(192,57,43,.12)!important;border-color:var(--red)!important;animation:del-pulse 1.3s ease-in-out infinite;}
+@keyframes del-pulse{0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.3)}50%{box-shadow:0 0 0 5px rgba(192,57,43,.0)}}
+
+.slot-n{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);margin-bottom:3px;display:flex;align-items:center;gap:4px;}
+.slot-n .status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .slot-who{font-size:.8rem;font-weight:600;word-break:break-word;line-height:1.2}
 .slot.free .slot-who{color:var(--muted);font-weight:400;font-size:.76rem}
-.slot.taken .slot-who{color:var(--blue)}
+.slot.sure .slot-who{color:var(--green)}
+.slot.maybe .slot-who{color:var(--yellow)}
+.slot.standby .slot-who{color:var(--orange)}
 .slot-del{position:absolute;top:3px;right:3px;background:none;border:none;cursor:pointer;font-size:.7rem;color:var(--red);opacity:0;transition:opacity .15s;padding:2px;}
-.slot.taken:hover .slot-del{opacity:1}
+.slot.sure:hover .slot-del,.slot.maybe:hover .slot-del,.slot.standby:hover .slot-del{opacity:1}
+.slot-req-badge{position:absolute;bottom:3px;right:3px;font-size:.55rem;background:var(--red);color:#fff;border-radius:99px;padding:1px 5px;font-family:'JetBrains Mono',monospace;font-weight:700;}
+
+/* Signup box */
 .signup-box{background:#fff;border:2px solid var(--green);border-radius:var(--r);padding:16px;margin-top:4px;animation:fadeUp .2s ease;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .signup-box p{font-size:.83rem;color:var(--muted);margin-bottom:10px}
 .signup-box p strong{color:var(--ink)}
-.inline-row{display:flex;gap:10px}
-.inline-row input{flex:1;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r);padding:9px 13px;font-family:'Instrument Sans',sans-serif;font-size:.88rem;color:var(--ink);outline:none;}
+.inline-row{display:flex;gap:10px;flex-wrap:wrap;}
+.inline-row input{flex:1;min-width:120px;background:var(--paper);border:2px solid var(--ink);border-radius:var(--r);padding:9px 13px;font-family:'Instrument Sans',sans-serif;font-size:.88rem;color:var(--ink);outline:none;}
 .inline-row input:focus{border-color:var(--green)}
+
+/* Status toggle in signup */
+.status-toggle{display:flex;gap:8px;margin-bottom:12px;}
+.status-opt{flex:1;padding:8px;border:2px solid var(--rule);border-radius:var(--r);cursor:pointer;text-align:center;font-size:.8rem;font-weight:600;transition:all .15s;background:#fff;}
+.status-opt.sure-opt{color:var(--green);}
+.status-opt.sure-opt.active{background:rgba(45,106,79,.1);border-color:var(--green);}
+.status-opt.maybe-opt{color:var(--yellow);}
+.status-opt.maybe-opt.active{background:rgba(200,150,12,.1);border-color:var(--yellow);}
+
+/* Standby info */
+.standby-note{font-size:.76rem;color:var(--orange);font-weight:600;margin-bottom:8px;padding:6px 10px;background:rgba(211,84,0,.07);border:1.5px solid var(--orange);border-radius:var(--r);}
 
 #toasts{position:fixed;bottom:26px;right:26px;z-index:999;display:flex;flex-direction:column;gap:9px;pointer-events:none;}
 .toast{background:var(--ink);color:var(--paper);padding:12px 16px;border-radius:var(--r);font-size:.83rem;font-weight:500;box-shadow:4px 4px 0 rgba(0,0,0,.28);animation:toastIn .22s cubic-bezier(.34,1.56,.64,1);border-left:4px solid var(--green);max-width:300px;}
@@ -196,6 +244,9 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .dash-num{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);min-width:18px;}
 .dash-name{font-weight:600;color:var(--ink);}
 .dash-name.free{color:var(--muted);font-weight:400;font-style:italic;}
+.dash-name.maybe-name{color:var(--yellow);}
+.dash-name.standby-name{color:var(--orange);}
+.dash-status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-left:auto;}
 
 #btn-requests{position:relative;}
 .req-badge{position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;font-family:'JetBrains Mono',monospace;border-radius:99px;padding:2px 6px;min-width:18px;text-align:center;pointer-events:none;}
@@ -208,74 +259,30 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .req-item-reason{font-size:.8rem;color:var(--muted);font-style:italic;border-left:3px solid var(--rule);padding-left:10px;margin-top:2px;}
 .req-item-actions{display:flex;gap:8px;flex-shrink:0;}
 
-/* ── UPCOMING DASHBOARD ── */
+/* ── UPCOMING ── */
 #upcoming-section{margin-top:36px;margin-bottom:48px;}
 .upcoming-hd{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--ink);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .upcoming-live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;animation:pulse-dot 1.8s ease-in-out infinite;}
 @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
 
-/* ── CATEGORY GROUPS in upcoming ── */
 .upc-cat-group{margin-bottom:28px;}
-.upc-cat-group:last-child{margin-bottom:0;}
-
-/* Category group header — strong color band */
-.upc-cat-group-hd{
-  display:flex;align-items:center;gap:10px;
-  padding:11px 18px;
-  border-radius:var(--r) var(--r) 0 0;
-  border:2px solid var(--ink);
-  border-bottom:none;
-}
+.upc-cat-group-hd{display:flex;align-items:center;gap:10px;padding:11px 18px;border-radius:var(--r) var(--r) 0 0;border:2px solid var(--ink);border-bottom:none;}
 .upc-cat-group-hd-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.5);flex-shrink:0;}
-.upc-cat-group-hd-name{
-  font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;
-  color:#fff;flex:1;
-  text-shadow:0 1px 2px rgba(0,0,0,.25);
-}
+.upc-cat-group-hd-name{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:#fff;flex:1;text-shadow:0 1px 2px rgba(0,0,0,.25);}
 .upc-cat-group-hd-count{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:600;color:rgba(255,255,255,.75);}
-.upc-cat-group-body{
-  border:2px solid var(--ink);
-  border-top:3px solid;
-  border-radius:0 0 var(--r) var(--r);
-  overflow:hidden;
-}
+.upc-cat-group-body{border:2px solid var(--ink);border-top:3px solid;border-radius:0 0 var(--r) var(--r);overflow:hidden;}
+.upc-cat-group-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0;}
 
-/* Cards inside group — horizontal list or wrapping grid */
-.upc-cat-group-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
-  gap:0;
-}
-
-/* Urgency legend strip */
-.upc-urgency-legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:18px;font-family:'JetBrains Mono',monospace;font-size:.68rem;align-items:center;}
-.upc-urgency-legend-label{color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
-.upc-urgency-item{display:flex;align-items:center;gap:5px;color:var(--muted);}
-.upc-urgency-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-
-/* Individual upcoming card — embedded in group */
-.upc-card{
-  background:#fff;
-  cursor:pointer;
-  position:relative;
-  transition:background .15s;
-  border-right:1px solid var(--rule);
-  border-bottom:1px solid var(--rule);
-}
+.upc-card{background:#fff;cursor:pointer;position:relative;transition:background .15s;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);}
 .upc-card:last-child{border-right:none;}
 .upc-card:hover{background:var(--paper);}
-
-/* Strong color accent: left bar + tinted header strip */
-.upc-card-color-strip{
-  height:4px;
-  /* color set via inline style */
-}
+.upc-card-color-strip{height:4px;}
 .upc-card.urgency-warn{background:rgba(200,150,12,.05);}
 .upc-card.urgency-hot{background:rgba(192,57,43,.06);animation:hot-card-pulse 1.4s ease-in-out infinite;}
 @keyframes hot-card-pulse{0%,100%{background:rgba(192,57,43,.06)}50%{background:rgba(192,57,43,.13)}}
 .upc-card:hover.urgency-hot{animation:none;}
 
-.upc-body{padding:13px 14px 13px 14px;}
+.upc-body{padding:13px 14px;}
 .upc-title{font-family:'Playfair Display',serif;font-size:.98rem;font-weight:700;line-height:1.25;margin-bottom:8px;color:var(--ink);}
 .upc-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
 .upc-chip{font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:600;padding:3px 9px;border-radius:99px;border:1.5px solid currentColor;}
@@ -289,10 +296,11 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 .upc-divider{height:1px;background:var(--rule);margin:8px 0 7px;}
 .upc-participants{display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
 .upc-participant-chip{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:600;background:var(--paper2);border:1px solid var(--rule);border-radius:99px;padding:2px 8px;color:var(--ink2);white-space:nowrap;}
+.upc-participant-chip.maybe{border-color:var(--yellow);color:var(--yellow);background:rgba(200,150,12,.07);}
+.upc-participant-chip.standby{border-color:var(--orange);color:var(--orange);background:rgba(211,84,0,.07);}
 .upc-free-chip{font-family:'JetBrains Mono',monospace;font-size:.62rem;background:transparent;border:1px dashed var(--rule);border-radius:99px;padding:2px 8px;color:var(--muted);white-space:nowrap;}
 .upc-more-chip{font-family:'JetBrains Mono',monospace;font-size:.62rem;background:var(--ink);color:var(--paper);border-radius:99px;padding:2px 8px;white-space:nowrap;}
 .upc-empty{text-align:center;padding:40px 20px;border:2px dashed var(--rule);border-radius:var(--r);}
-.upc-empty-text{color:var(--muted);font-size:.85rem;}
 
 /* ── MARKETPLACE ── */
 .market-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between;padding:20px 0 28px;border-bottom:2px solid var(--ink);margin-bottom:32px;}
@@ -328,6 +336,7 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
   .modal-hd,.modal-body{padding-left:18px;padding-right:18px}
   .inline-row{flex-direction:column}
   .upc-cat-group-grid{grid-template-columns:1fr;}
+  .lang-switcher{flex-wrap:wrap;}
 }
 </style>
 </head>
@@ -337,23 +346,28 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
   <header>
     <div>
       <div class="wordmark">Chrono<em>mancer's</em> Book</div>
-      <div class="tagline">Family management · organised by category</div>
+      <div class="tagline" id="tagline-text">Family management · organised by category</div>
     </div>
     <div class="header-right">
+      <div class="lang-switcher">
+        <button class="lang-btn active" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('de')">DE</button>
+        <button class="lang-btn" onclick="setLang('it')">IT</button>
+        <button class="lang-btn" onclick="setLang('es')">ES</button>
+        <button class="lang-btn" onclick="setLang('tr')">TR</button>
+        <button class="lang-btn" onclick="setLang('fr')">FR</button>
+      </div>
       <span id="admin-badge" class="admin-badge" style="display:none">🔑 Admin</span>
-      <button class="btn btn-sm btn-info" onclick="openInfo()" title="How to use this app">ℹ️ How it works</button>
-      <button class="btn btn-sm btn-market" onclick="openMarketplace()">🛒 Marketplace</button>
-      <button id="btn-requests" class="btn btn-sm" onclick="openRequests()" style="display:none">🔔 Requests</button>
-      <button id="btn-login"  class="btn btn-green" onclick="openLogin()">🔒 Admin Login</button>
-      <button id="btn-logout" class="btn btn-sm btn-red" onclick="doLogout()" style="display:none">Sign out</button>
+      <button class="btn btn-sm btn-info" onclick="openInfo()">ℹ️ <span data-t="howItWorks">How it works</span></button>
+      <button class="btn btn-sm btn-market" onclick="openMarketplace()">🛒 <span data-t="marketplace">Marketplace</span></button>
+      <button id="btn-requests" class="btn btn-sm" onclick="openRequests()" style="display:none">🔔 <span data-t="requests">Requests</span></button>
+      <button id="btn-login" class="btn btn-green" onclick="openLogin()">🔒 <span data-t="adminLogin">Admin Login</span></button>
+      <button id="btn-logout" class="btn btn-sm btn-red" onclick="doLogout()" style="display:none"><span data-t="signOut">Sign out</span></button>
     </div>
   </header>
 
   <div id="back-bar">
-    <button class="back-btn" onclick="goHome()">
-      <span class="back-btn-arrow">←</span>
-      Back to Categories
-    </button>
+    <button class="back-btn" onclick="goHome()">← <span data-t="backToCategories">Back to Categories</span></button>
     <span id="back-bar-cat-name"></span>
   </div>
 
@@ -367,19 +381,18 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 <div class="backdrop" id="bd-login">
   <div class="modal">
     <div class="modal-hd">
-      <div class="modal-title">Admin Login</div>
+      <div class="modal-title" data-t="adminLogin">Admin Login</div>
       <button class="modal-close" onclick="closeModal('bd-login')">✕</button>
     </div>
     <div class="modal-body">
       <div class="login-icon">🔑</div>
-      <div class="login-sub">Admins can create, edit and delete categories &amp; lists.<br>Anyone can sign up for open slots.</div>
-      <div class="error-msg" id="login-err">Incorrect password — please try again.</div>
+      <div class="login-sub" data-t="loginSub">Admins can create, edit and delete categories & lists.<br>Anyone can sign up for open slots.</div>
+      <div class="error-msg" id="login-err" data-t="wrongPassword">Incorrect password — please try again.</div>
       <div class="field">
-        <label>Password</label>
-        <input type="password" id="pw-input" placeholder="Enter admin password…"/>
-        <div class="field-hint">Set via ADMIN_PASSWORD environment variable in Railway.</div>
+        <label data-t="password">Password</label>
+        <input type="password" id="pw-input" placeholder="…"/>
       </div>
-      <button class="btn btn-fill" style="width:100%;padding:12px" onclick="doLogin()">Log in →</button>
+      <button class="btn btn-fill" style="width:100%;padding:12px" onclick="doLogin()"><span data-t="loginBtn">Log in →</span></button>
     </div>
   </div>
 </div>
@@ -387,44 +400,33 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 <div class="backdrop" id="bd-info">
   <div class="modal info-modal">
     <div class="modal-hd">
-      <div class="modal-title">ℹ️ How it works</div>
+      <div class="modal-title" data-t="howItWorks">ℹ️ How it works</div>
       <button class="modal-close" onclick="closeModal('bd-info')">✕</button>
     </div>
     <div class="modal-body">
       <div class="info-tabs">
-        <button class="info-tab active" onclick="switchInfoTab('guest')">👤 For Guests</button>
-        <button class="info-tab" onclick="switchInfoTab('admin')">🔑 For Admins</button>
+        <button class="info-tab active" onclick="switchInfoTab('guest')" data-t="forGuests">👤 For Guests</button>
+        <button class="info-tab" onclick="switchInfoTab('admin')" data-t="forAdmins">🔑 For Admins</button>
       </div>
       <div class="info-panel active" id="info-panel-guest">
         <div class="info-section">
-          <div class="info-section-title">Browsing &amp; signing up</div>
-          <div class="info-step"><div class="info-step-num">1</div><div class="info-step-text">At the top of the home screen you see the live <strong>Upcoming Events</strong> dashboard — events are grouped by category and sorted by time. Below that are all <strong>Categories</strong>.</div></div>
-          <div class="info-step"><div class="info-step-num">2</div><div class="info-step-text">Inside a category you see all <strong>Lists</strong> — each one has a date, optional time, channel, and a slot progress bar.</div></div>
-          <div class="info-step"><div class="info-step-num">3</div><div class="info-step-text">Click a list card to open its detail view. Click any <strong>free slot</strong>, enter your nickname and press "Sign up ✓".</div></div>
+          <div class="info-section-title" data-t="browsingSignup">Browsing & signing up</div>
+          <div class="info-step"><div class="info-step-num">1</div><div class="info-step-text" data-t="infoStep1">At the top you see the live <strong>Upcoming Events</strong> dashboard. Below are all <strong>Categories</strong>.</div></div>
+          <div class="info-step"><div class="info-step-num">2</div><div class="info-step-text" data-t="infoStep2">Inside a category you see all <strong>Lists</strong> — each has a date, optional time, channel and slot progress bar.</div></div>
+          <div class="info-step"><div class="info-step-num">3</div><div class="info-step-text" data-t="infoStep3">Click a list card. Click any <strong>free slot</strong>, enter your nickname, choose <strong>Sure ✅</strong> or <strong>Maybe 🟡</strong>, and sign up.</div></div>
+          <div class="info-step"><div class="info-step-num">4</div><div class="info-step-text" data-t="infoStep4">If you choose <strong>Maybe</strong>, a second person can register as <strong>Standby 🟠</strong> (replacement). If the maybe cancels, standby takes the spot.</div></div>
         </div>
-        <div class="info-section">
-          <div class="info-section-title">Marketplace</div>
-          <div class="info-step"><div class="info-step-num">4</div><div class="info-step-text">Click <strong>"🛒 Marketplace"</strong> in the header. Anyone can post an item with a photo, title, description, and their nickname.</div></div>
-          <div class="info-step"><div class="info-step-num">5</div><div class="info-step-text">Items are visible to everyone. Only admins can remove listings.</div></div>
-        </div>
-        <div class="info-section">
-          <div class="info-section-title">Removing your sign-up</div>
-          <div class="info-step"><div class="info-step-num">6</div><div class="info-step-text">Open the list detail, hover your slot and click <strong>✕</strong>. Enter your name and a reason — the admin reviews your request.</div></div>
-        </div>
-        <div class="info-note"><strong>Tip:</strong> Event cards turn <strong style="color:var(--yellow)">yellow</strong> when &lt; 1 hour away, <strong style="color:var(--red)">red &amp; pulsing</strong> within 15 minutes.</div>
+        <div class="info-note" data-t="infoTip">💡 <strong>Tip:</strong> Events turn yellow when &lt; 1 hour away, red & pulsing within 15 minutes. Slots with a removal request glow red.</div>
       </div>
       <div class="info-panel" id="info-panel-admin">
         <div class="info-section">
-          <div class="info-section-title">Logging in</div>
-          <div class="info-step"><div class="info-step-num">1</div><div class="info-step-text">Click <strong>"Admin Login"</strong> and enter the admin password (set via <code style="font-family:monospace;font-size:.8em;background:var(--paper2);padding:1px 5px;border-radius:3px">ADMIN_PASSWORD</code> env var in Railway). Session lasts 24 hours.</div></div>
+          <div class="info-section-title" data-t="adminInfoTitle">Managing categories & lists</div>
+          <div class="info-step"><div class="info-step-num">1</div><div class="info-step-text" data-t="adminStep1">Log in → <strong>"+ New Category"</strong>. Hover cards for ✏️ Edit / 🗑 Delete.</div></div>
+          <div class="info-step"><div class="info-step-num">2</div><div class="info-step-text" data-t="adminStep2">Use <strong>✏️ Edit</strong> on any list card to change its title, date, slots or channel.</div></div>
+          <div class="info-step"><div class="info-step-num">3</div><div class="info-step-text" data-t="adminStep3">Accept or deny slot-removal requests via the 🔔 bell. Expired lists are <strong>auto-deleted</strong> after their event time passes.</div></div>
+          <div class="info-step"><div class="info-step-num">4</div><div class="info-step-text" data-t="adminStep4">In the Marketplace, hover any listing to reveal a delete button.</div></div>
         </div>
-        <div class="info-section">
-          <div class="info-section-title">Managing categories &amp; lists</div>
-          <div class="info-step"><div class="info-step-num">2</div><div class="info-step-text">Click <strong>"+ New Category"</strong> on the home screen. Hover cards to reveal ✏️ Edit and 🗑 Delete buttons.</div></div>
-          <div class="info-step"><div class="info-step-num">3</div><div class="info-step-text">When creating a list, set the <strong>Channel (1–7)</strong> along with date and optional time.</div></div>
-          <div class="info-step"><div class="info-step-num">4</div><div class="info-step-text">In the Marketplace, hover any listing card to reveal a delete button (admin only).</div></div>
-        </div>
-        <div class="info-warn"><strong>Note:</strong> All deletes are permanent and cannot be undone.</div>
+        <div class="info-warn" data-t="adminWarn"><strong>Note:</strong> All deletes are permanent and cannot be undone.</div>
       </div>
     </div>
   </div>
@@ -433,25 +435,25 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 <div class="backdrop" id="bd-cat">
   <div class="modal">
     <div class="modal-hd">
-      <div class="modal-title" id="cat-modal-title">New Category</div>
+      <div class="modal-title" id="cat-modal-title" data-t="newCategory">New Category</div>
       <button class="modal-close" onclick="closeModal('bd-cat')">✕</button>
     </div>
     <div class="modal-body">
       <div class="field">
-        <label>Name *</label>
-        <input type="text" id="cat-name" placeholder="e.g. Ele-Raids, Clol" maxlength="80"/>
+        <label data-t="name">Name *</label>
+        <input type="text" id="cat-name" maxlength="80"/>
       </div>
       <div class="field">
-        <label>Description</label>
-        <textarea id="cat-desc" placeholder="What kind of lists will live here?"></textarea>
+        <label data-t="description">Description</label>
+        <textarea id="cat-desc"></textarea>
       </div>
       <div class="field">
-        <label>Colour</label>
+        <label data-t="colour">Colour</label>
         <div class="color-presets" id="color-presets"></div>
       </div>
       <input type="hidden" id="cat-color" value="#1a4a7a"/>
       <input type="hidden" id="cat-edit-id" value=""/>
-      <button class="btn btn-fill" style="width:100%;padding:12px;margin-top:4px" onclick="submitCategory()">Save Category →</button>
+      <button class="btn btn-fill" style="width:100%;padding:12px;margin-top:4px" onclick="submitCategory()"><span data-t="saveCategory">Save Category →</span></button>
     </div>
   </div>
 </div>
@@ -459,46 +461,43 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 <div class="backdrop" id="bd-list">
   <div class="modal">
     <div class="modal-hd">
-      <div class="modal-title">New List</div>
+      <div class="modal-title" id="list-modal-title" data-t="newList">New List</div>
       <button class="modal-close" onclick="closeModal('bd-list')">✕</button>
     </div>
     <div class="modal-body">
       <div class="field">
-        <label>Title *</label>
-        <input type="text" id="list-title" placeholder="e.g. Summer Hike 2025" maxlength="120"/>
+        <label data-t="title">Title *</label>
+        <input type="text" id="list-title" maxlength="120"/>
       </div>
       <div class="field-row-4">
         <div class="field">
-          <label>Date *</label>
+          <label data-t="date">Date *</label>
           <input type="date" id="list-date"/>
         </div>
         <div class="field">
-          <label>Time (optional)</label>
-          <input type="time" id="list-time" placeholder="–"/>
+          <label data-t="time">Time (opt.)</label>
+          <input type="time" id="list-time"/>
         </div>
         <div class="field">
-          <label>Slots *</label>
+          <label data-t="slots">Slots *</label>
           <input type="number" id="list-slots" min="1" max="500" value="10"/>
         </div>
         <div class="field">
-          <label>Channel *</label>
+          <label data-t="channel">Channel *</label>
           <select id="list-channel">
-            <option value="1">Channel 1</option>
-            <option value="2">Channel 2</option>
-            <option value="3">Channel 3</option>
-            <option value="4">Channel 4</option>
-            <option value="5">Channel 5</option>
-            <option value="6">Channel 6</option>
-            <option value="7">Channel 7</option>
+            <option value="1">Ch. 1</option><option value="2">Ch. 2</option>
+            <option value="3">Ch. 3</option><option value="4">Ch. 4</option>
+            <option value="5">Ch. 5</option><option value="6">Ch. 6</option>
+            <option value="7">Ch. 7</option>
           </select>
         </div>
       </div>
       <div class="field">
-        <label>Description</label>
-        <textarea id="list-desc" placeholder="Meeting point, rules, what to bring…"></textarea>
+        <label data-t="description">Description</label>
+        <textarea id="list-desc"></textarea>
       </div>
-      <div class="field-hint" style="margin-bottom:16px">💡 Time is optional — used for the live countdown on the home screen.</div>
-      <button class="btn btn-fill" style="width:100%;padding:12px;margin-top:4px" onclick="submitList()">Create List →</button>
+      <input type="hidden" id="list-edit-id" value=""/>
+      <button class="btn btn-fill" style="width:100%;padding:12px;margin-top:4px" onclick="submitList()"><span id="list-submit-label" data-t="createList">Create List →</span></button>
     </div>
   </div>
 </div>
@@ -512,43 +511,45 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
     <div class="modal-body">
       <div class="detail-pills" id="det-pills"></div>
       <div class="detail-desc-block" id="det-desc"></div>
-      <div class="slots-hd">Slots — click a free one to sign up</div>
+      <!-- Legend -->
+      <div class="legend-box">
+        <span class="legend-title" data-t="legend">Legend:</span>
+        <span class="legend-item"><span class="legend-dot legend-dot-sure"></span><span data-t="legendSure">Sure ✅</span></span>
+        <span class="legend-sep">·</span>
+        <span class="legend-item"><span class="legend-dot legend-dot-maybe"></span><span data-t="legendMaybe">Maybe 🟡</span></span>
+        <span class="legend-sep">·</span>
+        <span class="legend-item"><span class="legend-dot legend-dot-standby"></span><span data-t="legendStandby">Standby 🟠</span></span>
+        <span class="legend-sep">·</span>
+        <span class="legend-item"><span class="legend-dot legend-dot-free"></span><span data-t="legendFree">Free</span></span>
+        <span class="legend-sep">·</span>
+        <span class="legend-item"><span class="legend-dot legend-dot-req"></span><span data-t="legendReq">Removal Request ⚠️</span></span>
+      </div>
+      <div class="slots-hd" data-t="slotsHint">Slots — click a free one to sign up</div>
       <div class="slots-wrap" id="det-slots"></div>
       <div id="det-signup"></div>
     </div>
   </div>
 </div>
 
-<!-- Marketplace item modal -->
 <div class="backdrop" id="bd-market-new">
   <div class="modal market-modal">
     <div class="modal-hd">
-      <div class="modal-title">🛒 List an Item</div>
+      <div class="modal-title" data-t="listAnItem">🛒 List an Item</div>
       <button class="modal-close" onclick="closeModal('bd-market-new')">✕</button>
     </div>
     <div class="modal-body">
+      <div class="field"><label data-t="yourNickname">Your Nickname *</label><input type="text" id="mkt-nick" maxlength="60"/></div>
+      <div class="field"><label data-t="title">Title *</label><input type="text" id="mkt-title" maxlength="120"/></div>
+      <div class="field"><label data-t="description">Description *</label><textarea id="mkt-desc" style="min-height:90px"></textarea></div>
       <div class="field">
-        <label>Your Nickname *</label>
-        <input type="text" id="mkt-nick" placeholder="Your name or alias…" maxlength="60"/>
-      </div>
-      <div class="field">
-        <label>Title *</label>
-        <input type="text" id="mkt-title" placeholder="e.g. Vintage Camera, Magic Cards…" maxlength="120"/>
-      </div>
-      <div class="field">
-        <label>Description *</label>
-        <textarea id="mkt-desc" placeholder="Condition, price, how to contact you…" style="min-height:90px"></textarea>
-      </div>
-      <div class="field">
-        <label>Photo (optional)</label>
+        <label data-t="photoOptional">Photo (optional)</label>
         <div class="img-upload-area" id="mkt-upload-area" onclick="triggerImgPick()">
           <input type="file" id="mkt-img-input" accept="image/*" style="display:none" onchange="handleImgSelect(event)"/>
-          <div class="img-upload-label" id="mkt-upload-label">📷 Click to choose a photo</div>
+          <div class="img-upload-label" id="mkt-upload-label" data-t="clickToChoosePhoto">📷 Click to choose a photo</div>
           <img class="img-upload-preview" id="mkt-img-preview" style="display:none"/>
         </div>
-        <div class="field-hint">JPG, PNG, GIF, WEBP — shown on your listing.</div>
       </div>
-      <button class="btn btn-fill" style="width:100%;padding:12px;margin-top:4px" onclick="submitMarketItem()">Post Listing →</button>
+      <button class="btn btn-fill" style="width:100%;padding:12px;margin-top:4px" onclick="submitMarketItem()"><span data-t="postListing">Post Listing →</span></button>
     </div>
   </div>
 </div>
@@ -558,41 +559,401 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 <div class="backdrop" id="bd-requests">
   <div class="modal">
     <div class="modal-hd">
-      <div class="modal-title">🔔 Pending Removal Requests</div>
+      <div class="modal-title" data-t="pendingRequests">🔔 Pending Removal Requests</div>
       <button class="modal-close" onclick="closeModal('bd-requests')">✕</button>
     </div>
-    <div class="modal-body">
-      <div id="req-list-wrap"></div>
-    </div>
+    <div class="modal-body"><div id="req-list-wrap"></div></div>
   </div>
 </div>
 
 <div class="backdrop" id="bd-del-req">
   <div class="modal">
     <div class="modal-hd">
-      <div class="modal-title">Request Slot Removal</div>
+      <div class="modal-title" data-t="requestSlotRemoval">Request Slot Removal</div>
       <button class="modal-close" onclick="closeModal('bd-del-req')">✕</button>
     </div>
     <div class="modal-body">
-      <p style="font-size:.85rem;color:var(--muted);margin-bottom:18px;line-height:1.5">
-        Enter your name exactly as it appears in the slot, and a short reason.<br>
-        The admin will review and remove you if approved.
-      </p>
-      <div class="field">
-        <label>Your name (must match slot) *</label>
-        <input type="text" id="delreq-name" placeholder="Your nickname…" maxlength="60"/>
-      </div>
-      <div class="field">
-        <label>Reason *</label>
-        <textarea id="delreq-reason" placeholder="e.g. Can't make it, schedule conflict…" style="min-height:70px"></textarea>
-      </div>
-      <div class="error-msg" id="delreq-err">Name does not match the slot.</div>
-      <button class="btn btn-fill" style="width:100%;padding:12px;margin-top:4px" onclick="submitDeleteRequest()">Send Request →</button>
+      <p style="font-size:.85rem;color:var(--muted);margin-bottom:18px;line-height:1.5" data-t="delReqSub">Enter your name exactly as it appears in the slot. The admin will review your request.</p>
+      <div class="field"><label data-t="yourName">Your name (must match slot) *</label><input type="text" id="delreq-name" maxlength="60"/></div>
+      <div class="field"><label data-t="reason">Reason *</label><textarea id="delreq-reason" style="min-height:70px"></textarea></div>
+      <div class="error-msg" id="delreq-err" data-t="nameMismatch">Name does not match the slot.</div>
+      <button class="btn btn-fill" style="width:100%;padding:12px;margin-top:4px" onclick="submitDeleteRequest()"><span data-t="sendRequest">Send Request →</span></button>
     </div>
   </div>
 </div>
 
 <script>
+// ── TRANSLATIONS ──────────────────────────────────────────────────────────
+const TRANSLATIONS = {
+  en: {
+    tagline:'Family management · organised by category',
+    howItWorks:'ℹ️ How it works', marketplace:'Marketplace', requests:'Requests',
+    adminLogin:'Admin Login', signOut:'Sign out', backToCategories:'Back to Categories',
+    loginSub:'Admins can create, edit and delete categories & lists.<br>Anyone can sign up.',
+    wrongPassword:'Incorrect password — please try again.',
+    password:'Password', loginBtn:'Log in →',
+    forGuests:'👤 For Guests', forAdmins:'🔑 For Admins',
+    browsingSignup:'Browsing & signing up',
+    infoStep1:'At the top you see the live <strong>Upcoming Events</strong> dashboard. Below are all <strong>Categories</strong>.',
+    infoStep2:'Inside a category you see all <strong>Lists</strong> — each has a date, optional time, channel and slot progress bar.',
+    infoStep3:'Click a list card. Click any <strong>free slot</strong>, enter your nickname, choose <strong>Sure ✅</strong> or <strong>Maybe 🟡</strong>, and sign up.',
+    infoStep4:'If you choose <strong>Maybe</strong>, a second person can register as <strong>Standby 🟠</strong> (replacement).',
+    infoTip:'💡 <strong>Tip:</strong> Events turn yellow when &lt;1h away, red within 15min. Slots with removal requests glow red.',
+    adminInfoTitle:'Managing categories & lists',
+    adminStep1:'Log in → <strong>"+ New Category"</strong>. Hover cards for ✏️ Edit / 🗑 Delete.',
+    adminStep2:'Use <strong>✏️ Edit</strong> on any list card to change title, date, slots or channel.',
+    adminStep3:'Accept or deny slot-removal requests via 🔔. Expired lists are <strong>auto-deleted</strong>.',
+    adminStep4:'In the Marketplace, hover any listing to reveal a delete button.',
+    adminWarn:'<strong>Note:</strong> All deletes are permanent.',
+    newCategory:'New Category', editCategory:'Edit Category',
+    name:'Name *', description:'Description', colour:'Colour',
+    saveCategory:'Save Category →',
+    newList:'New List', editList:'Edit List',
+    title:'Title *', date:'Date *', time:'Time (opt.)', slots:'Slots *', channel:'Channel *',
+    createList:'Create List →', updateList:'Update List →',
+    legend:'Legend:', legendSure:'Sure ✅', legendMaybe:'Maybe 🟡',
+    legendStandby:'Standby 🟠', legendFree:'Free', legendReq:'Removal Request ⚠️',
+    slotsHint:'Slots — click a free one to sign up',
+    signupFor:'Signing up for slot', enterNickname:'Enter your nickname:',
+    statusSure:'✅ Sure', statusMaybe:'🟡 Maybe',
+    standbyNote:'⚠️ This is a standby slot — you replace the maybe person if they cancel.',
+    signUpBtn:'Sign up ✓',
+    listAnItem:'🛒 List an Item', yourNickname:'Your Nickname *',
+    photoOptional:'Photo (optional)', clickToChoosePhoto:'📷 Click to choose a photo',
+    postListing:'Post Listing →',
+    pendingRequests:'🔔 Pending Removal Requests',
+    requestSlotRemoval:'Request Slot Removal',
+    delReqSub:'Enter your name exactly as it appears in the slot. The admin will review.',
+    yourName:'Your name (must match slot) *', reason:'Reason *',
+    nameMismatch:'Name does not match the slot.',
+    sendRequest:'Send Request →',
+    upcomingEvents:'Upcoming Events', allCategories:'All Categories',
+    noUpcoming:'No upcoming events today.',
+    noCategories:'No categories have been created yet.',
+    noCategoriesAdmin:'No categories yet. Create your first one above!',
+    noLists:'No lists in this category yet. Create the first one above!',
+    deleteCategory:'Delete this category and all its lists? This cannot be undone.',
+    deleteList:'Delete this list and all sign-ups? This cannot be undone.',
+    deleteMarket:'Delete this listing? This cannot be undone.',
+    noPending:'No pending requests 🎉',
+    accept:'✓ Accept', deny:'✗ Deny',
+    slot:'Slot', free:'free', full:'Full',
+    lists:'List', lists_p:'Lists', category:'Category',
+    filled:'filled', signups:'signups',
+    participants:'👥 Participants',
+    normalTime:'Normal', lessThanHour:'< 1 hour', lessThan15:'< 15 min',
+  },
+  de: {
+    tagline:'Familien-Management · nach Kategorien sortiert',
+    howItWorks:'ℹ️ So funktioniert es', marketplace:'Marktplatz', requests:'Anfragen',
+    adminLogin:'Admin-Login', signOut:'Abmelden', backToCategories:'Zurück zu Kategorien',
+    loginSub:'Admins können Kategorien & Listen erstellen, bearbeiten und löschen.',
+    wrongPassword:'Falsches Passwort — bitte erneut versuchen.',
+    password:'Passwort', loginBtn:'Einloggen →',
+    forGuests:'👤 Für Gäste', forAdmins:'🔑 Für Admins',
+    browsingSignup:'Stöbern & Anmelden',
+    infoStep1:'Oben siehst du das Live-<strong>Kommende Events</strong>-Dashboard. Darunter alle <strong>Kategorien</strong>.',
+    infoStep2:'Innerhalb einer Kategorie siehst du alle <strong>Listen</strong> – mit Datum, optionaler Zeit, Kanal und Slot-Fortschrittsbalken.',
+    infoStep3:'Klicke eine Listenkarte an. Klicke auf einen <strong>freien Slot</strong>, gib deinen Nicknamen ein, wähle <strong>Sicher ✅</strong> oder <strong>Vielleicht 🟡</strong> und melde dich an.',
+    infoStep4:'Bei <strong>Vielleicht</strong> kann eine zweite Person als <strong>Ersatz 🟠</strong> eingetragen werden.',
+    infoTip:'💡 <strong>Tipp:</strong> Events werden gelb bei &lt;1h, rot und pulsierend bei &lt;15min. Slots mit Löschanfragen leuchten rot.',
+    adminInfoTitle:'Kategorien & Listen verwalten',
+    adminStep1:'Einloggen → <strong>"+ Neue Kategorie"</strong>. Karten hovern für ✏️ Bearbeiten / 🗑 Löschen.',
+    adminStep2:'<strong>✏️ Bearbeiten</strong> bei einer Listenkarte um Titel, Datum, Slots oder Kanal zu ändern.',
+    adminStep3:'Slot-Löschanfragen über 🔔 akzeptieren oder ablehnen. Abgelaufene Listen werden <strong>automatisch gelöscht</strong>.',
+    adminStep4:'Im Marktplatz: Hover über eine Anzeige um den Löschen-Button zu sehen.',
+    adminWarn:'<strong>Hinweis:</strong> Alle Löschungen sind endgültig.',
+    newCategory:'Neue Kategorie', editCategory:'Kategorie bearbeiten',
+    name:'Name *', description:'Beschreibung', colour:'Farbe',
+    saveCategory:'Kategorie speichern →',
+    newList:'Neue Liste', editList:'Liste bearbeiten',
+    title:'Titel *', date:'Datum *', time:'Zeit (opt.)', slots:'Slots *', channel:'Kanal *',
+    createList:'Liste erstellen →', updateList:'Liste aktualisieren →',
+    legend:'Legende:', legendSure:'Sicher ✅', legendMaybe:'Vielleicht 🟡',
+    legendStandby:'Ersatz 🟠', legendFree:'Frei', legendReq:'Löschanfrage ⚠️',
+    slotsHint:'Slots – klicke auf einen freien, um dich anzumelden',
+    signupFor:'Anmeldung für Slot', enterNickname:'Dein Nickname:',
+    statusSure:'✅ Sicher', statusMaybe:'🟡 Vielleicht',
+    standbyNote:'⚠️ Dies ist ein Ersatz-Slot – du übernimmst den Platz falls der "Vielleicht"-Teilnehmer absagt.',
+    signUpBtn:'Anmelden ✓',
+    listAnItem:'🛒 Artikel einstellen', yourNickname:'Dein Nickname *',
+    photoOptional:'Foto (optional)', clickToChoosePhoto:'📷 Foto auswählen',
+    postListing:'Anzeige erstellen →',
+    pendingRequests:'🔔 Ausstehende Löschanfragen',
+    requestSlotRemoval:'Slot-Löschung anfragen',
+    delReqSub:'Gib deinen Namen genau so ein wie er im Slot steht. Der Admin wird deine Anfrage prüfen.',
+    yourName:'Dein Name (muss zum Slot passen) *', reason:'Grund *',
+    nameMismatch:'Name stimmt nicht mit dem Slot überein.',
+    sendRequest:'Anfrage senden →',
+    upcomingEvents:'Kommende Events', allCategories:'Alle Kategorien',
+    noUpcoming:'Heute keine kommenden Events.',
+    noCategories:'Noch keine Kategorien vorhanden.',
+    noCategoriesAdmin:'Noch keine Kategorien. Erstelle oben deine erste!',
+    noLists:'Keine Listen in dieser Kategorie. Erstelle die erste oben!',
+    deleteCategory:'Diese Kategorie und alle Listen löschen? Nicht rückgängig zu machen.',
+    deleteList:'Diese Liste und alle Anmeldungen löschen? Nicht rückgängig zu machen.',
+    deleteMarket:'Diese Anzeige löschen? Nicht rückgängig zu machen.',
+    noPending:'Keine ausstehenden Anfragen 🎉',
+    accept:'✓ Akzeptieren', deny:'✗ Ablehnen',
+    slot:'Slot', free:'frei', full:'Voll',
+    lists:'Liste', lists_p:'Listen', category:'Kategorie',
+    filled:'belegt', signups:'Anmeldungen',
+    participants:'👥 Teilnehmer',
+    normalTime:'Normal', lessThanHour:'< 1 Stunde', lessThan15:'< 15 Min',
+  },
+  it: {
+    tagline:'Gestione famiglia · organizzato per categoria',
+    howItWorks:'ℹ️ Come funziona', marketplace:'Mercatino', requests:'Richieste',
+    adminLogin:'Login Admin', signOut:'Esci', backToCategories:'Torna alle Categorie',
+    loginSub:'Gli admin possono creare, modificare ed eliminare categorie e liste.',
+    wrongPassword:'Password errata — riprova.',
+    password:'Password', loginBtn:'Accedi →',
+    forGuests:'👤 Per Ospiti', forAdmins:'🔑 Per Admin',
+    browsingSignup:'Navigare & iscriversi',
+    infoStep1:'In cima vedi la dashboard <strong>Prossimi eventi</strong>. Sotto tutte le <strong>Categorie</strong>.',
+    infoStep2:'All\'interno di una categoria trovi tutte le <strong>Liste</strong> — con data, ora opzionale, canale e barra slot.',
+    infoStep3:'Clicca una scheda lista. Clicca uno <strong>slot libero</strong>, inserisci il tuo nickname, scegli <strong>Sicuro ✅</strong> o <strong>Forse 🟡</strong> e iscriviti.',
+    infoStep4:'Con <strong>Forse</strong>, una seconda persona può iscriversi come <strong>Riserva 🟠</strong>.',
+    infoTip:'💡 <strong>Suggerimento:</strong> Gli eventi diventano gialli a &lt;1h, rossi e pulsanti a &lt;15min. Gli slot con richiesta di rimozione lampeggiano in rosso.',
+    adminInfoTitle:'Gestione categorie & liste',
+    adminStep1:'Accedi → <strong>"+ Nuova Categoria"</strong>. Passa il mouse sulle schede per ✏️ Modifica / 🗑 Elimina.',
+    adminStep2:'Usa <strong>✏️ Modifica</strong> su una scheda lista per cambiare titolo, data, slot o canale.',
+    adminStep3:'Accetta o nega richieste di rimozione tramite 🔔. Le liste scadute vengono <strong>eliminate automaticamente</strong>.',
+    adminStep4:'Nel Mercatino, passa il mouse su un annuncio per il pulsante elimina.',
+    adminWarn:'<strong>Nota:</strong> Tutte le eliminazioni sono permanenti.',
+    newCategory:'Nuova Categoria', editCategory:'Modifica Categoria',
+    name:'Nome *', description:'Descrizione', colour:'Colore',
+    saveCategory:'Salva Categoria →',
+    newList:'Nuova Lista', editList:'Modifica Lista',
+    title:'Titolo *', date:'Data *', time:'Ora (opz.)', slots:'Slot *', channel:'Canale *',
+    createList:'Crea Lista →', updateList:'Aggiorna Lista →',
+    legend:'Legenda:', legendSure:'Sicuro ✅', legendMaybe:'Forse 🟡',
+    legendStandby:'Riserva 🟠', legendFree:'Libero', legendReq:'Richiesta Rimozione ⚠️',
+    slotsHint:'Slot — clicca su uno libero per iscriverti',
+    signupFor:'Iscrizione per slot', enterNickname:'Il tuo nickname:',
+    statusSure:'✅ Sicuro', statusMaybe:'🟡 Forse',
+    standbyNote:'⚠️ Questo è uno slot di riserva — prendi il posto se il "Forse" si cancella.',
+    signUpBtn:'Iscriviti ✓',
+    listAnItem:'🛒 Inserisci un Articolo', yourNickname:'Il tuo Nickname *',
+    photoOptional:'Foto (opzionale)', clickToChoosePhoto:'📷 Clicca per scegliere una foto',
+    postListing:'Pubblica Annuncio →',
+    pendingRequests:'🔔 Richieste di Rimozione in Attesa',
+    requestSlotRemoval:'Richiedi Rimozione Slot',
+    delReqSub:'Inserisci il tuo nome esattamente come appare nello slot. L\'admin esaminerà la richiesta.',
+    yourName:'Il tuo nome (deve corrispondere allo slot) *', reason:'Motivo *',
+    nameMismatch:'Il nome non corrisponde allo slot.',
+    sendRequest:'Invia Richiesta →',
+    upcomingEvents:'Prossimi Eventi', allCategories:'Tutte le Categorie',
+    noUpcoming:'Nessun evento in programma oggi.',
+    noCategories:'Nessuna categoria ancora creata.',
+    noCategoriesAdmin:'Nessuna categoria. Creane una qui sopra!',
+    noLists:'Nessuna lista in questa categoria. Creane una qui sopra!',
+    deleteCategory:'Eliminare questa categoria e tutte le sue liste?',
+    deleteList:'Eliminare questa lista e tutte le iscrizioni?',
+    deleteMarket:'Eliminare questo annuncio?',
+    noPending:'Nessuna richiesta in attesa 🎉',
+    accept:'✓ Accetta', deny:'✗ Nega',
+    slot:'Slot', free:'libero', full:'Pieno',
+    lists:'Lista', lists_p:'Liste', category:'Categoria',
+    filled:'occupati', signups:'iscrizioni',
+    participants:'👥 Partecipanti',
+    normalTime:'Normale', lessThanHour:'< 1 ora', lessThan15:'< 15 min',
+  },
+  es: {
+    tagline:'Gestión familiar · organizado por categoría',
+    howItWorks:'ℹ️ Cómo funciona', marketplace:'Mercado', requests:'Solicitudes',
+    adminLogin:'Login Admin', signOut:'Cerrar sesión', backToCategories:'Volver a Categorías',
+    loginSub:'Los admins pueden crear, editar y eliminar categorías y listas.',
+    wrongPassword:'Contraseña incorrecta — inténtalo de nuevo.',
+    password:'Contraseña', loginBtn:'Iniciar sesión →',
+    forGuests:'👤 Para Invitados', forAdmins:'🔑 Para Admins',
+    browsingSignup:'Explorar e inscribirse',
+    infoStep1:'Arriba verás el panel de <strong>Próximos Eventos</strong>. Debajo, todas las <strong>Categorías</strong>.',
+    infoStep2:'Dentro de una categoría verás todas las <strong>Listas</strong> — con fecha, hora opcional, canal y barra de slots.',
+    infoStep3:'Haz clic en una lista. Haz clic en un <strong>slot libre</strong>, escribe tu apodo, elige <strong>Seguro ✅</strong> o <strong>Quizás 🟡</strong> y regístrate.',
+    infoStep4:'Si eliges <strong>Quizás</strong>, otra persona puede inscribirse como <strong>Suplente 🟠</strong>.',
+    infoTip:'💡 <strong>Consejo:</strong> Los eventos se vuelven amarillos a &lt;1h y rojos parpadeantes a &lt;15min. Los slots con solicitud de eliminación brillan en rojo.',
+    adminInfoTitle:'Gestionar categorías y listas',
+    adminStep1:'Inicia sesión → <strong>"+ Nueva Categoría"</strong>. Pasa el cursor para ✏️ Editar / 🗑 Eliminar.',
+    adminStep2:'Usa <strong>✏️ Editar</strong> en una tarjeta de lista para cambiar título, fecha, slots o canal.',
+    adminStep3:'Acepta o deniega solicitudes de eliminación con 🔔. Las listas caducadas se <strong>eliminan automáticamente</strong>.',
+    adminStep4:'En el Mercado, pasa el cursor sobre un anuncio para ver el botón eliminar.',
+    adminWarn:'<strong>Nota:</strong> Todas las eliminaciones son permanentes.',
+    newCategory:'Nueva Categoría', editCategory:'Editar Categoría',
+    name:'Nombre *', description:'Descripción', colour:'Color',
+    saveCategory:'Guardar Categoría →',
+    newList:'Nueva Lista', editList:'Editar Lista',
+    title:'Título *', date:'Fecha *', time:'Hora (opc.)', slots:'Slots *', channel:'Canal *',
+    createList:'Crear Lista →', updateList:'Actualizar Lista →',
+    legend:'Leyenda:', legendSure:'Seguro ✅', legendMaybe:'Quizás 🟡',
+    legendStandby:'Suplente 🟠', legendFree:'Libre', legendReq:'Solicitud de eliminación ⚠️',
+    slotsHint:'Slots — haz clic en uno libre para inscribirte',
+    signupFor:'Inscripción para slot', enterNickname:'Tu apodo:',
+    statusSure:'✅ Seguro', statusMaybe:'🟡 Quizás',
+    standbyNote:'⚠️ Este es un slot suplente — ocupas el lugar si el "Quizás" cancela.',
+    signUpBtn:'Inscribirse ✓',
+    listAnItem:'🛒 Publicar Artículo', yourNickname:'Tu Apodo *',
+    photoOptional:'Foto (opcional)', clickToChoosePhoto:'📷 Clic para elegir foto',
+    postListing:'Publicar Anuncio →',
+    pendingRequests:'🔔 Solicitudes de Eliminación Pendientes',
+    requestSlotRemoval:'Solicitar Eliminación de Slot',
+    delReqSub:'Escribe tu nombre exactamente como aparece en el slot. El admin revisará tu solicitud.',
+    yourName:'Tu nombre (debe coincidir con el slot) *', reason:'Motivo *',
+    nameMismatch:'El nombre no coincide con el slot.',
+    sendRequest:'Enviar Solicitud →',
+    upcomingEvents:'Próximos Eventos', allCategories:'Todas las Categorías',
+    noUpcoming:'No hay eventos hoy.',
+    noCategories:'Aún no se han creado categorías.',
+    noCategoriesAdmin:'Sin categorías. ¡Crea la primera arriba!',
+    noLists:'Sin listas en esta categoría. ¡Crea la primera arriba!',
+    deleteCategory:'¿Eliminar esta categoría y todas sus listas?',
+    deleteList:'¿Eliminar esta lista y todas las inscripciones?',
+    deleteMarket:'¿Eliminar este anuncio?',
+    noPending:'Sin solicitudes pendientes 🎉',
+    accept:'✓ Aceptar', deny:'✗ Denegar',
+    slot:'Slot', free:'libre', full:'Completo',
+    lists:'Lista', lists_p:'Listas', category:'Categoría',
+    filled:'ocupados', signups:'inscripciones',
+    participants:'👥 Participantes',
+    normalTime:'Normal', lessThanHour:'< 1 hora', lessThan15:'< 15 min',
+  },
+  tr: {
+    tagline:'Aile yönetimi · kategoriye göre düzenlenmiş',
+    howItWorks:'ℹ️ Nasıl çalışır', marketplace:'Pazar', requests:'İstekler',
+    adminLogin:'Admin Girişi', signOut:'Çıkış yap', backToCategories:'Kategorilere Dön',
+    loginSub:'Adminler kategorileri ve listeleri oluşturabilir, düzenleyebilir ve silebilir.',
+    wrongPassword:'Yanlış şifre — lütfen tekrar deneyin.',
+    password:'Şifre', loginBtn:'Giriş yap →',
+    forGuests:'👤 Misafirler için', forAdmins:'🔑 Adminler için',
+    browsingSignup:'Göz at & kayıt ol',
+    infoStep1:'Üstte canlı <strong>Yaklaşan Etkinlikler</strong> panosu var. Altında tüm <strong>Kategoriler</strong>.',
+    infoStep2:'Bir kategoride tüm <strong>Listeler</strong> görünür — tarih, opsiyonel saat, kanal ve slot çubuğu ile.',
+    infoStep3:'Bir liste kartına tıkla. <strong>Boş slot</strong>a tıkla, takma adını gir, <strong>Kesin ✅</strong> veya <strong>Belki 🟡</strong> seç ve kaydol.',
+    infoStep4:'<strong>Belki</strong> seçilirse ikinci bir kişi <strong>Yedek 🟠</strong> olarak kaydolabilir.',
+    infoTip:'💡 <strong>İpucu:</strong> Etkinlikler &lt;1sa sarıya, &lt;15dk kırmızıya döner. Silme istekli slotlar kırmızı yanar.',
+    adminInfoTitle:'Kategorileri & listeleri yönet',
+    adminStep1:'Giriş yap → <strong>"+ Yeni Kategori"</strong>. Kartların üzerine gel: ✏️ Düzenle / 🗑 Sil.',
+    adminStep2:'Bir liste kartında <strong>✏️ Düzenle</strong> ile başlık, tarih, slot veya kanalı değiştir.',
+    adminStep3:'🔔 ile slot silme isteklerini kabul et veya reddet. Süresi dolmuş listeler <strong>otomatik silinir</strong>.',
+    adminStep4:'Pazarda bir ilanın üzerine gel, silme düğmesini gör.',
+    adminWarn:'<strong>Not:</strong> Tüm silmeler kalıcıdır.',
+    newCategory:'Yeni Kategori', editCategory:'Kategoriyi Düzenle',
+    name:'Ad *', description:'Açıklama', colour:'Renk',
+    saveCategory:'Kategoriyi Kaydet →',
+    newList:'Yeni Liste', editList:'Listeyi Düzenle',
+    title:'Başlık *', date:'Tarih *', time:'Saat (isteğe bağlı)', slots:'Slot *', channel:'Kanal *',
+    createList:'Liste Oluştur →', updateList:'Listeyi Güncelle →',
+    legend:'Açıklama:', legendSure:'Kesin ✅', legendMaybe:'Belki 🟡',
+    legendStandby:'Yedek 🟠', legendFree:'Boş', legendReq:'Silme İsteği ⚠️',
+    slotsHint:'Slotlar — kaydolmak için boş birine tıkla',
+    signupFor:'Slot için kayıt', enterNickname:'Takma adın:',
+    statusSure:'✅ Kesin', statusMaybe:'🟡 Belki',
+    standbyNote:'⚠️ Bu bir yedek slot — "Belki" kişisi iptal ederse sen alırsın.',
+    signUpBtn:'Kaydol ✓',
+    listAnItem:'🛒 İlan Ver', yourNickname:'Takma Adın *',
+    photoOptional:'Fotoğraf (isteğe bağlı)', clickToChoosePhoto:'📷 Fotoğraf seç',
+    postListing:'İlanı Yayınla →',
+    pendingRequests:'🔔 Bekleyen Silme İstekleri',
+    requestSlotRemoval:'Slot Silme İste',
+    delReqSub:'Adını slotta göründüğü gibi yaz. Admin inceleyecek.',
+    yourName:'Adın (slotla eşleşmeli) *', reason:'Sebep *',
+    nameMismatch:'Ad slot ile eşleşmiyor.',
+    sendRequest:'İstek Gönder →',
+    upcomingEvents:'Yaklaşan Etkinlikler', allCategories:'Tüm Kategoriler',
+    noUpcoming:'Bugün yaklaşan etkinlik yok.',
+    noCategories:'Henüz kategori oluşturulmadı.',
+    noCategoriesAdmin:'Kategori yok. Yukarıdan ilkini oluştur!',
+    noLists:'Bu kategoride liste yok. Yukarıdan ilkini oluştur!',
+    deleteCategory:'Bu kategoriyi ve tüm listelerini sil? Geri alınamaz.',
+    deleteList:'Bu listeyi ve tüm kayıtları sil? Geri alınamaz.',
+    deleteMarket:'Bu ilanı sil? Geri alınamaz.',
+    noPending:'Bekleyen istek yok 🎉',
+    accept:'✓ Kabul Et', deny:'✗ Reddet',
+    slot:'Slot', free:'boş', full:'Dolu',
+    lists:'Liste', lists_p:'Liste', category:'Kategori',
+    filled:'dolu', signups:'kayıt',
+    participants:'👥 Katılımcılar',
+    normalTime:'Normal', lessThanHour:'< 1 saat', lessThan15:'< 15 dak',
+  },
+  fr: {
+    tagline:'Gestion familiale · organisée par catégorie',
+    howItWorks:'ℹ️ Comment ça marche', marketplace:'Marché', requests:'Demandes',
+    adminLogin:'Connexion Admin', signOut:'Se déconnecter', backToCategories:'Retour aux Catégories',
+    loginSub:'Les admins peuvent créer, modifier et supprimer catégories et listes.',
+    wrongPassword:'Mot de passe incorrect — réessayez.',
+    password:'Mot de passe', loginBtn:'Se connecter →',
+    forGuests:'👤 Pour les Invités', forAdmins:'🔑 Pour les Admins',
+    browsingSignup:'Parcourir et s\'inscrire',
+    infoStep1:'En haut se trouve le tableau de bord des <strong>Événements à venir</strong>. En dessous, toutes les <strong>Catégories</strong>.',
+    infoStep2:'À l\'intérieur d\'une catégorie, vous voyez toutes les <strong>Listes</strong> — avec date, heure optionnelle, chaîne et barre de slots.',
+    infoStep3:'Cliquez une carte liste. Cliquez un <strong>slot libre</strong>, entrez votre pseudo, choisissez <strong>Sûr ✅</strong> ou <strong>Peut-être 🟡</strong> et inscrivez-vous.',
+    infoStep4:'Avec <strong>Peut-être</strong>, une seconde personne peut s\'inscrire comme <strong>Remplaçant 🟠</strong>.',
+    infoTip:'💡 <strong>Astuce :</strong> Les événements deviennent jaunes à &lt;1h, rouges et clignotants à &lt;15min. Les slots avec demande de suppression luisent en rouge.',
+    adminInfoTitle:'Gérer catégories & listes',
+    adminStep1:'Connectez-vous → <strong>"+ Nouvelle Catégorie"</strong>. Survolez pour ✏️ Modifier / 🗑 Supprimer.',
+    adminStep2:'Utilisez <strong>✏️ Modifier</strong> sur une carte liste pour changer le titre, la date, les slots ou le canal.',
+    adminStep3:'Acceptez ou refusez les demandes de suppression via 🔔. Les listes expirées sont <strong>supprimées automatiquement</strong>.',
+    adminStep4:'Dans le Marché, survolez une annonce pour voir le bouton supprimer.',
+    adminWarn:'<strong>Note :</strong> Toutes les suppressions sont permanentes.',
+    newCategory:'Nouvelle Catégorie', editCategory:'Modifier Catégorie',
+    name:'Nom *', description:'Description', colour:'Couleur',
+    saveCategory:'Enregistrer la Catégorie →',
+    newList:'Nouvelle Liste', editList:'Modifier la Liste',
+    title:'Titre *', date:'Date *', time:'Heure (opt.)', slots:'Slots *', channel:'Chaîne *',
+    createList:'Créer la Liste →', updateList:'Mettre à jour la Liste →',
+    legend:'Légende :', legendSure:'Sûr ✅', legendMaybe:'Peut-être 🟡',
+    legendStandby:'Remplaçant 🟠', legendFree:'Libre', legendReq:'Demande de suppression ⚠️',
+    slotsHint:'Slots — cliquez sur un libre pour vous inscrire',
+    signupFor:'Inscription pour le slot', enterNickname:'Votre pseudo :',
+    statusSure:'✅ Sûr', statusMaybe:'🟡 Peut-être',
+    standbyNote:'⚠️ C\'est un slot de remplacement — vous prenez la place si le "Peut-être" annule.',
+    signUpBtn:'S\'inscrire ✓',
+    listAnItem:'🛒 Déposer une Annonce', yourNickname:'Votre Pseudo *',
+    photoOptional:'Photo (optionnelle)', clickToChoosePhoto:'📷 Cliquer pour choisir une photo',
+    postListing:'Publier l\'Annonce →',
+    pendingRequests:'🔔 Demandes de Suppression en Attente',
+    requestSlotRemoval:'Demander Suppression de Slot',
+    delReqSub:'Entrez votre nom exactement comme il apparaît dans le slot. L\'admin examinera la demande.',
+    yourName:'Votre nom (doit correspondre au slot) *', reason:'Raison *',
+    nameMismatch:'Le nom ne correspond pas au slot.',
+    sendRequest:'Envoyer la Demande →',
+    upcomingEvents:'Événements à venir', allCategories:'Toutes les Catégories',
+    noUpcoming:'Aucun événement prévu aujourd\'hui.',
+    noCategories:'Aucune catégorie créée pour l\'instant.',
+    noCategoriesAdmin:'Aucune catégorie. Créez la première ci-dessus !',
+    noLists:'Aucune liste dans cette catégorie. Créez la première ci-dessus !',
+    deleteCategory:'Supprimer cette catégorie et toutes ses listes ?',
+    deleteList:'Supprimer cette liste et toutes les inscriptions ?',
+    deleteMarket:'Supprimer cette annonce ?',
+    noPending:'Aucune demande en attente 🎉',
+    accept:'✓ Accepter', deny:'✗ Refuser',
+    slot:'Slot', free:'libre', full:'Complet',
+    lists:'Liste', lists_p:'Listes', category:'Catégorie',
+    filled:'remplis', signups:'inscriptions',
+    participants:'👥 Participants',
+    normalTime:'Normal', lessThanHour:'< 1 heure', lessThan15:'< 15 min',
+  }
+};
+
+let currentLang = 'en';
+function t(key) { return TRANSLATIONS[currentLang]?.[key] || TRANSLATIONS.en[key] || key; }
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent === lang.toUpperCase()));
+  applyTranslations();
+  render();
+}
+function applyTranslations() {
+  document.querySelectorAll('[data-t]').forEach(el => {
+    const key = el.getAttribute('data-t');
+    const val = t(key);
+    if (el.tagName === 'INPUT' && el.type === 'text') el.placeholder = val;
+    else el.innerHTML = val;
+  });
+  document.getElementById('tagline-text').textContent = t('tagline');
+}
+
+// ── State ──────────────────────────────────────────────────────────────────
 let isAdmin = false;
 let view = 'categories';
 let activeCatId = null;
@@ -600,11 +961,12 @@ let activeCatData = null;
 let detailListId = null;
 let detailListData = null;
 let pickedSlot = null;
+let signupStatus = 'sure'; // 'sure' or 'maybe'
 let upcomingInterval = null;
-
 let marketItems = [];
 let mktImgDataUrl = null;
-let currentView = 'home'; // 'home' | 'marketplace'
+let currentView = 'home';
+let pendingDelSlot = null;
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -621,8 +983,6 @@ function hexToRgb(hex) {
   const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
   return {r,g,b};
 }
-
-// Darken a hex color by a factor (0=black, 1=original)
 function darkenHex(hex, factor) {
   const {r,g,b} = hexToRgb(hex);
   return `rgb(${Math.round(r*factor)},${Math.round(g*factor)},${Math.round(b*factor)})`;
@@ -708,11 +1068,12 @@ async function doLogin() {
 }
 async function doLogout() {
   await api('/api/auth/logout', 'POST');
-  toast('Signed out.');
+  toast(t('signOut') + '.');
   applyAdminUI(false);
 }
 
 async function render() {
+  applyTranslations();
   if (currentView === 'marketplace') { renderMarketplace(); return; }
   if (view === 'categories') await renderCategories();
   else await renderLists();
@@ -732,14 +1093,14 @@ function updateBackBar() {
 function updateBreadcrumb() {
   const bc = $('breadcrumb');
   if (currentView === 'marketplace') {
-    bc.innerHTML = `<a onclick="goHome()">Home</a><span class="breadcrumb-sep">/</span><span style="color:var(--ink);font-weight:600">Marketplace</span>`;
+    bc.innerHTML = `<a onclick="goHome()">Home</a><span class="breadcrumb-sep">/</span><span style="color:var(--ink);font-weight:600">${t('marketplace')}</span>`;
     return;
   }
   if (view === 'categories') {
-    bc.innerHTML = '<span style="color:var(--ink);font-weight:600">All Categories</span>';
+    bc.innerHTML = `<span style="color:var(--ink);font-weight:600">${t('allCategories')}</span>`;
   } else {
     const name = activeCatData ? esc(activeCatData.name) : '…';
-    bc.innerHTML = `<a onclick="goHome()">All Categories</a><span class="breadcrumb-sep">/</span><span style="color:var(--ink);font-weight:600">${name}</span>`;
+    bc.innerHTML = `<a onclick="goHome()">${t('allCategories')}</a><span class="breadcrumb-sep">/</span><span style="color:var(--ink);font-weight:600">${name}</span>`;
   }
 }
 
@@ -761,7 +1122,7 @@ async function openCategory(id) {
   await renderLists();
 }
 
-// ── UPCOMING DASHBOARD ──
+// ── UPCOMING ──────────────────────────────────────────────────────────────
 let upcomingData = [];
 
 function stopUpcomingTicker() {
@@ -773,8 +1134,6 @@ async function renderUpcoming() {
   if (!section) return;
   upcomingData = await api('/api/lists/upcoming');
   const now = Date.now();
-
-  // Filter: timed events in the future, plus untimed events today
   const today = new Date().toISOString().slice(0, 10);
   const timedLists = upcomingData.filter(l => {
     if (!l.event_time) return false;
@@ -784,7 +1143,6 @@ async function renderUpcoming() {
   const untimedToday = upcomingData.filter(l => !l.event_time && l.event_date === today);
   const all = [...timedLists, ...untimedToday];
 
-  // Sort by time within each category: timed first, then untimed
   const sortList = arr => arr.sort((a, b) => {
     const da = getEventDateTime(a.event_date, a.event_time);
     const db2 = getEventDateTime(b.event_date, b.event_time);
@@ -794,16 +1152,10 @@ async function renderUpcoming() {
     return a.event_date.localeCompare(b.event_date);
   });
 
-  // Group by category, preserving category order (first appearance)
-  const catMap = new Map(); // categoryId -> { meta, lists[] }
+  const catMap = new Map();
   sortList(all).forEach(l => {
     if (!catMap.has(l.category_id)) {
-      catMap.set(l.category_id, {
-        id: l.category_id,
-        name: l.category_name,
-        color: l.category_color || '#1a4a7a',
-        lists: []
-      });
+      catMap.set(l.category_id, { id: l.category_id, name: l.category_name, color: l.category_color || '#1a4a7a', lists: [] });
     }
     catMap.get(l.category_id).lists.push(l);
   });
@@ -816,30 +1168,26 @@ async function renderUpcoming() {
 function drawUpcomingGrouped(catMap) {
   const grid = document.querySelector('.upcoming-grid');
   if (!grid) return;
-
   if (!catMap.size) {
-    grid.innerHTML = `<div class="upc-empty"><div class="upc-empty-text">No upcoming events today.</div></div>`;
+    grid.innerHTML = `<div class="upc-empty"><div style="color:var(--muted);font-size:.85rem">${t('noUpcoming')}</div></div>`;
     return;
   }
-
   let html = '';
   catMap.forEach(cat => {
     const color = cat.color;
     const darkColor = darkenHex(color, 0.78);
     const cardsHtml = cat.lists.map(l => buildUpcomingCard(l, color)).join('');
-    html += `
-      <div class="upc-cat-group" data-cat-id="${cat.id}">
-        <div class="upc-cat-group-hd" style="background:${esc(color)};border-color:${esc(darkColor)};">
-          <span class="upc-cat-group-hd-dot"></span>
-          <span class="upc-cat-group-hd-name">${esc(cat.name)}</span>
-          <span class="upc-cat-group-hd-count">${cat.lists.length} event${cat.lists.length !== 1 ? 's' : ''}</span>
-        </div>
-        <div class="upc-cat-group-body" style="border-color:${esc(darkColor)};border-top-color:${esc(color)};">
-          <div class="upc-cat-group-grid">${cardsHtml}</div>
-        </div>
-      </div>`;
+    html += `<div class="upc-cat-group" data-cat-id="${cat.id}">
+      <div class="upc-cat-group-hd" style="background:${esc(color)};border-color:${esc(darkColor)};">
+        <span class="upc-cat-group-hd-dot"></span>
+        <span class="upc-cat-group-hd-name">${esc(cat.name)}</span>
+        <span class="upc-cat-group-hd-count">${cat.lists.length}</span>
+      </div>
+      <div class="upc-cat-group-body" style="border-color:${esc(darkColor)};border-top-color:${esc(color)};">
+        <div class="upc-cat-group-grid">${cardsHtml}</div>
+      </div>
+    </div>`;
   });
-
   grid.innerHTML = html;
 }
 
@@ -848,32 +1196,28 @@ function buildUpcomingCard(l, catColor) {
   const ms = dt ? getMsUntil(dt) : null;
   const urgency = ms !== null ? getUrgency(ms) : 'normal';
   const countdown = ms !== null ? formatCountdown(ms) : null;
-  const color = catColor || l.category_color || '#1a4a7a';
-
+  const color = catColor || '#1a4a7a';
   let urgencyClass = '';
   if (urgency === 'warn') urgencyClass = 'urgency-warn';
   if (urgency === 'hot') urgencyClass = 'urgency-hot';
-
   let countdownChip = '';
   if (countdown) {
     const cls = urgency === 'hot' ? 'hot' : urgency === 'warn' ? 'warn' : '';
     countdownChip = `<span class="upc-chip upc-chip-countdown ${cls}" data-list-id="${l.id}">⏱ ${esc(countdown)}</span>`;
   }
-
   const timeChip = l.event_time ? `<span class="upc-chip upc-chip-time">🕐 ${esc(l.event_time)}</span>` : '';
-  const slotsChip = `<span class="upc-chip upc-chip-slots">${l.filled || 0}/${l.slots} filled</span>`;
+  const slotsChip = `<span class="upc-chip upc-chip-slots">${l.filled || 0}/${l.slots}</span>`;
   const channelChip = l.channel ? `<span class="upc-chip upc-chip-ch">Ch.${l.channel}</span>` : '';
-
   const MAX_SHOWN = 5;
   const signups = l.signups || [];
   const nameMap = {};
-  signups.forEach(s => { nameMap[s.slot_number] = s.nickname; });
+  signups.forEach(s => { nameMap[s.slot_number] = { nick: s.nickname, status: s.status }; });
   const chips = Array.from({length: Math.min(l.slots, MAX_SHOWN)}, (_, i) => {
     const n = i + 1;
-    const name = nameMap[n];
-    return name
-      ? `<span class="upc-participant-chip">${esc(name)}</span>`
-      : `<span class="upc-free-chip">#${n} free</span>`;
+    const entry = nameMap[n];
+    if (!entry) return `<span class="upc-free-chip">#${n}</span>`;
+    const cls = entry.status === 'maybe' ? 'maybe' : entry.status === 'standby' ? 'standby' : '';
+    return `<span class="upc-participant-chip ${cls}">${esc(entry.nick)}</span>`;
   });
   const remaining = l.slots - MAX_SHOWN;
   if (remaining > 0) chips.push(`<span class="upc-more-chip">+${remaining}</span>`);
@@ -884,10 +1228,7 @@ function buildUpcomingCard(l, catColor) {
       <div class="upc-title">${esc(l.title)}</div>
       <div class="upc-meta">
         <span class="upc-chip upc-chip-date">📅 ${fmtDate(l.event_date)}</span>
-        ${timeChip}
-        ${countdownChip}
-        ${channelChip}
-        ${slotsChip}
+        ${timeChip}${countdownChip}${channelChip}${slotsChip}
       </div>
       <div class="upc-divider"></div>
       <div class="upc-participants">${chips.join('')}</div>
@@ -896,7 +1237,6 @@ function buildUpcomingCard(l, catColor) {
 }
 
 function tickUpcoming() {
-  let anyRemoved = false;
   upcomingData.forEach(l => {
     if (!l.event_time) return;
     const dt = getEventDateTime(l.event_date, l.event_time);
@@ -906,23 +1246,18 @@ function tickUpcoming() {
     const card = document.querySelector(`.upc-card[data-list-id="${l.id}"]`);
     if (!card) return;
     if (urgency === 'gone') {
-      card.style.transition = 'opacity .6s, transform .6s';
+      card.style.transition = 'opacity .6s';
       card.style.opacity = '0';
-      card.style.transform = 'scale(.95)';
       setTimeout(() => {
         card.remove();
         upcomingData = upcomingData.filter(x => x.id !== l.id);
-        // Remove empty category group
-        document.querySelectorAll('.upc-cat-group').forEach(g => {
-          if (!g.querySelector('.upc-card')) g.remove();
-        });
+        document.querySelectorAll('.upc-cat-group').forEach(g => { if (!g.querySelector('.upc-card')) g.remove(); });
         const grid = document.querySelector('.upcoming-grid');
         if (grid && !grid.querySelector('.upc-card')) {
-          grid.innerHTML = `<div class="upc-empty"><div class="upc-empty-text">No more upcoming events today.</div></div>`;
+          grid.innerHTML = `<div class="upc-empty"><div style="color:var(--muted);font-size:.85rem">${t('noUpcoming')}</div></div>`;
           stopUpcomingTicker();
         }
       }, 650);
-      anyRemoved = true;
       return;
     }
     const chip = card.querySelector(`[data-list-id="${l.id}"].upc-chip-countdown`);
@@ -930,7 +1265,7 @@ function tickUpcoming() {
       chip.textContent = `⏱ ${formatCountdown(ms)}`;
       chip.className = `upc-chip upc-chip-countdown${urgency === 'hot' ? ' hot' : urgency === 'warn' ? ' warn' : ''}`;
     }
-    card.classList.remove('urgency-warn', 'urgency-hot');
+    card.classList.remove('urgency-warn','urgency-hot');
     if (urgency === 'warn') card.classList.add('urgency-warn');
     if (urgency === 'hot') card.classList.add('urgency-hot');
   });
@@ -945,7 +1280,7 @@ async function openCategoryFromUpcoming(catId, listId) {
   setTimeout(() => openDetail(listId), 200);
 }
 
-// ── Categories view ──
+// ── Categories ──────────────────────────────────────────────────────────
 async function renderCategories() {
   currentView = 'home';
   stopUpcomingTicker();
@@ -954,17 +1289,17 @@ async function renderCategories() {
   const cats = await api('/api/categories');
   const mv = $('main-view');
   const adminActions = isAdmin
-    ? `<div class="view-hd-actions"><button class="btn btn-fill" onclick="openCatModal()">+ New Category</button></div>`
+    ? `<div class="view-hd-actions"><button class="btn btn-fill" onclick="openCatModal()">+ ${t('newCategory')}</button></div>`
     : '';
   mv.innerHTML = `
     <div id="upcoming-section">
       <div class="upcoming-hd">
         <span class="upcoming-live-dot"></span>
-        Upcoming Events
+        ${t('upcomingEvents')}
         <span style="margin-left:auto;display:flex;align-items:center;gap:14px;font-family:'JetBrains Mono',monospace;font-size:.65rem;">
-          <span style="display:flex;align-items:center;gap:5px;color:var(--muted)"><span style="width:9px;height:9px;border-radius:50%;background:var(--green);display:inline-block;"></span>Normal</span>
-          <span style="display:flex;align-items:center;gap:5px;color:var(--muted)"><span style="width:9px;height:9px;border-radius:50%;background:var(--yellow);display:inline-block;"></span>&lt; 1 hour</span>
-          <span style="display:flex;align-items:center;gap:5px;color:var(--muted)"><span style="width:9px;height:9px;border-radius:50%;background:var(--red);display:inline-block;"></span>&lt; 15 min</span>
+          <span style="display:flex;align-items:center;gap:5px;color:var(--muted)"><span style="width:9px;height:9px;border-radius:50%;background:var(--green);display:inline-block;"></span>${t('normalTime')}</span>
+          <span style="display:flex;align-items:center;gap:5px;color:var(--muted)"><span style="width:9px;height:9px;border-radius:50%;background:var(--yellow);display:inline-block;"></span>${t('lessThanHour')}</span>
+          <span style="display:flex;align-items:center;gap:5px;color:var(--muted)"><span style="width:9px;height:9px;border-radius:50%;background:var(--red);display:inline-block;"></span>${t('lessThan15')}</span>
         </span>
       </div>
       <div class="upcoming-grid"></div>
@@ -972,33 +1307,33 @@ async function renderCategories() {
     <div class="view-hd">
       <div class="view-hd-left">
         <div class="view-label">Overview</div>
-        <div class="view-title">All Categories</div>
-        ${cats.length ? `<div class="view-desc">${cats.length} Categor${cats.length!==1?'ies':'y'}</div>` : ''}
+        <div class="view-title">${t('allCategories')}</div>
+        ${cats.length ? `<div class="view-desc">${cats.length} ${cats.length!==1?t('lists_p'):t('lists')}</div>` : ''}
       </div>
       ${adminActions}
     </div>
     <div id="cat-grid"></div>`;
   const grid = $('cat-grid');
   if (!cats.length) {
-    grid.innerHTML = `<div class="empty"><span class="empty-icon">🗂️</span><div class="empty-text">${isAdmin ? 'No categories yet.<br>Create your first one above!' : 'No categories have been created yet.'}</div></div>`;
+    grid.innerHTML = `<div class="empty"><span class="empty-icon">🗂️</span><div class="empty-text">${isAdmin ? t('noCategoriesAdmin') : t('noCategories')}</div></div>`;
   } else {
     grid.innerHTML = cats.map(c => {
       const pct = c.total_slots ? Math.round(c.total_signups / c.total_slots * 100) : 0;
       const adminBtns = isAdmin ? `
         <div class="cat-actions">
-          <button class="btn btn-xs" onclick="event.stopPropagation();editCatModal(${c.id})" title="Edit">✏️</button>
-          <button class="btn btn-xs btn-red" onclick="event.stopPropagation();deleteCat(${c.id})" title="Delete">🗑</button>
+          <button class="btn btn-xs" onclick="event.stopPropagation();editCatModal(${c.id})">✏️</button>
+          <button class="btn btn-xs btn-red" onclick="event.stopPropagation();deleteCat(${c.id})">🗑</button>
         </div>` : '';
       return `<div class="cat-card" onclick="openCategory(${c.id})">
         <div class="cat-stripe" style="background:${esc(c.color)}"></div>
         ${adminBtns}
         <div class="cat-body">
           <div class="cat-name">${esc(c.name)}</div>
-          <div class="cat-desc">${c.description ? esc(c.description) : '<em style="opacity:.5">No description</em>'}</div>
+          <div class="cat-desc">${c.description ? esc(c.description) : '<em style="opacity:.5">–</em>'}</div>
           <div class="cat-stats">
-            <span><strong>${c.list_count}</strong> List${c.list_count!==1?'s':''}</span>
-            <span><strong>${c.total_signups}</strong> / ${c.total_slots} Slots</span>
-            ${c.total_slots ? `<span><strong>${pct}%</strong> filled</span>` : ''}
+            <span><strong>${c.list_count}</strong> ${c.list_count!==1?t('lists_p'):t('lists')}</span>
+            <span><strong>${c.total_signups}</strong> / ${c.total_slots} ${t('filled')}</span>
+            ${c.total_slots ? `<span><strong>${pct}%</strong></span>` : ''}
           </div>
         </div>
       </div>`;
@@ -1007,7 +1342,7 @@ async function renderCategories() {
   renderUpcoming();
 }
 
-// ── Lists view ──
+// ── Lists ──────────────────────────────────────────────────────────────────
 async function renderLists() {
   currentView = 'home';
   stopUpcomingTicker();
@@ -1018,15 +1353,15 @@ async function renderLists() {
   const mv = $('main-view');
   const adminActions = `
     <div class="view-hd-actions">
-      <button class="btn btn-fill" onclick="openListModal()">+ New List</button>
-      ${isAdmin ? `<button class="btn btn-xs" onclick="editCatModal(${data.id})" title="Edit category">✏️ Edit</button>` : ''}
+      <button class="btn btn-fill" onclick="openListModal()">+ ${t('newList')}</button>
+      ${isAdmin ? `<button class="btn btn-xs" onclick="editCatModal(${data.id})">✏️</button>` : ''}
     </div>`;
   mv.innerHTML = `
     <div class="view-hd">
       <div class="view-hd-left">
         <div class="view-label" style="display:flex;align-items:center;gap:8px">
           <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${esc(data.color)}"></span>
-          Category
+          ${t('category')}
         </div>
         <div class="view-title">${esc(data.name)}</div>
         ${data.description ? `<div class="view-desc">${esc(data.description)}</div>` : ''}
@@ -1036,35 +1371,41 @@ async function renderLists() {
     <div id="list-grid"></div>`;
   const grid = $('list-grid');
   if (!data.lists || !data.lists.length) {
-    grid.innerHTML = `<div class="empty"><span class="empty-icon">📋</span><div class="empty-text">No lists in this category yet.<br>Create your first one above!</div></div>`;
+    grid.innerHTML = `<div class="empty"><span class="empty-icon">📋</span><div class="empty-text">${t('noLists')}</div></div>`;
     return;
   }
   grid.innerHTML = data.lists.map(l => {
     const pct = l.slots ? Math.round(l.filled / l.slots * 100) : 0;
     const mc = pct >= 100 ? 'full' : pct >= 70 ? 'warn' : '';
     const free = l.slots - l.filled;
-    const delBtn = `<button class="card-del-btn" onclick="event.stopPropagation();deleteList(${l.id})" title="Delete list">🗑</button>`;
-    const teamMatch = l.title.match(/^(.*?)\s*(\(Team \d+\))$/);
-    const displayTitle = teamMatch ? `${esc(teamMatch[1])} <strong>${esc(teamMatch[2])}</strong>` : esc(l.title);
     const timeLabel = l.event_time ? ` · <span style="color:var(--blue)">🕐 ${esc(l.event_time)}</span>` : '';
     const channelLabel = l.channel ? ` · ${chLabel(l.channel)}` : '';
+    const teamMatch = l.title.match(/^(.*?)\s*(\(Team \d+\))$/);
+    const displayTitle = teamMatch ? `${esc(teamMatch[1])} <strong>${esc(teamMatch[2])}</strong>` : esc(l.title);
+    const adminBtns = isAdmin
+      ? `<div class="card-admin-btns">
+          <button class="btn btn-xs" onclick="event.stopPropagation();openEditListModal(${l.id})" title="${t('editList')}">✏️</button>
+          <button class="btn btn-xs btn-red" onclick="event.stopPropagation();deleteList(${l.id})" title="Delete">🗑</button>
+        </div>`
+      : `<button class="card-del-btn" onclick="event.stopPropagation();deleteList(${l.id})">🗑</button>`;
     return `<div class="list-card" onclick="openDetail(${l.id})">
       <div class="list-card-top-bar" style="background:${esc(data.color)}"></div>
-      ${delBtn}
+      ${adminBtns}
       <div class="card-date">📅 ${fmtDate(l.event_date)}${timeLabel}${channelLabel}</div>
       <div class="card-title">${displayTitle}</div>
       ${l.description ? `<div class="card-desc">${esc(l.description)}</div>` : ''}
       <div class="slot-meter"><div class="slot-fill ${mc}" style="width:${pct}%"></div></div>
       <div class="card-slots">
-        <span><strong>${l.filled}</strong> / ${l.slots} filled</span>
-        <span>${free > 0 ? `${free} free` : '<span style="color:var(--red)">Full</span>'}</span>
+        <span><strong>${l.filled}</strong> / ${l.slots} ${t('filled')}</span>
+        <span>${free > 0 ? `${free} ${t('free')}` : `<span style="color:var(--red)">${t('full')}</span>`}</span>
       </div>
     </div>`;
   }).join('');
 
+  // Participants dashboard
   const dashEl = document.createElement('div');
   dashEl.className = 'dashboard';
-  dashEl.innerHTML = `<div class="dashboard-hd">👥 Participants</div><div class="dashboard-grid" id="dashboard-grid"></div>`;
+  dashEl.innerHTML = `<div class="dashboard-hd">${t('participants')}</div><div class="dashboard-grid" id="dashboard-grid"></div>`;
   mv.appendChild(dashEl);
 
   const dashGrid = document.getElementById('dashboard-grid');
@@ -1075,9 +1416,12 @@ async function renderLists() {
     const teamLabel = teamMatch ? teamMatch[2] : '';
     const rows = Array.from({length: l.slots}, (_, i) => {
       const signup = l.signups.find(s => s.slot_number === i + 1);
+      const dotColor = signup ? (signup.status === 'maybe' ? 'var(--yellow)' : signup.status === 'standby' ? 'var(--orange)' : 'var(--green)') : 'transparent';
+      const nameClass = signup ? (signup.status === 'maybe' ? 'maybe-name' : signup.status === 'standby' ? 'standby-name' : '') : 'free';
       return `<li class="dash-name-row">
-        <span class="dash-num">${i + 1}.</span>
-        <span class="dash-name ${signup ? '' : 'free'}">${signup ? esc(signup.nickname) : 'free'}</span>
+        <span class="dash-num">${i+1}.</span>
+        <span class="dash-name ${nameClass}">${signup ? esc(signup.nickname) : t('free')}</span>
+        ${signup ? `<span class="dash-status-dot" style="background:${dotColor};border:1.5px solid rgba(0,0,0,.12);"></span>` : ''}
       </li>`;
     }).join('');
     return `<div class="dash-col">
@@ -1094,12 +1438,12 @@ async function renderLists() {
   }).join('');
 }
 
-// ── Category CRUD ──
+// ── Category CRUD ──────────────────────────────────────────────────────────
 function buildColorPicker(selected) {
   const container = $('color-presets');
-  container.innerHTML = COLORS.map(c => `
-    <div class="color-dot ${c===selected?'active':''}" style="background:${c}" title="${c}"
-      onclick="selectColor('${c}')"></div>`).join('');
+  container.innerHTML = COLORS.map(c =>
+    `<div class="color-dot ${c===selected?'active':''}" style="background:${c}" title="${c}" onclick="selectColor('${c}')"></div>`
+  ).join('');
   $('cat-color').value = selected;
 }
 function selectColor(c) {
@@ -1107,7 +1451,7 @@ function selectColor(c) {
   document.querySelectorAll('.color-dot').forEach(d => d.classList.toggle('active', d.title === c));
 }
 function openCatModal(prefill=null) {
-  $('cat-modal-title').textContent = 'New Category';
+  $('cat-modal-title').textContent = t('newCategory');
   $('cat-name').value = prefill?.name || '';
   $('cat-desc').value = prefill?.description || '';
   $('cat-edit-id').value = '';
@@ -1117,7 +1461,7 @@ function openCatModal(prefill=null) {
 }
 async function editCatModal(id) {
   const data = await api(`/api/categories/${id}`);
-  $('cat-modal-title').textContent = 'Edit Category';
+  $('cat-modal-title').textContent = t('editCategory');
   $('cat-name').value = data.name || '';
   $('cat-desc').value = data.description || '';
   $('cat-edit-id').value = id;
@@ -1130,36 +1474,54 @@ async function submitCategory() {
   const description = $('cat-desc').value.trim();
   const color = $('cat-color').value;
   const editId = $('cat-edit-id').value;
-  if (!name) return toast('Please enter a category name.', true);
+  if (!name) return toast(t('name') + '!', true);
   if (editId) {
     const r = await api(`/api/categories/${editId}`, 'PUT', { name, description, color });
     if (r.error) return toast(r.error, true);
-    toast('Category updated ✓');
+    toast(t('editCategory') + ' ✓');
   } else {
     const r = await api('/api/categories', 'POST', { name, description, color });
     if (r.error) return toast(r.error, true);
-    toast('Category created ✓');
+    toast(t('newCategory') + ' ✓');
   }
   closeModal('bd-cat');
   render();
 }
 async function deleteCat(id) {
-  if (!confirm('Delete this category and all its lists? This cannot be undone.')) return;
+  if (!confirm(t('deleteCategory'))) return;
   const r = await api(`/api/categories/${id}`, 'DELETE');
   if (r.error) return toast(r.error, true);
-  toast('Category deleted.');
+  toast('Deleted.');
   if (activeCatId === id) await goHome();
   else render();
 }
 
-// ── List CRUD ──
+// ── List CRUD ──────────────────────────────────────────────────────────────
 function openListModal() {
+  $('list-modal-title').textContent = t('newList');
+  $('list-submit-label').textContent = t('createList');
   $('list-title').value = '';
   $('list-date').value = new Date().toISOString().slice(0, 10);
   $('list-time').value = '';
   $('list-slots').value = '10';
   $('list-channel').value = '1';
   $('list-desc').value = '';
+  $('list-edit-id').value = '';
+  openModal('bd-list');
+  setTimeout(() => $('list-title').focus(), 60);
+}
+
+async function openEditListModal(id) {
+  const data = await api(`/api/lists/${id}`);
+  $('list-modal-title').textContent = t('editList');
+  $('list-submit-label').textContent = t('updateList');
+  $('list-title').value = data.title || '';
+  $('list-date').value = data.event_date || '';
+  $('list-time').value = data.event_time || '';
+  $('list-slots').value = data.slots || 10;
+  $('list-channel').value = data.channel || 1;
+  $('list-desc').value = data.description || '';
+  $('list-edit-id').value = id;
   openModal('bd-list');
   setTimeout(() => $('list-title').focus(), 60);
 }
@@ -1171,8 +1533,21 @@ async function submitList() {
   const slots = parseInt($('list-slots').value) || 0;
   const channel = parseInt($('list-channel').value) || 1;
   const description = $('list-desc').value.trim();
-  if (!title || !event_date || !slots) return toast('Please fill in all required fields.', true);
+  const editId = $('list-edit-id').value;
 
+  if (!title || !event_date || !slots) return toast(t('title') + '!', true);
+
+  if (editId) {
+    // Editing existing list
+    const r = await api(`/api/lists/${editId}`, 'PUT', { title, description, event_date, event_time, slots, channel });
+    if (r.error) return toast(r.error, true);
+    toast(t('editList') + ' ✓');
+    closeModal('bd-list');
+    renderLists();
+    return;
+  }
+
+  // Creating new list
   const existing = await api(`/api/categories/${activeCatId}`);
   const dupes = (existing.lists || []).filter(l => l.title === title && l.event_date === event_date);
   let finalTitle = title;
@@ -1185,85 +1560,122 @@ async function submitList() {
         event_date: first.event_date,
         event_time: first.event_time || '',
         slots: first.slots,
-        channel: first.channel || 1,
-        category_id: activeCatId
+        channel: first.channel || 1
       });
     }
     finalTitle = `${title} (Team ${dupes.length + 1})`;
   }
-
   const r = await api('/api/lists', 'POST', { category_id: activeCatId, title: finalTitle, description, event_date, event_time, slots, channel });
   if (r.error) return toast(r.error, true);
-  toast('List created ✓');
+  toast(t('newList') + ' ✓');
   closeModal('bd-list');
   renderLists();
 }
 
 async function deleteList(id) {
-  if (!confirm('Delete this list and all sign-ups? This cannot be undone.')) return;
+  if (!confirm(t('deleteList'))) return;
   const r = await api(`/api/lists/${id}`, 'DELETE');
   if (r.error) return toast(r.error, true);
-  toast('List deleted.');
+  toast('Deleted.');
   if (detailListId === id) closeModal('bd-detail');
   renderLists();
 }
 
-// ── List Detail & Sign-up ──
+// ── List Detail & Sign-up ──────────────────────────────────────────────────
 async function openDetail(id) {
   detailListId = id;
   pickedSlot = null;
+  signupStatus = 'sure';
   $('det-signup').innerHTML = '';
   const data = await api(`/api/lists/${id}`);
   detailListData = data;
   $('det-title').textContent = data.title;
   renderDetailPills(data);
-  $('det-desc').textContent = data.description || 'No description provided.';
+  $('det-desc').textContent = data.description || '–';
   $('det-desc').style.color = data.description ? '' : 'var(--muted)';
+  applyTranslations();
   renderSlots();
   openModal('bd-detail');
 }
 
 function renderDetailPills(data) {
-  const free = data.slots - (data.signups?.length || 0);
+  const filled = (data.signups || []).filter(s => s.status !== 'standby').length;
+  const free = data.slots - filled;
   const pc = free === 0 ? 'pill-red' : free <= 3 ? 'pill-yellow' : 'pill-green';
   const timeChip = data.event_time ? `<span class="pill pill-blue">🕐 ${esc(data.event_time)}</span>` : '';
-  const channelChip = data.channel ? `<span class="pill pill-purple">📡 Channel ${data.channel}</span>` : '';
+  const channelChip = data.channel ? `<span class="pill pill-purple">📡 Ch. ${data.channel}</span>` : '';
   $('det-pills').innerHTML = `
     <span class="pill pill-blue">📅 ${fmtDate(data.event_date)}</span>
-    ${timeChip}
-    ${channelChip}
-    <span class="pill pill-blue">🪑 ${data.slots} Slots</span>
-    <span class="pill ${pc}">${free > 0 ? `✔ ${free} free` : '✖ Full'}</span>`;
+    ${timeChip}${channelChip}
+    <span class="pill pill-blue">🪑 ${data.slots}</span>
+    <span class="pill ${pc}">${free > 0 ? `✔ ${free} ${t('free')}` : `✖ ${t('full')}`}</span>`;
 }
 
 function renderSlots() {
   if (!detailListData) return;
   const tm = {};
-  (detailListData.signups || []).forEach(s => tm[s.slot_number] = s.nickname);
+  (detailListData.signups || []).forEach(s => { tm[s.slot_number] = s; });
+  const pending = new Set(detailListData.pendingDeleteSlots || []);
+
   $('det-slots').innerHTML = Array.from({ length: detailListData.slots }, (_, i) => {
-    const n = i + 1, name = tm[n], taken = !!name, picked = pickedSlot === n;
-    const delBtn = taken
-      ? isAdmin
-        ? `<button class="slot-del" onclick="event.stopPropagation();removeSignup(${n})" title="Remove">✕</button>`
-        : `<button class="slot-del" onclick="event.stopPropagation();openDeleteRequest(${n})" title="Request removal">✕</button>`
+    const n = i + 1;
+    const signup = tm[n];
+    const isPending = pending.has(n);
+    const taken = !!signup;
+    const picked = pickedSlot === n;
+    const statusClass = taken ? signup.status : 'free';
+    const pendingClass = isPending ? ' pending-delete' : '';
+
+    // Status dot
+    const dotColor = taken ? (signup.status === 'maybe' ? 'var(--yellow)' : signup.status === 'standby' ? 'var(--orange)' : 'var(--green)') : 'var(--rule)';
+    const dotHtml = `<span class="status-dot" style="background:${dotColor}"></span>`;
+
+    let btnHtml = '';
+    if (taken) {
+      if (isAdmin) {
+        btnHtml = `<button class="slot-del" onclick="event.stopPropagation();removeSignup(${n})" title="Remove">✕</button>`;
+      } else {
+        btnHtml = `<button class="slot-del" onclick="event.stopPropagation();openDeleteRequest(${n})" title="Request">✕</button>`;
+      }
+    }
+    const reqBadge = isPending ? `<span class="slot-req-badge">⚠️</span>` : '';
+    const statusLabel = taken
+      ? (signup.status === 'maybe' ? '🟡' : signup.status === 'standby' ? '🟠' : '✅')
       : '';
-    return `<div class="slot ${taken?'taken':'free'}${picked?' picked':''}" onclick="${taken?'':'pickSlot('+n+')'}">
-      <div class="slot-n">Slot ${n}</div>
-      <div class="slot-who">${taken ? esc(name) : '+ Sign up'}</div>
-      ${delBtn}
+
+    // For a maybe slot: allow standby registration
+    let clickHandler = '';
+    if (!taken) {
+      clickHandler = `onclick="pickSlot(${n}, 'free')"`;
+    } else if (taken && signup.status === 'maybe' && !pending.has(n)) {
+      // Check if standby slot exists right after
+      const nextSlot = tm[n]; // same slot is 'maybe', user can register standby
+      // We allow standby on the same slot by clicking maybe slot
+      clickHandler = `onclick="pickStandbySlot(${n})"`;
+    }
+
+    return `<div class="slot ${statusClass}${pendingClass}${picked?' picked':''}" ${!taken ? clickHandler : (taken && signup.status === 'maybe' ? clickHandler : '')}>
+      <div class="slot-n">${dotHtml} #${n} ${statusLabel}</div>
+      <div class="slot-who">${taken ? esc(signup.nickname) : '+ ' + t('signUpBtn')}</div>
+      ${btnHtml}${reqBadge}
     </div>`;
   }).join('');
 }
 
-function pickSlot(n) {
+function pickSlot(n, type='free') {
   pickedSlot = n;
+  signupStatus = 'sure';
   renderSlots();
   const box = $('det-signup');
   box.innerHTML = `<div class="signup-box">
-    <p>Slot <strong>#${n}</strong> — enter your nickname to sign up:</p>
+    <p>${t('signupFor')} <strong>#${n}</strong> — ${t('enterNickname')}</p>
+    <div class="status-toggle">
+      <div class="status-opt sure-opt active" onclick="selectStatus('sure', this)">${t('statusSure')}</div>
+      <div class="status-opt maybe-opt" onclick="selectStatus('maybe', this)">${t('statusMaybe')}</div>
+    </div>
     <div class="inline-row">
-      <input type="text" id="nick-input" placeholder="Your nickname…" maxlength="60"/>
-      <button class="btn btn-fill btn-sm" onclick="submitSignup(${n})">Sign up ✓</button>
+      <input type="text" id="nick-input" placeholder="…" maxlength="60"/>
+      <button class="btn btn-fill btn-sm" onclick="submitSignup(${n})">${t('signUpBtn')}</button>
     </div>
   </div>`;
   const inp = $('nick-input');
@@ -1272,15 +1684,69 @@ function pickSlot(n) {
   box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
+function pickStandbySlot(n) {
+  pickedSlot = n;
+  signupStatus = 'standby';
+  renderSlots();
+  const box = $('det-signup');
+  box.innerHTML = `<div class="signup-box" style="border-color:var(--orange)">
+    <p>${t('signupFor')} <strong>#${n}</strong> — <span style="color:var(--orange)">${t('legendStandby')}</span></p>
+    <div class="standby-note">${t('standbyNote')}</div>
+    <div class="inline-row">
+      <input type="text" id="nick-input" placeholder="…" maxlength="60"/>
+      <button class="btn btn-sm btn-yellow" onclick="submitSignupStandby(${n})">${t('signUpBtn')}</button>
+    </div>
+  </div>`;
+  const inp = $('nick-input');
+  inp.focus();
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') submitSignupStandby(n); });
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function selectStatus(status, el) {
+  signupStatus = status;
+  document.querySelectorAll('.status-opt').forEach(o => o.classList.remove('active'));
+  el.classList.add('active');
+}
+
 async function submitSignup(slotNum) {
   const nick = ($('nick-input')?.value || '').trim();
-  if (!nick) return toast('Please enter a nickname.', true);
-  const r = await api(`/api/lists/${detailListId}/signup`, 'POST', { slot_number: slotNum, nickname: nick });
+  if (!nick) return toast(t('yourNickname') + '!', true);
+  const r = await api(`/api/lists/${detailListId}/signup`, 'POST', { slot_number: slotNum, nickname: nick, status: signupStatus });
   if (r.error) {
-    toast(r.error === 'Slot already taken' ? 'That slot was just taken — pick another!' : r.error, true);
+    toast(r.error, true);
     return;
   }
-  toast(`${nick} → Slot #${slotNum} confirmed ✓`);
+  toast(`${nick} → #${slotNum} ✓`);
+  pickedSlot = null;
+  $('det-signup').innerHTML = '';
+  const data = await api(`/api/lists/${detailListId}`);
+  detailListData = data;
+  renderDetailPills(data);
+  renderSlots();
+  if (view === 'lists') renderLists();
+}
+
+async function submitSignupStandby(slotNum) {
+  // Standby is a separate slot (slot number + 0.5 doesn't exist in DB)
+  // We implement standby as a second signup in a new slot using status='standby'
+  // First check the maybe slot exists
+  const signup = (detailListData.signups || []).find(s => s.slot_number === slotNum);
+  if (!signup || signup.status !== 'maybe') return toast('No maybe on this slot.', true);
+
+  // Find a free slot for standby
+  const takenSlots = new Set((detailListData.signups || []).map(s => s.slot_number));
+  let standbySlot = null;
+  for (let i = 1; i <= detailListData.slots; i++) {
+    if (!takenSlots.has(i)) { standbySlot = i; break; }
+  }
+  if (standbySlot === null) return toast(t('full'), true);
+
+  const nick = ($('nick-input')?.value || '').trim();
+  if (!nick) return toast(t('yourNickname') + '!', true);
+  const r = await api(`/api/lists/${detailListId}/signup`, 'POST', { slot_number: standbySlot, nickname: nick, status: 'standby' });
+  if (r.error) { toast(r.error, true); return; }
+  toast(`${nick} → Standby #${standbySlot} ✓`);
   pickedSlot = null;
   $('det-signup').innerHTML = '';
   const data = await api(`/api/lists/${detailListId}`);
@@ -1291,18 +1757,17 @@ async function submitSignup(slotNum) {
 }
 
 async function removeSignup(slotNum) {
-  if (!confirm(`Remove sign-up from slot #${slotNum}?`)) return;
+  if (!confirm(`Remove slot #${slotNum}?`)) return;
   await api(`/api/lists/${detailListId}/signup/${slotNum}`, 'DELETE');
   toast(`Slot #${slotNum} cleared.`);
   const data = await api(`/api/lists/${detailListId}`);
   detailListData = data;
+  renderDetailPills(data);
   renderSlots();
   if (view === 'lists') renderLists();
 }
 
-// ── Delete Requests ──
-let pendingDelSlot = null;
-
+// ── Delete Requests ────────────────────────────────────────────────────────
 async function pollRequests() {
   const r = await api('/api/delete-requests/count');
   const btn = $('btn-requests');
@@ -1322,7 +1787,7 @@ async function openRequests() {
   const rows = await api('/api/delete-requests');
   const wrap = $('req-list-wrap');
   if (!rows.length) {
-    wrap.innerHTML = `<div style="text-align:center;padding:30px;color:var(--muted);font-size:.88rem">No pending requests 🎉</div>`;
+    wrap.innerHTML = `<div style="text-align:center;padding:30px;color:var(--muted);font-size:.88rem">${t('noPending')}</div>`;
   } else {
     wrap.innerHTML = `<div class="req-list">${rows.map(r => `
       <div class="req-item" id="req-${r.id}">
@@ -1330,12 +1795,12 @@ async function openRequests() {
           <div class="req-item-info">
             <div class="req-item-name">${esc(r.nickname)}</div>
             <div style="font-size:.78rem;color:var(--muted);font-family:'JetBrains Mono',monospace">
-              ${esc(r.list_title)} · Slot #${r.slot_number} · ${fmtDate(r.event_date)}
+              ${esc(r.list_title)} · #${r.slot_number} · ${fmtDate(r.event_date)}
             </div>
           </div>
           <div class="req-item-actions">
-            <button class="btn btn-sm btn-green" onclick="acceptRequest(${r.id})">✓ Accept</button>
-            <button class="btn btn-sm btn-red" onclick="denyRequest(${r.id})">✗ Deny</button>
+            <button class="btn btn-sm btn-green" onclick="acceptRequest(${r.id})">${t('accept')}</button>
+            <button class="btn btn-sm btn-red" onclick="denyRequest(${r.id})">${t('deny')}</button>
           </div>
         </div>
         ${r.reason ? `<div class="req-item-reason">"${esc(r.reason)}"</div>` : ''}
@@ -1356,7 +1821,7 @@ function openDeleteRequest(slotNum) {
 async function submitDeleteRequest() {
   const nickname = $('delreq-name').value.trim();
   const reason = $('delreq-reason').value.trim();
-  if (!nickname || !reason) return toast('Please fill in both fields.', true);
+  if (!nickname || !reason) return toast('Please fill in all fields.', true);
   const r = await api(`/api/lists/${detailListId}/signup/${pendingDelSlot}/request-delete`, 'POST', { nickname, reason });
   if (r.error) {
     $('delreq-err').textContent = r.error;
@@ -1364,17 +1829,22 @@ async function submitDeleteRequest() {
     return;
   }
   closeModal('bd-del-req');
-  toast('Removal request sent to admin ✓');
+  toast(t('sendRequest') + ' ✓');
+  // Refresh slots to show red highlight
+  const data = await api(`/api/lists/${detailListId}`);
+  detailListData = data;
+  renderSlots();
 }
 
 async function acceptRequest(id) {
   await api(`/api/delete-requests/${id}/accept`, 'POST');
-  toast('Request accepted — slot cleared ✓');
+  toast(t('accept') + ' ✓');
   document.getElementById(`req-${id}`)?.remove();
   pollRequests();
   if (detailListId) {
     const data = await api(`/api/lists/${detailListId}`);
     detailListData = data;
+    renderDetailPills(data);
     renderSlots();
     if (view === 'lists') renderLists();
   }
@@ -1382,12 +1852,12 @@ async function acceptRequest(id) {
 
 async function denyRequest(id) {
   await api(`/api/delete-requests/${id}/deny`, 'POST');
-  toast('Request denied.');
+  toast(t('deny') + '.');
   document.getElementById(`req-${id}`)?.remove();
   pollRequests();
 }
 
-// ── MARKETPLACE ──
+// ── Marketplace ────────────────────────────────────────────────────────────
 function openMarketplace() {
   currentView = 'marketplace';
   stopUpcomingTicker();
@@ -1402,14 +1872,14 @@ async function renderMarketplace() {
     <div class="market-nav">
       <div class="market-nav-left">
         <div class="market-nav-label">Community</div>
-        <div class="market-nav-title">🛒 Marketplace</div>
+        <div class="market-nav-title">🛒 ${t('marketplace')}</div>
       </div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <button class="btn btn-fill" onclick="openMarketNew()">+ List an Item</button>
-        <button class="btn btn-xs" onclick="goHome()">← Back to Home</button>
+        <button class="btn btn-fill" onclick="openMarketNew()">+ ${t('listAnItem')}</button>
+        <button class="btn btn-xs" onclick="goHome()">← Home</button>
       </div>
     </div>
-    <div id="market-grid" class="market-grid"><div class="empty" style="grid-column:1/-1"><span class="empty-icon" style="font-size:1.5rem">⏳</span><div class="empty-text">Loading listings…</div></div></div>`;
+    <div id="market-grid" class="market-grid"><div class="empty" style="grid-column:1/-1"><span class="empty-icon" style="font-size:1.5rem">⏳</span></div></div>`;
   const items = await api('/api/marketplace');
   marketItems = items;
   renderMarketGrid();
@@ -1419,13 +1889,11 @@ async function renderMarketGrid() {
   const grid = $('market-grid');
   if (!grid) return;
   if (!marketItems.length) {
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><span class="empty-icon">🛍️</span><div class="empty-text">No listings yet.<br>Be the first to post something!</div></div>`;
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><span class="empty-icon">🛍️</span><div class="empty-text">–</div></div>`;
     return;
   }
   grid.innerHTML = marketItems.map(item => {
-    const delBtn = isAdmin
-      ? `<button class="market-card-del" onclick="deleteMarketItem(${item.id})" title="Delete listing">🗑 Delete</button>`
-      : '';
+    const delBtn = isAdmin ? `<button class="market-card-del" onclick="deleteMarketItem(${item.id})">🗑 Delete</button>` : '';
     const dateStr = new Date(item.created_at).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
     return `<div class="market-card" id="mkt-card-${item.id}">
       <div class="market-card-top-bar"></div>
@@ -1459,10 +1927,10 @@ async function renderMarketGrid() {
 }
 
 async function deleteMarketItem(id) {
-  if (!confirm('Delete this listing? This cannot be undone.')) return;
+  if (!confirm(t('deleteMarket'))) return;
   const r = await api(`/api/marketplace/${id}`, 'DELETE');
   if (r.error) return toast(r.error, true);
-  toast('Listing deleted.');
+  toast('Deleted.');
   marketItems = marketItems.filter(i => i.id !== id);
   renderMarketGrid();
 }
@@ -1480,14 +1948,12 @@ function openMarketNew() {
   setTimeout(() => $('mkt-nick').focus(), 60);
 }
 
-function triggerImgPick() {
-  $('mkt-img-input').click();
-}
+function triggerImgPick() { $('mkt-img-input').click(); }
 
 function handleImgSelect(e) {
   const file = e.target.files?.[0];
   if (!file) return;
-  if (file.size > 5 * 1024 * 1024) { toast('Image must be under 5 MB.', true); return; }
+  if (file.size > 5 * 1024 * 1024) { toast('Max 5MB.', true); return; }
   const reader = new FileReader();
   reader.onload = ev => {
     mktImgDataUrl = ev.target.result;
@@ -1504,14 +1970,15 @@ async function submitMarketItem() {
   const nickname = $('mkt-nick').value.trim();
   const title = $('mkt-title').value.trim();
   const description = $('mkt-desc').value.trim();
-  if (!nickname || !title || !description) return toast('Please fill in nickname, title, and description.', true);
+  if (!nickname || !title || !description) return toast('Please fill all fields.', true);
   const r = await api('/api/marketplace', 'POST', { nickname, title, description, image_data: mktImgDataUrl || '' });
   if (r.error) return toast(r.error, true);
   closeModal('bd-market-new');
-  toast('Listing posted ✓');
+  toast(t('postListing') + ' ✓');
   await renderMarketplace();
 }
 
+// ── Modal keyboard & backdrop ──────────────────────────────────────────────
 ['bd-login','bd-cat','bd-list','bd-detail','bd-requests','bd-del-req','bd-info','bd-market-new'].forEach(id => {
   $(id).addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(id); });
 });
@@ -1519,9 +1986,10 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') ['bd-login','bd-cat','bd-list','bd-detail','bd-requests','bd-del-req','bd-info','bd-market-new'].forEach(closeModal);
   if (e.key === 'Enter' && $('bd-login').classList.contains('open')) doLogin();
   if (e.key === 'Enter' && $('bd-cat').classList.contains('open')) submitCategory();
-  if (e.key === 'Enter' && $('bd-list').classList.contains('open')) submitList();
 });
 
+// ── Boot ──────────────────────────────────────────────────────────────────
+applyTranslations();
 checkAuth();
 </script>
 </body>
