@@ -1,13 +1,8 @@
 {
-  "name": "listify",
-  "version": "1.0.0",
-  "scripts": {
-    "start": "concurrently \"node server.js\" \"node bot.js\""
-  },
+  "name": "listify-web",
+  "scripts": { "start": "node server.js" },
   "dependencies": {
     "express": "^4.18.2",
-    "better-sqlite3": "^9.4.3",
-    "discord.js": "^14.14.1",
-    "concurrently": "^8.2.2"
+    "better-sqlite3": "^9.4.3"
   }
 }
