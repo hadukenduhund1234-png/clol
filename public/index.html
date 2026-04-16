@@ -378,8 +378,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
 
 </div>
 
-<!-- ────── MODALS ────── -->
-
 <div class="backdrop" id="bd-login">
   <div class="modal">
     <div class="modal-hd">
@@ -388,7 +386,7 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
     </div>
     <div class="modal-body">
       <div class="login-icon">🔑</div>
-      <div class="login-sub" data-t="loginSub">Admins can create, edit and delete categories & lists.<br>Anyone can sign up for open slots.</div>
+      <div class="login-sub" data-t="loginSub">Admins can create, edit and delete categories & lists.<br>Anyone can sign up.</div>
       <div class="error-msg" id="login-err" data-t="wrongPassword">Incorrect password — please try again.</div>
       <div class="field">
         <label data-t="password">Password</label>
@@ -513,7 +511,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
     <div class="modal-body">
       <div class="detail-pills" id="det-pills"></div>
       <div class="detail-desc-block" id="det-desc"></div>
-      <!-- Legend -->
       <div class="legend-box">
         <span class="legend-title" data-t="legend">Legend:</span>
         <span class="legend-item"><span class="legend-dot legend-dot-sure"></span><span data-t="legendSure">Sure ✅</span></span>
@@ -556,7 +553,6 @@ header{padding:44px 0 28px;border-bottom:3px solid var(--ink);display:flex;align
   </div>
 </div>
 
-<!-- ── Marketplace Detail Modal (Lightbox) ── -->
 <div class="backdrop" id="bd-market-detail">
   <div class="modal detail-modal">
     <div class="modal-hd">
@@ -1705,7 +1701,7 @@ async function openDetail(id) {
 }
 
 function renderDetailPills(data) {
-  const filled = (data.signups || []).filter(s => s.status !== 'standby').length;
+  const filled = (data.signups || []).filter(s => s.status !== 'standby' && s.slot_number <= data.slots).length;
   const free = data.slots - filled;
   const pc = free === 0 ? 'pill-red' : free <= 3 ? 'pill-yellow' : 'pill-green';
   const timeChip = data.event_time ? `<span class="pill pill-blue">🕐 ${esc(data.event_time)}</span>` : '';
@@ -1723,8 +1719,19 @@ function renderSlots() {
   (detailListData.signups || []).forEach(s => { tm[s.slot_number] = s; });
   const pending = new Set(detailListData.pendingDeleteSlots || []);
 
-  $('det-slots').innerHTML = Array.from({ length: detailListData.slots }, (_, i) => {
+  let maxSlots = detailListData.slots;
+  const filledCount = (detailListData.signups || []).filter(s => s.slot_number <= detailListData.slots).length;
+  if (filledCount >= detailListData.slots) {
+    maxSlots = detailListData.slots + 2;
+  }
+
+  let html = '';
+  for (let i = 0; i < maxSlots; i++) {
     const n = i + 1;
+    if (n === detailListData.slots + 1) {
+      html += `<div class="slots-hd" style="grid-column: 1/-1; margin-top: 15px; color: var(--orange);">Warteliste (Max. 2 Reservierungen)</div>`;
+    }
+
     const signup = tm[n];
     const isPending = pending.has(n);
     const taken = !!signup;
@@ -1755,12 +1762,16 @@ function renderSlots() {
       clickHandler = `onclick="pickStandbySlot(${n})"`;
     }
 
-    return `<div class="slot ${statusClass}${pendingClass}${picked?' picked':''}" ${!taken ? clickHandler : (taken && signup.status === 'maybe' ? clickHandler : '')}>
-      <div class="slot-n">${dotHtml} #${n} ${statusLabel}</div>
+    const isWaitlist = n > detailListData.slots;
+    const numberLabel = isWaitlist ? `R${n - detailListData.slots}` : `#${n}`;
+
+    html += `<div class="slot ${statusClass}${pendingClass}${picked?' picked':''}" ${!taken ? clickHandler : (taken && signup.status === 'maybe' ? clickHandler : '')}>
+      <div class="slot-n">${dotHtml} ${numberLabel} ${statusLabel}</div>
       <div class="slot-who">${taken ? esc(signup.nickname) : '+ ' + t('signUpBtn')}</div>
       ${btnHtml}${reqBadge}
     </div>`;
-  }).join('');
+  }
+  $('det-slots').innerHTML = html;
 }
 
 function pickSlot(n, type='free') {
@@ -1769,7 +1780,7 @@ function pickSlot(n, type='free') {
   renderSlots();
   const box = $('det-signup');
   box.innerHTML = `<div class="signup-box">
-    <p>${t('signupFor')} <strong>#${n}</strong> — ${t('enterNickname')}</p>
+    <p>${t('signupFor')} <strong>#${n > detailListData.slots ? 'R' + (n - detailListData.slots) : n}</strong> — ${t('enterNickname')}</p>
     <div class="status-toggle">
       <div class="status-opt sure-opt active" onclick="selectStatus('sure', this)">${t('statusSure')}</div>
       <div class="status-opt maybe-opt" onclick="selectStatus('maybe', this)">${t('statusMaybe')}</div>
@@ -1791,7 +1802,7 @@ function pickStandbySlot(n) {
   renderSlots();
   const box = $('det-signup');
   box.innerHTML = `<div class="signup-box" style="border-color:var(--orange)">
-    <p>${t('signupFor')} <strong>#${n}</strong> — <span style="color:var(--orange)">${t('legendStandby')}</span></p>
+    <p>${t('signupFor')} <strong>#${n > detailListData.slots ? 'R' + (n - detailListData.slots) : n}</strong> — <span style="color:var(--orange)">${t('legendStandby')}</span></p>
     <div class="standby-note">${t('standbyNote')}</div>
     <div class="inline-row">
       <input type="text" id="nick-input" placeholder="…" maxlength="60"/>
@@ -1813,7 +1824,7 @@ function selectStatus(status, el) {
 async function submitSignup(slotNum) {
   const nick = ($('nick-input')?.value || '').trim();
   if (!nick) return toast(t('yourNickname') + '!', true);
-  const r = await api(`/api/lists/${detailListId}/signup`, 'POST', { slot_number: slotNum, nickname: nick, status: signupStatus });
+  const r = await api(`/api/lists/${detailListId}/signup`, 'POST', { slot_number: slotNum, nickname: nick, discord_id: '', status: signupStatus });
   if (r.error) { toast(r.error, true); return; }
   toast(`${nick} → #${slotNum} ✓`);
   pickedSlot = null;
@@ -1831,14 +1842,14 @@ async function submitSignupStandby(slotNum) {
 
   const takenSlots = new Set((detailListData.signups || []).map(s => s.slot_number));
   let standbySlot = null;
-  for (let i = 1; i <= detailListData.slots; i++) {
+  for (let i = 1; i <= detailListData.slots + 2; i++) {
     if (!takenSlots.has(i)) { standbySlot = i; break; }
   }
   if (standbySlot === null) return toast(t('full'), true);
 
   const nick = ($('nick-input')?.value || '').trim();
   if (!nick) return toast(t('yourNickname') + '!', true);
-  const r = await api(`/api/lists/${detailListId}/signup`, 'POST', { slot_number: standbySlot, nickname: nick, status: 'standby' });
+  const r = await api(`/api/lists/${detailListId}/signup`, 'POST', { slot_number: standbySlot, nickname: nick, discord_id: '', status: 'standby' });
   if (r.error) { toast(r.error, true); return; }
   toast(`${nick} → Standby #${standbySlot} ✓`);
   pickedSlot = null;

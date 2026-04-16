@@ -30,6 +30,7 @@ db.exec(`
     event_date TEXT NOT NULL,
     event_time TEXT DEFAULT '',
     slots INTEGER NOT NULL DEFAULT 10,
+    channel INTEGER DEFAULT 1,
     created_at TEXT DEFAULT (datetime('now'))
   );
   CREATE TABLE IF NOT EXISTS signups (
@@ -37,6 +38,7 @@ db.exec(`
     list_id INTEGER NOT NULL REFERENCES lists(id),
     slot_number INTEGER NOT NULL,
     nickname TEXT NOT NULL,
+    discord_id TEXT DEFAULT '',
     status TEXT DEFAULT 'sure',
     signed_at TEXT DEFAULT (datetime('now')),
     UNIQUE(list_id, slot_number)
@@ -69,6 +71,7 @@ try { db.prepare("ALTER TABLE lists ADD COLUMN event_time TEXT DEFAULT ''").run(
 try { db.prepare("ALTER TABLE lists ADD COLUMN channel INTEGER DEFAULT 1").run(); } catch(e) {}
 try { db.prepare("ALTER TABLE marketplace_items ADD COLUMN image_data TEXT DEFAULT ''").run(); } catch(e) {}
 try { db.prepare("ALTER TABLE signups ADD COLUMN status TEXT DEFAULT 'sure'").run(); } catch(e) {}
+try { db.prepare("ALTER TABLE signups ADD COLUMN discord_id TEXT DEFAULT ''").run(); } catch(e) {}
 
 db.prepare("DELETE FROM sessions WHERE created_at < datetime('now', '-24 hours')").run();
 
@@ -204,7 +207,7 @@ app.get('/api/lists/upcoming', (_req, res) => {
       COUNT(s.id) AS filled
     FROM lists l
     JOIN categories c ON c.id = l.category_id
-    LEFT JOIN signups s ON s.list_id = l.id
+    LEFT JOIN signups s ON s.list_id = l.id AND s.slot_number <= l.slots
     WHERE l.event_date >= date('now')
     GROUP BY l.id
     ORDER BY l.event_date ASC, COALESCE(NULLIF(l.event_time,''), '99:99') ASC
@@ -260,15 +263,18 @@ app.delete('/api/lists/:id', (req, res) => {
 // ── Signups ────────────────────────────────────────────────────────────────
 
 app.post('/api/lists/:id/signup', (req, res) => {
-  const { slot_number, nickname, status } = req.body;
+  const { slot_number, nickname, status, discord_id } = req.body;
   if (!nickname?.trim() || slot_number == null) return res.status(400).json({ error: 'Missing fields' });
   const list = db.prepare('SELECT * FROM lists WHERE id = ?').get(req.params.id);
   if (!list) return res.status(404).json({ error: 'List not found' });
-  if (slot_number < 1 || slot_number > list.slots) return res.status(400).json({ error: 'Invalid slot' });
-  const validStatus = ['sure', 'maybe'].includes(status) ? status : 'sure';
+  
+  // Allow up to 2 waitlist slots (list.slots + 2)
+  if (slot_number < 1 || slot_number > list.slots + 2) return res.status(400).json({ error: 'Invalid slot' });
+  
+  const validStatus = ['sure', 'maybe', 'standby'].includes(status) ? status : 'sure';
   try {
-    db.prepare('INSERT INTO signups (list_id, slot_number, nickname, status) VALUES (?,?,?,?)')
-      .run(req.params.id, slot_number, nickname.trim(), validStatus);
+    db.prepare('INSERT INTO signups (list_id, slot_number, nickname, discord_id, status) VALUES (?,?,?,?,?)')
+      .run(req.params.id, slot_number, nickname.trim(), discord_id || '', validStatus);
     res.json({ ok: true });
   } catch {
     res.status(409).json({ error: 'Slot already taken' });
@@ -315,8 +321,23 @@ app.post('/api/lists/:id/signup/:slot/request-delete', (req, res) => {
 app.post('/api/delete-requests/:id/accept', requireAuth, (req, res) => {
   const req2 = db.prepare('SELECT * FROM delete_requests WHERE id = ?').get(req.params.id);
   if (!req2) return res.status(404).json({ error: 'Request not found' });
-  db.prepare('DELETE FROM signups WHERE list_id = ? AND slot_number = ?').run(req2.list_id, req2.slot_number);
-  db.prepare("UPDATE delete_requests SET status = 'accepted' WHERE id = ?").run(req.params.id);
+  
+  db.transaction(() => {
+    // 1. Delete original slot
+    db.prepare('DELETE FROM signups WHERE list_id = ? AND slot_number = ?').run(req2.list_id, req2.slot_number);
+    db.prepare("UPDATE delete_requests SET status = 'accepted' WHERE id = ?").run(req.params.id);
+    
+    // 2. Waitlist Auto-Promotion
+    const list = db.prepare('SELECT slots FROM lists WHERE id = ?').get(req2.list_id);
+    if (req2.slot_number <= list.slots) {
+      const waiting = db.prepare('SELECT * FROM signups WHERE list_id = ? AND slot_number > ? ORDER BY slot_number ASC').all(req2.list_id, list.slots);
+      if (waiting.length > 0) {
+        const nextPerson = waiting[0];
+        db.prepare('UPDATE signups SET slot_number = ? WHERE id = ?').run(req2.slot_number, nextPerson.id);
+      }
+    }
+  })();
+  
   res.json({ ok: true });
 });
 
