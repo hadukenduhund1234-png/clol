@@ -208,7 +208,12 @@ app.get('/api/lists/upcoming', (_req, res) => {
     FROM lists l
     JOIN categories c ON c.id = l.category_id
     LEFT JOIN signups s ON s.list_id = l.id AND s.slot_number <= l.slots
-    WHERE l.event_date >= date('now')
+    WHERE 
+      -- Events mit Zeit: nur wenn datetime noch in der Zukunft liegt
+      (l.event_time != '' AND datetime(l.event_date || 'T' || l.event_time) > datetime('now'))
+      OR
+      -- Events ohne Zeit: nur nach Datum filtern
+      (l.event_time = '' AND l.event_date >= date('now'))
     GROUP BY l.id
     ORDER BY l.event_date ASC, COALESCE(NULLIF(l.event_time,''), '99:99') ASC
     LIMIT 20
